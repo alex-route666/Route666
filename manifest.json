@@ -1,33 +1,169 @@
 {
   "races": [
-    {"index":1,"name":"GP Québec","raceName":"GP Québec 2026","date":"2026-09-11","status":"live","file":"route666-quebec-auto-v2.html","closeAt":"2026-09-11T16:00:00+02:00"},
-    {"index":2,"name":"Memorial Pantani","raceName":"Memorial Pantani 2026","date":"2026-09-12","status":"live","file":"memorialpantani.html","closeAt":"2026-09-12T11:45:00+02:00"},
-    {"index":3,"name":"GP de Fourmies","date":"2026-09-13","status":"planned"},
-    {"index":4,"name":"GP de Montréal","date":"2026-09-13","status":"planned"},
-    {"index":5,"name":"GP de Wallonie","date":"2026-09-16","status":"planned"},
-    {"index":6,"name":"Kamp. van Vlaanderen","date":"2026-09-18","status":"planned"},
-    {"index":7,"name":"Flandrien 0.0 Classic","date":"2026-09-19","status":"planned"},
-    {"index":8,"name":"Giro del Lazio","date":"2026-09-19","status":"planned"},
-    {"index":9,"name":"Giro della Romagna","date":"2026-09-20","status":"planned"},
-    {"index":10,"name":"GP d'Isbergues","date":"2026-09-20","status":"planned"},
-    {"index":11,"name":"Omloop van het Houtland","date":"2026-09-23","status":"planned"},
-    {"index":12,"name":"Championnat du Monde U23","date":"2026-09-25","status":"planned"},
-    {"index":13,"name":"Grand Prix Cerami","date":"2026-09-26","status":"planned"},
-    {"index":14,"name":"Championnat du Monde","date":"2026-09-27","status":"planned"},
-    {"index":15,"name":"Giro dell'Emilia","date":"2026-10-03","status":"planned"},
-    {"index":16,"name":"Münsterland Giro","date":"2026-10-03","status":"planned"},
-    {"index":17,"name":"Championnat d'Europe","date":"2026-10-04","status":"planned"},
-    {"index":18,"name":"Tour de Vendée","date":"2026-10-04","status":"planned"},
-    {"index":19,"name":"Championnat d'Europe U23","date":"2026-10-05","status":"planned"},
-    {"index":20,"name":"Coppa Bernocchi","date":"2026-10-05","status":"planned"},
-    {"index":21,"name":"Tre Valli Varesine","date":"2026-10-06","status":"planned"},
-    {"index":22,"name":"Binche-Chimay-Binche","date":"2026-10-06","status":"planned"},
-    {"index":23,"name":"Gran Piemonte","date":"2026-10-08","status":"planned"},
-    {"index":24,"name":"Il Lombardia","date":"2026-10-10","status":"planned"},
-    {"index":25,"name":"Paris-Tours","date":"2026-10-11","status":"planned"},
-    {"index":26,"name":"Trofeo Tessile & Moda","date":"2026-10-11","status":"planned"},
-    {"index":27,"name":"Giro del Veneto","date":"2026-10-14","status":"planned"},
-    {"index":28,"name":"Japan Cup","date":"2026-10-18","status":"planned"},
-    {"index":29,"name":"Veneto Classic","date":"2026-10-18","status":"planned"}
+    {
+      "index": 2,
+      "name": "Memorial Pantani",
+      "raceName": "Memorial Pantani 2026",
+      "date": "2026-09-12",
+      "status": "live",
+      "file": "memorialpantani.html",
+      "closeAt": "2026-09-12T11:45:00+02:00"
+    },
+    {
+      "index": 4,
+      "name": "GP de Montréal",
+      "date": "2026-09-13",
+      "status": "planned"
+    },
+    {
+      "index": 5,
+      "name": "GP de Wallonie",
+      "date": "2026-09-16",
+      "status": "planned"
+    },
+    {
+      "index": 6,
+      "name": "Kamp. van Vlaanderen",
+      "date": "2026-09-18",
+      "status": "planned"
+    },
+    {
+      "index": 7,
+      "name": "Flandrien 0.0 Classic",
+      "date": "2026-09-19",
+      "status": "planned"
+    },
+    {
+      "index": 8,
+      "name": "Giro del Lazio",
+      "date": "2026-09-19",
+      "status": "planned"
+    },
+    {
+      "index": 9,
+      "name": "Giro della Romagna",
+      "date": "2026-09-20",
+      "status": "planned"
+    },
+    {
+      "index": 10,
+      "name": "GP d'Isbergues",
+      "date": "2026-09-20",
+      "status": "planned"
+    },
+    {
+      "index": 11,
+      "name": "Omloop van het Houtland",
+      "date": "2026-09-23",
+      "status": "planned"
+    },
+    {
+      "index": 12,
+      "name": "Championnat du Monde U23",
+      "date": "2026-09-25",
+      "status": "planned"
+    },
+    {
+      "index": 13,
+      "name": "Grand Prix Cerami",
+      "date": "2026-09-26",
+      "status": "planned"
+    },
+    {
+      "index": 14,
+      "name": "Championnat du Monde",
+      "date": "2026-09-27",
+      "status": "planned"
+    },
+    {
+      "index": 15,
+      "name": "Giro dell'Emilia",
+      "date": "2026-10-03",
+      "status": "planned"
+    },
+    {
+      "index": 16,
+      "name": "Münsterland Giro",
+      "date": "2026-10-03",
+      "status": "planned"
+    },
+    {
+      "index": 17,
+      "name": "Championnat d'Europe",
+      "date": "2026-10-04",
+      "status": "planned"
+    },
+    {
+      "index": 18,
+      "name": "Tour de Vendée",
+      "date": "2026-10-04",
+      "status": "planned"
+    },
+    {
+      "index": 19,
+      "name": "Championnat d'Europe U23",
+      "date": "2026-10-05",
+      "status": "planned"
+    },
+    {
+      "index": 20,
+      "name": "Coppa Bernocchi",
+      "date": "2026-10-05",
+      "status": "planned"
+    },
+    {
+      "index": 21,
+      "name": "Tre Valli Varesine",
+      "date": "2026-10-06",
+      "status": "planned"
+    },
+    {
+      "index": 22,
+      "name": "Binche-Chimay-Binche",
+      "date": "2026-10-06",
+      "status": "planned"
+    },
+    {
+      "index": 23,
+      "name": "Gran Piemonte",
+      "date": "2026-10-08",
+      "status": "planned"
+    },
+    {
+      "index": 24,
+      "name": "Il Lombardia",
+      "date": "2026-10-10",
+      "status": "planned"
+    },
+    {
+      "index": 25,
+      "name": "Paris-Tours",
+      "date": "2026-10-11",
+      "status": "planned"
+    },
+    {
+      "index": 26,
+      "name": "Trofeo Tessile & Moda",
+      "date": "2026-10-11",
+      "status": "planned"
+    },
+    {
+      "index": 27,
+      "name": "Giro del Veneto",
+      "date": "2026-10-14",
+      "status": "planned"
+    },
+    {
+      "index": 28,
+      "name": "Japan Cup",
+      "date": "2026-10-18",
+      "status": "planned"
+    },
+    {
+      "index": 29,
+      "name": "Veneto Classic",
+      "date": "2026-10-18",
+      "status": "planned"
+    }
   ]
 }
