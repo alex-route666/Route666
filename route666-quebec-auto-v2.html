@@ -254,7 +254,36 @@
   }
   .finalized-banner a{color:var(--superteam);cursor:pointer;text-decoration:underline;}
 
+  .board-toolbar{
+    display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:12px;
+    padding-bottom:10px;border-bottom:1px solid var(--line);
+  }
+  .cat-filter-bar{display:flex;align-items:center;gap:6px;}
+  .cat-filter-label{font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--dim);}
+  .cat-filter-chip{
+    font-size:1.1em;padding:3px 8px;border-radius:5px;cursor:pointer;
+    border:1px solid var(--line);background:var(--panel);opacity:0.55;
+  }
+  .cat-filter-chip.active{opacity:1;border-color:var(--superteam);background:var(--panel-2);box-shadow:0 0 0 1px var(--superteam);}
+  .board-sort-bar{display:flex;gap:2px;background:var(--panel-2);border-radius:6px;padding:2px;}
+  .sort-btn{
+    font-family:'IBM Plex Mono',monospace;font-size:0.72em;padding:5px 10px;border-radius:4px;
+    cursor:pointer;color:var(--dim);
+  }
+  .sort-btn.active{background:var(--panel);color:var(--paper);font-weight:600;}
+  .strategy-btn{
+    margin-left:auto;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.78em;
+    padding:6px 12px;border-radius:6px;cursor:pointer;color:var(--superteam);
+    border:1px solid var(--superteam);background:rgba(232,191,90,0.08);
+  }
+  .strategy-btn:hover{background:rgba(232,191,90,0.18);}
+
   .board{display:grid;grid-template-columns:repeat(4, 1fr);gap:8px;}
+  .board.board-flat{display:flex;flex-direction:column;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px;}
+  .board-flat .rr{border-radius:3px;}
+  .rcat-emoji{flex-shrink:0;margin-right:2px;}
+  .rteam{flex:1;font-size:0.82em;color:var(--dim);}
+  .st-tag{color:var(--superteam);font-family:'IBM Plex Mono',monospace;font-weight:700;}
   .tc{background:var(--panel);border:1px solid var(--line);border-top:2px solid #d8c0b0;border-radius:4px;overflow:hidden;}
   .tc.st{border-top:2px solid var(--superteam);box-shadow:0 0 14px rgba(177,18,47,0.25) inset;}
   .th{display:flex;align-items:center;gap:6px;padding:5px 8px 4px;border-bottom:1px solid var(--line);}
@@ -344,6 +373,7 @@
   .modal h2{font-family:'Space Grotesk',sans-serif;font-size:1.2em;margin:0 0 4px;}
   .modal .msub{font-size:0.8em;color:var(--dim);margin-bottom:14px;}
   .modal textarea{width:100%;height:180px;background:var(--bg);border:1px solid var(--line);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.72em;border-radius:4px;padding:10px;margin-bottom:12px;}
+  .pwd-input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--paper);font-family:'IBM Plex Sans',sans-serif;font-size:0.9em;border-radius:4px;padding:10px 12px;margin-top:12px;}
   .modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
   .modal input[type=password]{
     width:100%;background:var(--bg);border:1px solid var(--line);color:var(--paper);
@@ -436,7 +466,7 @@
     <div>
       <div class="eyebrow">UCI PRO SERIES · COURSE D'UN JOUR · SEPTEMBRE 2026 · QUÉBEC, CANADA</div>
       <h1>ROUTE 6<span class="six">6</span>6</h1>
-      <div class="subtitle">GP Québec — Draft du jour</div>
+      <div class="subtitle">GP Industria & Artigianato — Draft du jour</div>
     </div>
     <div style="text-align:right;">
       <svg class="header-devil" width="76" height="76" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -509,6 +539,21 @@
     <div id="finalizedBanner"></div>
 
     <div class="validate-row" id="validateRow"></div>
+
+    <div class="board-toolbar">
+      <div class="cat-filter-bar" id="catFilterBar">
+        <span class="cat-filter-label">Filtrer :</span>
+        <span class="cat-filter-chip" data-cat="tentation" onclick="toggleCatFilter('tentation')">🔥</span>
+        <span class="cat-filter-chip" data-cat="diablo" onclick="toggleCatFilter('diablo')">😈</span>
+        <span class="cat-filter-chip" data-cat="malin" onclick="toggleCatFilter('malin')">😏</span>
+        <span class="cat-filter-chip" data-cat="angel" onclick="toggleCatFilter('angel')">😇</span>
+      </div>
+      <div class="board-sort-bar">
+        <span class="sort-btn active" id="sortByTeamBtn" onclick="setBoardSort('team')">Par équipe</span>
+        <span class="sort-btn" id="sortByCostBtn" onclick="setBoardSort('cost')">Par coût</span>
+      </div>
+      <div class="strategy-btn" onclick="openStrategy()">💡 Quelle est la meilleure stratégie ?</div>
+    </div>
 
     <div class="board" id="board"></div>
 
@@ -596,9 +641,11 @@
   <div class="modal">
     <h2 id="welcomeTitle" style="color:var(--superteam);">😈 La Route 666</h2>
     <div class="msub" id="welcomeText" style="font-size:0.95em;line-height:1.6;color:var(--paper);"></div>
-    <div class="modal-actions">
-      <button class="btn final" onclick="closeWelcome()">JE FERME ET JE FAIS MES PICKS</button>
+    <div class="modal-actions" style="flex-wrap:wrap;">
+      <button class="btn final" onclick="closeWelcome(true)">JE FERME ET JE FAIS MES PICKS</button>
+      <button class="btn" onclick="closeWelcome(false)">Passer le tuto, je connais déjà</button>
     </div>
+    <div class="mnote" style="margin-top:8px;">L'icône <b>i</b> en haut à droite permet de relire les règles à tout moment, tuto ou pas.</div>
   </div>
 </div>
 
@@ -654,6 +701,62 @@
 
 <div class="rules-fab" id="rulesFab" onclick="openRules()" title="Voir les règles">i</div>
 
+<div class="overlay" id="strategyOverlay">
+  <div class="modal" style="max-height:80vh;overflow-y:auto;">
+    <h2 style="color:var(--superteam);">💡 Quelle est la meilleure stratégie ?</h2>
+    <div class="msub" style="font-size:0.88em;line-height:1.6;color:var(--paper);">
+      <p>Il n'y a pas de recette magique — voici 6 approches types, avec leur force et leur faiblesse.</p>
+
+      <p><b>1. Le Pari sur l'ultra favori</b><br>
+      Miser sur le meilleur Tentation, équilibrer le reste.<br>
+      <span style="color:var(--good);">✓ Force :</span> si ton ultra favori (souvent 120-150 pts au barème) performe, il peut porter l'équipe à lui seul.<br>
+      <span style="color:var(--bad);">✗ Faiblesse :</span> tu perds le +20% "Résiste à la Tentation", et s'il chute/abandonne, une grosse part du budget n'a rien rapporté — tout misé sur un seul cheval.</p>
+
+      <p><b>2. Résistance totale</b><br>
+      Zéro Tentation, budget étalé sur de bons Diablo/Malin.<br>
+      <span style="color:var(--good);">✓ Force :</span> le +20% "Résiste à la Tentation" est garanti quel que soit le résultat, et le risque est réparti sur plusieurs coureurs solides.<br>
+      <span style="color:var(--bad);">✗ Faiblesse :</span> tu te prives des meilleurs favoris de la course (justement ceux en Tentation) — ton plafond de points bruts est plus bas.</p>
+
+      <p><b>3. Escadron Angel</b><br>
+      0 Tentation + 5 Angels bon marché, en pariant sur 1-2 outsiders qui rentrent dans le top 30/top 10.<br>
+      <span style="color:var(--good);">✓ Force :</span> si ça sort, les bonus se cumulent (Angel jusqu'à +250% + Résiste à la Tentation +20%) sur un score brut pourtant modeste — le meilleur ratio risque/récompense du jeu.<br>
+      <span style="color:var(--bad);">✗ Faiblesse :</span> si aucun des 5 Angels ne rentre dans le top 30, le bonus Angel tombe à 0% et le score brut de départ est déjà faible (coureurs bon marché) — tout ou rien sur des outsiders imprévisibles.</p>
+
+      <p><b>4. Chasse au Budget Coquin</b><br>
+      Équipe économique, gros reliquat de budget, Leader bien choisi.<br>
+      <span style="color:var(--good);">✓ Force :</span> le bonus budget coquin (jusqu'à +100%, garanti, indépendant des résultats) double potentiellement les points de ton Leader.<br>
+      <span style="color:var(--bad);">✗ Faiblesse :</span> une équipe économique marque moins de points bruts partout ailleurs, et ce bonus ne profite qu'au Leader — s'il a une mauvaise course, tout ce reliquat de budget n'a servi à rien.</p>
+
+      <p><b>5. Tout au feeling</b><br>
+      Choisis les coureurs que tu vois performer, ajuste ton budget au fil de tes choix.<br>
+      <span style="color:var(--good);">✓ Force :</span> si tu repères un ou deux outsiders sous-évalués par le système de coûts, c'est là que vient ta vraie plus-value — pas des bonus, mais de ton flair.<br>
+      <span style="color:var(--bad);">✗ Faiblesse :</span> sans piloter consciemment les paliers (0 ou 1 Tentation, nombre d'Angels dans le top 30, seuil des 2 coureurs de la 666 Team), tu peux finir avec un modificateur net proche de 0%, voire négatif, alors qu'un seul ajustement (un Angel en moins, un Diablo en plus) l'aurait rendu largement positif.</p>
+
+      <p><b>6. Les coureurs borderline</b><br>
+      Entre un Tentation à 90 pts et un Diablo à 89, pourquoi hésiter ? Traque les coureurs à 1-2 points du palier supérieur.<br>
+      <span style="color:var(--good);">✓ Force :</span> un coureur à 89 pts a souvent un profil quasi identique à celui à 90 — l'écart ne tient qu'à un point de stat, pas de niveau. Tu payes le tarif Diablo (80-89) pour une valeur quasi-Tentation, et le budget économisé se recase ailleurs.<br>
+      <span style="color:var(--bad);">✗ Faiblesse :</span> tu raisonnes en seuils de coût plutôt qu'en forme du jour ou en profil de course — deux coureurs séparés d'un point (89/90, 79/80, 69/70) n'ont souvent presque rien à voir sur le terrain le jour J, donc l'optimisation reste parfois cosmétique.</p>
+
+      <p style="font-style:italic;color:var(--dim);">Dans tous les cas, un piège reste transversal : 2 coureurs ou plus de la 666 Team 👿 dans ton équipe, et c'est -10% sur tout ton score, quelle que soit la stratégie choisie.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn final" onclick="closeStrategy()">J'ai mon plan</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="passwordOverlay">
+  <div class="modal">
+    <h2 id="pwdTitle" style="color:var(--superteam);">🔐 Mot de passe</h2>
+    <div class="msub" id="pwdBody" style="font-size:0.88em;line-height:1.5;color:var(--paper);"></div>
+    <input type="password" id="pwdInput" class="pwd-input" autocomplete="off" placeholder="Ton mot de passe">
+    <div class="modal-actions">
+      <button class="btn" id="pwdCancelBtn">Annuler</button>
+      <button class="btn final" id="pwdSubmitBtn">Valider</button>
+    </div>
+  </div>
+</div>
+
 <div class="hesitation-bubble" id="hesitationBubble">
   <div class="hb-close" onclick="dismissHesitation()">✕</div>
   <div class="hb-tag" id="hbTag"></div>
@@ -664,6 +767,9 @@
 
 <div class="angel-tooltip" id="angelTooltip">👿 NE L'ÉCOUTE PAS, CE SONT DES PETITS COUREURS SANS AVENIR</div>
 
+<script>
+const DATA = {"riders": [{"bib": 1, "name": "Isaac del Toro", "nat": "mx", "team": "UAE Team Emirates-XRG", "cost": 112, "cat": "tentation", "special": "st"}, {"bib": 2, "name": "Felix Großschartner", "nat": "at", "team": "UAE Team Emirates-XRG", "cost": 76, "cat": "malin", "special": "st"}, {"bib": 3, "name": "Brandon McNulty", "nat": "us", "team": "UAE Team Emirates-XRG", "cost": 83, "cat": "diablo", "special": "st"}, {"bib": 4, "name": "Jhonatan Narvaez", "nat": "ec", "team": "UAE Team Emirates-XRG", "cost": 89, "cat": "diablo", "special": "st"}, {"bib": 5, "name": "Florian Vermeersch", "nat": "be", "team": "UAE Team Emirates-XRG", "cost": 80, "cat": "diablo", "special": "st"}, {"bib": 6, "name": "Tim Wellens", "nat": "be", "team": "UAE Team Emirates-XRG", "cost": 87, "cat": "diablo", "special": "st"}, {"bib": 7, "name": "Adam Yates", "nat": "gb", "team": "UAE Team Emirates-XRG", "cost": 75, "cat": "malin", "special": "st"}, {"bib": 11, "name": "Remco Evenepoel", "nat": "be", "team": "Red Bull-BORA-hansgrohe", "cost": 132, "cat": "tentation", "special": null}, {"bib": 12, "name": "Giovanni Aleotti", "nat": "it", "team": "Red Bull-BORA-hansgrohe", "cost": 68, "cat": "angel", "special": null}, {"bib": 13, "name": "Mattia Cattaneo", "nat": "it", "team": "Red Bull-BORA-hansgrohe", "cost": 66, "cat": "angel", "special": null}, {"bib": 14, "name": "Emil Herzog", "nat": "de", "team": "Red Bull-BORA-hansgrohe", "cost": 65, "cat": "angel", "special": null}, {"bib": 15, "name": "Jan Tratnik", "nat": "si", "team": "Red Bull-BORA-hansgrohe", "cost": 75, "cat": "malin", "special": null}, {"bib": 16, "name": "Maxim Van Gils", "nat": "be", "team": "Red Bull-BORA-hansgrohe", "cost": 87, "cat": "diablo", "special": null}, {"bib": 17, "name": "Nico Denz", "nat": "de", "team": "Red Bull-BORA-hansgrohe", "cost": 77, "cat": "malin", "special": null}, {"bib": 21, "name": "Matteo Jorgenson", "nat": "us", "team": "Team Visma | Lease a Bike", "cost": 86, "cat": "diablo", "special": null}, {"bib": 23, "name": "Victor Campenaerts", "nat": "be", "team": "Team Visma | Lease a Bike", "cost": 83, "cat": "diablo", "special": null}, {"bib": 24, "name": "Filippo Fiorelli", "nat": "it", "team": "Team Visma | Lease a Bike", "cost": 76, "cat": "malin", "special": null}, {"bib": 25, "name": "Tim Rex", "nat": "be", "team": "Team Visma | Lease a Bike", "cost": 60, "cat": "angel", "special": null}, {"bib": 26, "name": "Bart Lemmen", "nat": "nl", "team": "Team Visma | Lease a Bike", "cost": 80, "cat": "diablo", "special": null}, {"bib": 27, "name": "Wilco Kelderman", "nat": "nl", "team": "Team Visma | Lease a Bike", "cost": 76, "cat": "malin", "special": null}, {"bib": 31, "name": "Paul Seixas", "nat": "fr", "team": "Decathlon CMA CGM Team", "cost": 92, "cat": "tentation", "special": null}, {"bib": 32, "name": "Tiesj Benoot", "nat": "be", "team": "Decathlon CMA CGM Team", "cost": 79, "cat": "malin", "special": null}, {"bib": 33, "name": "Noa Isidore", "nat": "fr", "team": "Decathlon CMA CGM Team", "cost": 71, "cat": "malin", "special": null}, {"bib": 34, "name": "Paul Lapeira", "nat": "fr", "team": "Decathlon CMA CGM Team", "cost": 84, "cat": "diablo", "special": null}, {"bib": 35, "name": "Stefan Bissegger", "nat": "ch", "team": "Decathlon CMA CGM Team", "cost": 74, "cat": "malin", "special": null}, {"bib": 36, "name": "Rasmus Søjberg Pedersen", "nat": "dk", "team": "Decathlon CMA CGM Team", "cost": 68, "cat": "angel", "special": null}, {"bib": 37, "name": "Nicolas Prodhomme", "nat": "fr", "team": "Decathlon CMA CGM Team", "cost": 76, "cat": "malin", "special": null}, {"bib": 41, "name": "Quinn Simmons", "nat": "us", "team": "Lidl-Trek", "cost": 89, "cat": "diablo", "special": null}, {"bib": 42, "name": "Juan Ayuso", "nat": "es", "team": "Lidl-Trek", "cost": 86, "cat": "diablo", "special": null}, {"bib": 43, "name": "Sam Oomen", "nat": "nl", "team": "Lidl-Trek", "cost": 60, "cat": "angel", "special": null}, {"bib": 44, "name": "Giulio Ciccone", "nat": "it", "team": "Lidl-Trek", "cost": 86, "cat": "diablo", "special": null}, {"bib": 45, "name": "Derek Gee-West", "nat": "ca", "team": "Lidl-Trek", "cost": 81, "cat": "diablo", "special": null}, {"bib": 46, "name": "Matteo Sobrero", "nat": "it", "team": "Lidl-Trek", "cost": 78, "cat": "malin", "special": null}, {"bib": 47, "name": "Toms Skujins", "nat": "lv", "team": "Lidl-Trek", "cost": 82, "cat": "diablo", "special": null}, {"bib": 51, "name": "Alberto Bettiol", "nat": "it", "team": "XDS Astana Team", "cost": 83, "cat": "diablo", "special": null}, {"bib": 52, "name": "Sergio Higuita", "nat": "co", "team": "XDS Astana Team", "cost": 73, "cat": "malin", "special": null}, {"bib": 53, "name": "Aaron Gate", "nat": "nz", "team": "XDS Astana Team", "cost": 71, "cat": "malin", "special": null}, {"bib": 54, "name": "Thomas Silva", "nat": "uy", "team": "XDS Astana Team", "cost": 77, "cat": "malin", "special": null}, {"bib": 55, "name": "Martin López", "nat": "ec", "team": "XDS Astana Team", "cost": 60, "cat": "angel", "special": null}, {"bib": 56, "name": "Arjen Livyns", "nat": "be", "team": "XDS Astana Team", "cost": 76, "cat": "malin", "special": null}, {"bib": 57, "name": "Davide Toneatti", "nat": "it", "team": "XDS Astana Team", "cost": 68, "cat": "angel", "special": null}, {"bib": 61, "name": "Edoardo Zambanini", "nat": "it", "team": "Bahrain Victorious", "cost": 76, "cat": "malin", "special": null}, {"bib": 62, "name": "Nikias Arndt", "nat": "de", "team": "Bahrain Victorious", "cost": 61, "cat": "angel", "special": null}, {"bib": 63, "name": "Alessandro Borgo", "nat": "it", "team": "Bahrain Victorious", "cost": 64, "cat": "angel", "special": null}, {"bib": 64, "name": "Afonso Eulalio", "nat": "pt", "team": "Bahrain Victorious", "cost": 80, "cat": "diablo", "special": null}, {"bib": 65, "name": "Alec Segaert", "nat": "be", "team": "Bahrain Victorious", "cost": 71, "cat": "malin", "special": null}, {"bib": 66, "name": "Robert Stannard", "nat": "au", "team": "Bahrain Victorious", "cost": 66, "cat": "angel", "special": null}, {"bib": 67, "name": "Oliver Stockwell", "nat": "gb", "team": "Bahrain Victorious", "cost": 37, "cat": "angel", "special": null}, {"bib": 71, "name": "Michal Kwiatkowski", "nat": "pl", "team": "Netcompany INEOS", "cost": 81, "cat": "diablo", "special": null}, {"bib": 72, "name": "Thymen Arensman", "nat": "nl", "team": "Netcompany INEOS", "cost": 74, "cat": "malin", "special": null}, {"bib": 73, "name": "AJ August", "nat": "us", "team": "Netcompany INEOS", "cost": 64, "cat": "angel", "special": null}, {"bib": 74, "name": "Artem Shmidt", "nat": "us", "team": "Netcompany INEOS", "cost": 61, "cat": "angel", "special": null}, {"bib": 75, "name": "Tobias Foss", "nat": "no", "team": "Netcompany INEOS", "cost": 71, "cat": "malin", "special": null}, {"bib": 76, "name": "Brandon Rivera", "nat": "co", "team": "Netcompany INEOS", "cost": 71, "cat": "malin", "special": null}, {"bib": 77, "name": "Magnus Sheffield", "nat": "us", "team": "Netcompany INEOS", "cost": 73, "cat": "malin", "special": null}, {"bib": 81, "name": "Max Schachmann", "nat": "de", "team": "Soudal Quick-Step", "cost": 76, "cat": "malin", "special": null}, {"bib": 82, "name": "Steff Cras", "nat": "be", "team": "Soudal Quick-Step", "cost": 65, "cat": "angel", "special": null}, {"bib": 83, "name": "Casper Pedersen", "nat": "dk", "team": "Soudal Quick-Step", "cost": 74, "cat": "malin", "special": null}, {"bib": 84, "name": "Andrea Raccagni Noviero", "nat": "it", "team": "Soudal Quick-Step", "cost": 68, "cat": "angel", "special": null}, {"bib": 85, "name": "Pepijn Reinderink", "nat": "nl", "team": "Soudal Quick-Step", "cost": 69, "cat": "angel", "special": null}, {"bib": 86, "name": "Ilan Van Wilder", "nat": "be", "team": "Soudal Quick-Step", "cost": 81, "cat": "diablo", "special": null}, {"bib": 87, "name": "Louis Vervaeke", "nat": "be", "team": "Soudal Quick-Step", "cost": 70, "cat": "malin", "special": null}, {"bib": 91, "name": "Kaden Groves", "nat": "au", "team": "Alpecin-Premier Tech", "cost": 82, "cat": "diablo", "special": null}, {"bib": 92, "name": "Tobias Bayer", "nat": "at", "team": "Alpecin-Premier Tech", "cost": 61, "cat": "angel", "special": null}, {"bib": 93, "name": "Lennert Belmans", "nat": "be", "team": "Alpecin-Premier Tech", "cost": 46, "cat": "angel", "special": null}, {"bib": 94, "name": "Aaron Dockx", "nat": "be", "team": "Alpecin-Premier Tech", "cost": 60, "cat": "angel", "special": null}, {"bib": 95, "name": "Edward Planckaert", "nat": "be", "team": "Alpecin-Premier Tech", "cost": 77, "cat": "malin", "special": null}, {"bib": 96, "name": "Henri Uhlig", "nat": "de", "team": "Alpecin-Premier Tech", "cost": 71, "cat": "malin", "special": null}, {"bib": 97, "name": "Luca Vergallito", "nat": "it", "team": "Alpecin-Premier Tech", "cost": 62, "cat": "angel", "special": null}, {"bib": 101, "name": "Anthon Charmig", "nat": "dk", "team": "Uno-X Mobility", "cost": 68, "cat": "angel", "special": null}, {"bib": 102, "name": "Sven Erik Bystrøm", "nat": "no", "team": "Uno-X Mobility", "cost": 67, "cat": "angel", "special": null}, {"bib": 103, "name": "Ådne Holter", "nat": "no", "team": "Uno-X Mobility", "cost": 73, "cat": "malin", "special": null}, {"bib": 104, "name": "Storm Ingebrigtsen", "nat": "no", "team": "Uno-X Mobility", "cost": 51, "cat": "angel", "special": null}, {"bib": 105, "name": "Alexander Kamp", "nat": "dk", "team": "Uno-X Mobility", "cost": 65, "cat": "angel", "special": null}, {"bib": 106, "name": "Anders Skaarseth", "nat": "no", "team": "Uno-X Mobility", "cost": 58, "cat": "angel", "special": null}, {"bib": 107, "name": "Tobias Svarre", "nat": "dk", "team": "Uno-X Mobility", "cost": 45, "cat": "angel", "special": null}, {"bib": 111, "name": "Michael Matthews", "nat": "au", "team": "Team Jayco-AlUla", "cost": 90, "cat": "tentation", "special": null}, {"bib": 112, "name": "Robert Donaldson", "nat": "gb", "team": "Team Jayco-AlUla", "cost": 66, "cat": "angel", "special": null}, {"bib": 113, "name": "Luke Durbridge", "nat": "au", "team": "Team Jayco-AlUla", "cost": 51, "cat": "angel", "special": null}, {"bib": 114, "name": "Anders Foldager", "nat": "dk", "team": "Team Jayco-AlUla", "cost": 72, "cat": "malin", "special": null}, {"bib": 115, "name": "Patrick Gamper", "nat": "at", "team": "Team Jayco-AlUla", "cost": 59, "cat": "angel", "special": null}, {"bib": 116, "name": "Christopher Juul-Jensen", "nat": "dk", "team": "Team Jayco-AlUla", "cost": 55, "cat": "angel", "special": null}, {"bib": 117, "name": "Mauro Schmid", "nat": "ch", "team": "Team Jayco-AlUla", "cost": 87, "cat": "diablo", "special": null}, {"bib": 121, "name": "Ben Healy", "nat": "ie", "team": "EF Education-EasyPost", "cost": 84, "cat": "diablo", "special": null}, {"bib": 122, "name": "Kasper Asgreen", "nat": "dk", "team": "EF Education-EasyPost", "cost": 78, "cat": "malin", "special": null}, {"bib": 123, "name": "Alex Baudin", "nat": "fr", "team": "EF Education-EasyPost", "cost": 80, "cat": "diablo", "special": null}, {"bib": 124, "name": "Sean Quinn", "nat": "us", "team": "EF Education-EasyPost", "cost": 70, "cat": "malin", "special": null}, {"bib": 125, "name": "Luke Lamperti", "nat": "us", "team": "EF Education-EasyPost", "cost": 68, "cat": "angel", "special": null}, {"bib": 126, "name": "Colby Simmons", "nat": "us", "team": "EF Education-EasyPost", "cost": 57, "cat": "angel", "special": null}, {"bib": 127, "name": "Michael Leonard", "nat": "ca", "team": "EF Education-EasyPost", "cost": 46, "cat": "angel", "special": null}, {"bib": 131, "name": "Guillaume Boivin", "nat": "ca", "team": "NSN Cycling Team", "cost": 62, "cat": "angel", "special": null}, {"bib": 132, "name": "Pier-André Côté", "nat": "ca", "team": "NSN Cycling Team", "cost": 72, "cat": "malin", "special": null}, {"bib": 133, "name": "Nadav Raisberg", "nat": "il", "team": "NSN Cycling Team", "cost": 62, "cat": "angel", "special": null}, {"bib": 134, "name": "Alessandro Pinarello", "nat": "it", "team": "NSN Cycling Team", "cost": 65, "cat": "angel", "special": null}, {"bib": 135, "name": "Riley Sheehan", "nat": "us", "team": "NSN Cycling Team", "cost": 78, "cat": "malin", "special": null}, {"bib": 136, "name": "Dion Smith", "nat": "nz", "team": "NSN Cycling Team", "cost": 63, "cat": "angel", "special": null}, {"bib": 137, "name": "Corbin Strong", "nat": "nz", "team": "NSN Cycling Team", "cost": 77, "cat": "malin", "special": null}, {"bib": 141, "name": "Manlio Moro", "nat": "it", "team": "Movistar Team", "cost": 44, "cat": "angel", "special": null}, {"bib": 142, "name": "Michel Heßmann", "nat": "de", "team": "Movistar Team", "cost": 56, "cat": "angel", "special": null}, {"bib": 143, "name": "Pavel Novak", "nat": "cz", "team": "Movistar Team", "cost": 49, "cat": "angel", "special": null}, {"bib": 144, "name": "Nelson Oliveira", "nat": "pt", "team": "Movistar Team", "cost": 65, "cat": "angel", "special": null}, {"bib": 145, "name": "Davide Formolo", "nat": "it", "team": "Movistar Team", "cost": 59, "cat": "angel", "special": null}, {"bib": 146, "name": "Filip Maciejuk", "nat": "pl", "team": "Movistar Team", "cost": 60, "cat": "angel", "special": null}, {"bib": 147, "name": "Pelayo Sanchez", "nat": "es", "team": "Movistar Team", "cost": 58, "cat": "angel", "special": null}, {"bib": 151, "name": "Sébastien Grignard", "nat": "be", "team": "Lotto-Intermarché", "cost": 57, "cat": "angel", "special": null}, {"bib": 152, "name": "Jenno Berckmoes", "nat": "be", "team": "Lotto-Intermarché", "cost": 82, "cat": "diablo", "special": null}, {"bib": 153, "name": "Cédric Beullens", "nat": "be", "team": "Lotto-Intermarché", "cost": 65, "cat": "angel", "special": null}, {"bib": 154, "name": "Simone Gualdi", "nat": "it", "team": "Lotto-Intermarché", "cost": 69, "cat": "angel", "special": null}, {"bib": 155, "name": "Jonas Rutsch", "nat": "de", "team": "Lotto-Intermarché", "cost": 73, "cat": "malin", "special": null}, {"bib": 156, "name": "Lennert Van Eetvelt", "nat": "be", "team": "Lotto-Intermarché", "cost": 80, "cat": "diablo", "special": null}, {"bib": 157, "name": "Georg Zimmermann", "nat": "de", "team": "Lotto-Intermarché", "cost": 77, "cat": "malin", "special": null}, {"bib": 161, "name": "Ewen Costiou", "nat": "fr", "team": "Groupama-FDJ United", "cost": 76, "cat": "malin", "special": null}, {"bib": 162, "name": "Clément Braz Afonso", "nat": "fr", "team": "Groupama-FDJ United", "cost": 72, "cat": "malin", "special": null}, {"bib": 163, "name": "Titouan Fontaine", "nat": "fr", "team": "Groupama-FDJ United", "cost": 30, "cat": "angel", "special": null}, {"bib": 164, "name": "Thibaud Gruel", "nat": "fr", "team": "Groupama-FDJ United", "cost": 74, "cat": "malin", "special": null}, {"bib": 165, "name": "Johan Jacobs", "nat": "ch", "team": "Groupama-FDJ United", "cost": 66, "cat": "angel", "special": null}, {"bib": 166, "name": "Quentin Pacher", "nat": "fr", "team": "Groupama-FDJ United", "cost": 77, "cat": "malin", "special": null}, {"bib": 167, "name": "Clément Russo", "nat": "fr", "team": "Groupama-FDJ United", "cost": 65, "cat": "angel", "special": null}, {"bib": 171, "name": "Frank van den Broek", "nat": "nl", "team": "Team Picnic PostNL", "cost": 73, "cat": "malin", "special": null}, {"bib": 172, "name": "Warren Barguil", "nat": "fr", "team": "Team Picnic PostNL", "cost": 73, "cat": "malin", "special": null}, {"bib": 173, "name": "Robbe Dhondt", "nat": "be", "team": "Team Picnic PostNL", "cost": 53, "cat": "angel", "special": null}, {"bib": 174, "name": "Alexy Faure-Prost", "nat": "fr", "team": "Team Picnic PostNL", "cost": 43, "cat": "angel", "special": null}, {"bib": 175, "name": "James Knox", "nat": "gb", "team": "Team Picnic PostNL", "cost": 56, "cat": "angel", "special": null}, {"bib": 176, "name": "Tim Naberman", "nat": "nl", "team": "Team Picnic PostNL", "cost": 38, "cat": "angel", "special": null}, {"bib": 177, "name": "Sean Flynn", "nat": "gb", "team": "Team Picnic PostNL", "cost": 68, "cat": "angel", "special": null}, {"bib": 181, "name": "Marc Hirschi", "nat": "ch", "team": "Tudor Pro Cycling Team", "cost": 82, "cat": "diablo", "special": null}, {"bib": 182, "name": "Sebastian Kolze Changizi", "nat": "dk", "team": "Tudor Pro Cycling Team", "cost": 47, "cat": "angel", "special": null}, {"bib": 183, "name": "Aivaras Mikutis", "nat": "lt", "team": "Tudor Pro Cycling Team", "cost": 51, "cat": "angel", "special": null}, {"bib": 184, "name": "Florian Stork", "nat": "de", "team": "Tudor Pro Cycling Team", "cost": 72, "cat": "malin", "special": null}, {"bib": 185, "name": "Yannis Voisard", "nat": "ch", "team": "Tudor Pro Cycling Team", "cost": 71, "cat": "malin", "special": null}, {"bib": 186, "name": "Luc Wirtgen", "nat": "lu", "team": "Tudor Pro Cycling Team", "cost": 54, "cat": "angel", "special": null}, {"bib": 187, "name": "Robin Donzé", "nat": "ch", "team": "Tudor Pro Cycling Team", "cost": 46, "cat": "angel", "special": null}, {"bib": 191, "name": "Tom Pidcock", "nat": "gb", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 100, "cat": "tentation", "special": null}, {"bib": 192, "name": "Mark Donovan", "nat": "gb", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 68, "cat": "angel", "special": null}, {"bib": 193, "name": "Quinten Hermans", "nat": "be", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 81, "cat": "diablo", "special": null}, {"bib": 194, "name": "Damien Howson", "nat": "au", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 63, "cat": "angel", "special": null}, {"bib": 195, "name": "Xandro Meurisse", "nat": "be", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 78, "cat": "malin", "special": null}, {"bib": 196, "name": "Brent Van Moer", "nat": "be", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 75, "cat": "malin", "special": null}, {"bib": 197, "name": "Nickolas Zukowsky", "nat": "ca", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 72, "cat": "malin", "special": null}, {"bib": 201, "name": "Ben Oliver", "nat": "nz", "team": "Modern Adventure Pro Cycling", "cost": 67, "cat": "angel", "special": null}, {"bib": 202, "name": "Robin Carpenter", "nat": "us", "team": "Modern Adventure Pro Cycling", "cost": 46, "cat": "angel", "special": null}, {"bib": 203, "name": "Samuel Boardman", "nat": "us", "team": "Modern Adventure Pro Cycling", "cost": 31, "cat": "angel", "special": null}, {"bib": 204, "name": "Stefan de Bod", "nat": "za", "team": "Modern Adventure Pro Cycling", "cost": 62, "cat": "angel", "special": null}, {"bib": 205, "name": "Kieran Haug", "nat": "us", "team": "Modern Adventure Pro Cycling", "cost": 36, "cat": "angel", "special": null}, {"bib": 206, "name": "Byron Munton", "nat": "za", "team": "Modern Adventure Pro Cycling", "cost": 46, "cat": "angel", "special": null}, {"bib": 207, "name": "Riley Pickrell", "nat": "ca", "team": "Modern Adventure Pro Cycling", "cost": 57, "cat": "angel", "special": null}, {"bib": 211, "name": "Jerome Gauthier", "nat": "ca", "team": "Canada", "cost": 35, "cat": "angel", "special": null}, {"bib": 212, "name": "Samuel Couture", "nat": "ca", "team": "Canada", "cost": 20, "cat": "angel", "special": null}, {"bib": 213, "name": "Jacob Roy", "nat": "ca", "team": "Canada", "cost": 20, "cat": "angel", "special": null}, {"bib": 214, "name": "Gabriel Seguin", "nat": "ca", "team": "Canada", "cost": 23, "cat": "angel", "special": null}, {"bib": 215, "name": "Adam Smith", "nat": "ca", "team": "Canada", "cost": 31, "cat": "angel", "special": null}, {"bib": 216, "name": "Jonas Walton", "nat": "ca", "team": "Canada", "cost": 27, "cat": "angel", "special": null}], "teamOrder": ["UAE Team Emirates-XRG", "Red Bull-BORA-hansgrohe", "Team Visma | Lease a Bike", "Decathlon CMA CGM Team", "Lidl-Trek", "XDS Astana Team", "Bahrain Victorious", "Netcompany INEOS", "Soudal Quick-Step", "Alpecin-Premier Tech", "Uno-X Mobility", "Team Jayco-AlUla", "EF Education-EasyPost", "NSN Cycling Team", "Movistar Team", "Lotto-Intermarché", "Groupama-FDJ United", "Team Picnic PostNL", "Tudor Pro Cycling Team", "Pinarello-Q36.5 Pro Cycling Team", "Modern Adventure Pro Cycling", "Canada"], "superTeam": "UAE Team Emirates-XRG", "raceName": "GP Québec 2026", "closeAt": "2026-09-11T16:00:00+02:00"};
+</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
@@ -682,8 +788,19 @@
       firebase.initializeApp(firebaseConfig);
       db = firebase.firestore();
     }
-  }catch(e){ db = null; }  const SHARED_COLLECTION = "route666_shared";
-  const PERSONAL_PREFIX = "route666_personal_";
+  }catch(e){ db = null; }
+
+  // Une collection Firestore distincte par course (dérivée du nom de la course),
+  // créée automatiquement au premier écrit — aucune action manuelle nécessaire
+  // dans la console Firebase, et aucun risque de collision entre deux courses
+  // qui auraient un joueur au même pseudo.
+  const RACE_SLUG = (DATA.raceName || "default")
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+  const SHARED_COLLECTION = "route666_" + RACE_SLUG;
+  const PERSONAL_PREFIX = "route666_personal_" + RACE_SLUG + "_";
 
   // Pont : remplace le window.storage utilisé par le reste du jeu par de vrais
   // appels Firestore (partagé) / localStorage (personnel), avec le même contrat
@@ -737,10 +854,30 @@
       }catch(e){ return { keys: [], prefix, shared: false }; }
     }
   };
+
+  // Canal global (une seule collection Firestore partagée par TOUTES les courses de
+  // la saison, indépendamment de RACE_SLUG) — utilisé uniquement pour les comptes
+  // pseudo/mot de passe, afin qu'un même pseudo désigne bien la même personne d'une
+  // course à l'autre (nécessaire pour un classement général cohérent).
+  const GLOBAL_ACCOUNTS_COLLECTION = "route666_accounts";
+  window.storageGlobal = {
+    async get(key){
+      try{
+        const snap = await db.collection(GLOBAL_ACCOUNTS_COLLECTION).doc(key).get();
+        if(!snap.exists) return null;
+        return { key, value: snap.data().value };
+      }catch(e){ return null; }
+    },
+    async set(key, value){
+      try{
+        await db.collection(GLOBAL_ACCOUNTS_COLLECTION).doc(key).set({ value, updatedAt: Date.now() });
+        return { key, value };
+      }catch(e){ return null; }
+    }
+  };
 })();
 </script>
 <script>
-const DATA = {"riders": [{"bib": 1, "name": "Isaac del Toro", "nat": "mx", "team": "UAE Team Emirates-XRG", "cost": 112, "cat": "tentation", "special": "st"}, {"bib": 2, "name": "Felix Großschartner", "nat": "at", "team": "UAE Team Emirates-XRG", "cost": 76, "cat": "malin", "special": "st"}, {"bib": 3, "name": "Brandon McNulty", "nat": "us", "team": "UAE Team Emirates-XRG", "cost": 83, "cat": "diablo", "special": "st"}, {"bib": 4, "name": "Jhonatan Narvaez", "nat": "ec", "team": "UAE Team Emirates-XRG", "cost": 89, "cat": "diablo", "special": "st"}, {"bib": 5, "name": "Florian Vermeersch", "nat": "be", "team": "UAE Team Emirates-XRG", "cost": 80, "cat": "diablo", "special": "st"}, {"bib": 6, "name": "Tim Wellens", "nat": "be", "team": "UAE Team Emirates-XRG", "cost": 87, "cat": "diablo", "special": "st"}, {"bib": 7, "name": "Adam Yates", "nat": "gb", "team": "UAE Team Emirates-XRG", "cost": 75, "cat": "malin", "special": "st"}, {"bib": 11, "name": "Remco Evenepoel", "nat": "be", "team": "Red Bull-BORA-hansgrohe", "cost": 132, "cat": "tentation", "special": null}, {"bib": 12, "name": "Giovanni Aleotti", "nat": "it", "team": "Red Bull-BORA-hansgrohe", "cost": 68, "cat": "angel", "special": null}, {"bib": 13, "name": "Mattia Cattaneo", "nat": "it", "team": "Red Bull-BORA-hansgrohe", "cost": 66, "cat": "angel", "special": null}, {"bib": 14, "name": "Emil Herzog", "nat": "de", "team": "Red Bull-BORA-hansgrohe", "cost": 65, "cat": "angel", "special": null}, {"bib": 15, "name": "Jan Tratnik", "nat": "si", "team": "Red Bull-BORA-hansgrohe", "cost": 75, "cat": "malin", "special": null}, {"bib": 16, "name": "Maxim Van Gils", "nat": "be", "team": "Red Bull-BORA-hansgrohe", "cost": 87, "cat": "diablo", "special": null}, {"bib": 17, "name": "Nico Denz", "nat": "de", "team": "Red Bull-BORA-hansgrohe", "cost": 77, "cat": "malin", "special": null}, {"bib": 21, "name": "Matteo Jorgenson", "nat": "us", "team": "Team Visma | Lease a Bike", "cost": 86, "cat": "diablo", "special": null}, {"bib": 23, "name": "Victor Campenaerts", "nat": "be", "team": "Team Visma | Lease a Bike", "cost": 83, "cat": "diablo", "special": null}, {"bib": 24, "name": "Filippo Fiorelli", "nat": "it", "team": "Team Visma | Lease a Bike", "cost": 76, "cat": "malin", "special": null}, {"bib": 25, "name": "Tim Rex", "nat": "be", "team": "Team Visma | Lease a Bike", "cost": 60, "cat": "angel", "special": null}, {"bib": 26, "name": "Bart Lemmen", "nat": "nl", "team": "Team Visma | Lease a Bike", "cost": 80, "cat": "diablo", "special": null}, {"bib": 27, "name": "Wilco Kelderman", "nat": "nl", "team": "Team Visma | Lease a Bike", "cost": 76, "cat": "malin", "special": null}, {"bib": 31, "name": "Paul Seixas", "nat": "fr", "team": "Decathlon CMA CGM Team", "cost": 92, "cat": "tentation", "special": null}, {"bib": 32, "name": "Tiesj Benoot", "nat": "be", "team": "Decathlon CMA CGM Team", "cost": 79, "cat": "malin", "special": null}, {"bib": 33, "name": "Noa Isidore", "nat": "fr", "team": "Decathlon CMA CGM Team", "cost": 71, "cat": "malin", "special": null}, {"bib": 34, "name": "Paul Lapeira", "nat": "fr", "team": "Decathlon CMA CGM Team", "cost": 84, "cat": "diablo", "special": null}, {"bib": 35, "name": "Stefan Bissegger", "nat": "ch", "team": "Decathlon CMA CGM Team", "cost": 74, "cat": "malin", "special": null}, {"bib": 36, "name": "Rasmus Søjberg Pedersen", "nat": "dk", "team": "Decathlon CMA CGM Team", "cost": 68, "cat": "angel", "special": null}, {"bib": 37, "name": "Nicolas Prodhomme", "nat": "fr", "team": "Decathlon CMA CGM Team", "cost": 76, "cat": "malin", "special": null}, {"bib": 41, "name": "Quinn Simmons", "nat": "us", "team": "Lidl-Trek", "cost": 89, "cat": "diablo", "special": null}, {"bib": 42, "name": "Juan Ayuso", "nat": "es", "team": "Lidl-Trek", "cost": 86, "cat": "diablo", "special": null}, {"bib": 43, "name": "Sam Oomen", "nat": "nl", "team": "Lidl-Trek", "cost": 60, "cat": "angel", "special": null}, {"bib": 44, "name": "Giulio Ciccone", "nat": "it", "team": "Lidl-Trek", "cost": 86, "cat": "diablo", "special": null}, {"bib": 45, "name": "Derek Gee-West", "nat": "ca", "team": "Lidl-Trek", "cost": 81, "cat": "diablo", "special": null}, {"bib": 46, "name": "Matteo Sobrero", "nat": "it", "team": "Lidl-Trek", "cost": 78, "cat": "malin", "special": null}, {"bib": 47, "name": "Toms Skujins", "nat": "lv", "team": "Lidl-Trek", "cost": 82, "cat": "diablo", "special": null}, {"bib": 51, "name": "Alberto Bettiol", "nat": "it", "team": "XDS Astana Team", "cost": 83, "cat": "diablo", "special": null}, {"bib": 52, "name": "Sergio Higuita", "nat": "co", "team": "XDS Astana Team", "cost": 73, "cat": "malin", "special": null}, {"bib": 53, "name": "Aaron Gate", "nat": "nz", "team": "XDS Astana Team", "cost": 71, "cat": "malin", "special": null}, {"bib": 54, "name": "Thomas Silva", "nat": "uy", "team": "XDS Astana Team", "cost": 77, "cat": "malin", "special": null}, {"bib": 55, "name": "Martin López", "nat": "ec", "team": "XDS Astana Team", "cost": 60, "cat": "angel", "special": null}, {"bib": 56, "name": "Arjen Livyns", "nat": "be", "team": "XDS Astana Team", "cost": 76, "cat": "malin", "special": null}, {"bib": 57, "name": "Davide Toneatti", "nat": "it", "team": "XDS Astana Team", "cost": 68, "cat": "angel", "special": null}, {"bib": 61, "name": "Edoardo Zambanini", "nat": "it", "team": "Bahrain Victorious", "cost": 76, "cat": "malin", "special": null}, {"bib": 62, "name": "Nikias Arndt", "nat": "de", "team": "Bahrain Victorious", "cost": 61, "cat": "angel", "special": null}, {"bib": 63, "name": "Alessandro Borgo", "nat": "it", "team": "Bahrain Victorious", "cost": 64, "cat": "angel", "special": null}, {"bib": 64, "name": "Afonso Eulalio", "nat": "pt", "team": "Bahrain Victorious", "cost": 80, "cat": "diablo", "special": null}, {"bib": 65, "name": "Alec Segaert", "nat": "be", "team": "Bahrain Victorious", "cost": 71, "cat": "malin", "special": null}, {"bib": 66, "name": "Robert Stannard", "nat": "au", "team": "Bahrain Victorious", "cost": 66, "cat": "angel", "special": null}, {"bib": 67, "name": "Oliver Stockwell", "nat": "gb", "team": "Bahrain Victorious", "cost": 37, "cat": "angel", "special": null}, {"bib": 71, "name": "Michal Kwiatkowski", "nat": "pl", "team": "Netcompany INEOS", "cost": 81, "cat": "diablo", "special": null}, {"bib": 72, "name": "Thymen Arensman", "nat": "nl", "team": "Netcompany INEOS", "cost": 74, "cat": "malin", "special": null}, {"bib": 73, "name": "AJ August", "nat": "us", "team": "Netcompany INEOS", "cost": 64, "cat": "angel", "special": null}, {"bib": 74, "name": "Artem Shmidt", "nat": "us", "team": "Netcompany INEOS", "cost": 61, "cat": "angel", "special": null}, {"bib": 75, "name": "Tobias Foss", "nat": "no", "team": "Netcompany INEOS", "cost": 71, "cat": "malin", "special": null}, {"bib": 76, "name": "Brandon Rivera", "nat": "co", "team": "Netcompany INEOS", "cost": 71, "cat": "malin", "special": null}, {"bib": 77, "name": "Magnus Sheffield", "nat": "us", "team": "Netcompany INEOS", "cost": 73, "cat": "malin", "special": null}, {"bib": 81, "name": "Max Schachmann", "nat": "de", "team": "Soudal Quick-Step", "cost": 76, "cat": "malin", "special": null}, {"bib": 82, "name": "Steff Cras", "nat": "be", "team": "Soudal Quick-Step", "cost": 65, "cat": "angel", "special": null}, {"bib": 83, "name": "Casper Pedersen", "nat": "dk", "team": "Soudal Quick-Step", "cost": 74, "cat": "malin", "special": null}, {"bib": 84, "name": "Andrea Raccagni Noviero", "nat": "it", "team": "Soudal Quick-Step", "cost": 68, "cat": "angel", "special": null}, {"bib": 85, "name": "Pepijn Reinderink", "nat": "nl", "team": "Soudal Quick-Step", "cost": 69, "cat": "angel", "special": null}, {"bib": 86, "name": "Ilan Van Wilder", "nat": "be", "team": "Soudal Quick-Step", "cost": 81, "cat": "diablo", "special": null}, {"bib": 87, "name": "Louis Vervaeke", "nat": "be", "team": "Soudal Quick-Step", "cost": 70, "cat": "malin", "special": null}, {"bib": 91, "name": "Kaden Groves", "nat": "au", "team": "Alpecin-Premier Tech", "cost": 82, "cat": "diablo", "special": null}, {"bib": 92, "name": "Tobias Bayer", "nat": "at", "team": "Alpecin-Premier Tech", "cost": 61, "cat": "angel", "special": null}, {"bib": 93, "name": "Lennert Belmans", "nat": "be", "team": "Alpecin-Premier Tech", "cost": 46, "cat": "angel", "special": null}, {"bib": 94, "name": "Aaron Dockx", "nat": "be", "team": "Alpecin-Premier Tech", "cost": 60, "cat": "angel", "special": null}, {"bib": 95, "name": "Edward Planckaert", "nat": "be", "team": "Alpecin-Premier Tech", "cost": 77, "cat": "malin", "special": null}, {"bib": 96, "name": "Henri Uhlig", "nat": "de", "team": "Alpecin-Premier Tech", "cost": 71, "cat": "malin", "special": null}, {"bib": 97, "name": "Luca Vergallito", "nat": "it", "team": "Alpecin-Premier Tech", "cost": 62, "cat": "angel", "special": null}, {"bib": 101, "name": "Anthon Charmig", "nat": "dk", "team": "Uno-X Mobility", "cost": 68, "cat": "angel", "special": null}, {"bib": 102, "name": "Sven Erik Bystrøm", "nat": "no", "team": "Uno-X Mobility", "cost": 67, "cat": "angel", "special": null}, {"bib": 103, "name": "Ådne Holter", "nat": "no", "team": "Uno-X Mobility", "cost": 73, "cat": "malin", "special": null}, {"bib": 104, "name": "Storm Ingebrigtsen", "nat": "no", "team": "Uno-X Mobility", "cost": 51, "cat": "angel", "special": null}, {"bib": 105, "name": "Alexander Kamp", "nat": "dk", "team": "Uno-X Mobility", "cost": 65, "cat": "angel", "special": null}, {"bib": 106, "name": "Anders Skaarseth", "nat": "no", "team": "Uno-X Mobility", "cost": 58, "cat": "angel", "special": null}, {"bib": 107, "name": "Tobias Svarre", "nat": "dk", "team": "Uno-X Mobility", "cost": 45, "cat": "angel", "special": null}, {"bib": 111, "name": "Michael Matthews", "nat": "au", "team": "Team Jayco-AlUla", "cost": 90, "cat": "tentation", "special": null}, {"bib": 112, "name": "Robert Donaldson", "nat": "gb", "team": "Team Jayco-AlUla", "cost": 66, "cat": "angel", "special": null}, {"bib": 113, "name": "Luke Durbridge", "nat": "au", "team": "Team Jayco-AlUla", "cost": 51, "cat": "angel", "special": null}, {"bib": 114, "name": "Anders Foldager", "nat": "dk", "team": "Team Jayco-AlUla", "cost": 72, "cat": "malin", "special": null}, {"bib": 115, "name": "Patrick Gamper", "nat": "at", "team": "Team Jayco-AlUla", "cost": 59, "cat": "angel", "special": null}, {"bib": 116, "name": "Christopher Juul-Jensen", "nat": "dk", "team": "Team Jayco-AlUla", "cost": 55, "cat": "angel", "special": null}, {"bib": 117, "name": "Mauro Schmid", "nat": "ch", "team": "Team Jayco-AlUla", "cost": 87, "cat": "diablo", "special": null}, {"bib": 121, "name": "Ben Healy", "nat": "ie", "team": "EF Education-EasyPost", "cost": 84, "cat": "diablo", "special": null}, {"bib": 122, "name": "Kasper Asgreen", "nat": "dk", "team": "EF Education-EasyPost", "cost": 78, "cat": "malin", "special": null}, {"bib": 123, "name": "Alex Baudin", "nat": "fr", "team": "EF Education-EasyPost", "cost": 80, "cat": "diablo", "special": null}, {"bib": 124, "name": "Sean Quinn", "nat": "us", "team": "EF Education-EasyPost", "cost": 70, "cat": "malin", "special": null}, {"bib": 125, "name": "Luke Lamperti", "nat": "us", "team": "EF Education-EasyPost", "cost": 68, "cat": "angel", "special": null}, {"bib": 126, "name": "Colby Simmons", "nat": "us", "team": "EF Education-EasyPost", "cost": 57, "cat": "angel", "special": null}, {"bib": 127, "name": "Michael Leonard", "nat": "ca", "team": "EF Education-EasyPost", "cost": 46, "cat": "angel", "special": null}, {"bib": 131, "name": "Guillaume Boivin", "nat": "ca", "team": "NSN Cycling Team", "cost": 62, "cat": "angel", "special": null}, {"bib": 132, "name": "Pier-André Côté", "nat": "ca", "team": "NSN Cycling Team", "cost": 72, "cat": "malin", "special": null}, {"bib": 133, "name": "Nadav Raisberg", "nat": "il", "team": "NSN Cycling Team", "cost": 62, "cat": "angel", "special": null}, {"bib": 134, "name": "Alessandro Pinarello", "nat": "it", "team": "NSN Cycling Team", "cost": 65, "cat": "angel", "special": null}, {"bib": 135, "name": "Riley Sheehan", "nat": "us", "team": "NSN Cycling Team", "cost": 78, "cat": "malin", "special": null}, {"bib": 136, "name": "Dion Smith", "nat": "nz", "team": "NSN Cycling Team", "cost": 63, "cat": "angel", "special": null}, {"bib": 137, "name": "Corbin Strong", "nat": "nz", "team": "NSN Cycling Team", "cost": 77, "cat": "malin", "special": null}, {"bib": 141, "name": "Manlio Moro", "nat": "it", "team": "Movistar Team", "cost": 44, "cat": "angel", "special": null}, {"bib": 142, "name": "Michel Heßmann", "nat": "de", "team": "Movistar Team", "cost": 56, "cat": "angel", "special": null}, {"bib": 143, "name": "Pavel Novak", "nat": "cz", "team": "Movistar Team", "cost": 49, "cat": "angel", "special": null}, {"bib": 144, "name": "Nelson Oliveira", "nat": "pt", "team": "Movistar Team", "cost": 65, "cat": "angel", "special": null}, {"bib": 145, "name": "Davide Formolo", "nat": "it", "team": "Movistar Team", "cost": 59, "cat": "angel", "special": null}, {"bib": 146, "name": "Filip Maciejuk", "nat": "pl", "team": "Movistar Team", "cost": 60, "cat": "angel", "special": null}, {"bib": 147, "name": "Pelayo Sanchez", "nat": "es", "team": "Movistar Team", "cost": 58, "cat": "angel", "special": null}, {"bib": 151, "name": "Sébastien Grignard", "nat": "be", "team": "Lotto-Intermarché", "cost": 57, "cat": "angel", "special": null}, {"bib": 152, "name": "Jenno Berckmoes", "nat": "be", "team": "Lotto-Intermarché", "cost": 82, "cat": "diablo", "special": null}, {"bib": 153, "name": "Cédric Beullens", "nat": "be", "team": "Lotto-Intermarché", "cost": 65, "cat": "angel", "special": null}, {"bib": 154, "name": "Simone Gualdi", "nat": "it", "team": "Lotto-Intermarché", "cost": 69, "cat": "angel", "special": null}, {"bib": 155, "name": "Jonas Rutsch", "nat": "de", "team": "Lotto-Intermarché", "cost": 73, "cat": "malin", "special": null}, {"bib": 156, "name": "Lennert Van Eetvelt", "nat": "be", "team": "Lotto-Intermarché", "cost": 80, "cat": "diablo", "special": null}, {"bib": 157, "name": "Georg Zimmermann", "nat": "de", "team": "Lotto-Intermarché", "cost": 77, "cat": "malin", "special": null}, {"bib": 161, "name": "Ewen Costiou", "nat": "fr", "team": "Groupama-FDJ United", "cost": 76, "cat": "malin", "special": null}, {"bib": 162, "name": "Clément Braz Afonso", "nat": "fr", "team": "Groupama-FDJ United", "cost": 72, "cat": "malin", "special": null}, {"bib": 163, "name": "Titouan Fontaine", "nat": "fr", "team": "Groupama-FDJ United", "cost": 30, "cat": "angel", "special": null}, {"bib": 164, "name": "Thibaud Gruel", "nat": "fr", "team": "Groupama-FDJ United", "cost": 74, "cat": "malin", "special": null}, {"bib": 165, "name": "Johan Jacobs", "nat": "ch", "team": "Groupama-FDJ United", "cost": 66, "cat": "angel", "special": null}, {"bib": 166, "name": "Quentin Pacher", "nat": "fr", "team": "Groupama-FDJ United", "cost": 77, "cat": "malin", "special": null}, {"bib": 167, "name": "Clément Russo", "nat": "fr", "team": "Groupama-FDJ United", "cost": 65, "cat": "angel", "special": null}, {"bib": 171, "name": "Frank van den Broek", "nat": "nl", "team": "Team Picnic PostNL", "cost": 73, "cat": "malin", "special": null}, {"bib": 172, "name": "Warren Barguil", "nat": "fr", "team": "Team Picnic PostNL", "cost": 73, "cat": "malin", "special": null}, {"bib": 173, "name": "Robbe Dhondt", "nat": "be", "team": "Team Picnic PostNL", "cost": 53, "cat": "angel", "special": null}, {"bib": 174, "name": "Alexy Faure-Prost", "nat": "fr", "team": "Team Picnic PostNL", "cost": 43, "cat": "angel", "special": null}, {"bib": 175, "name": "James Knox", "nat": "gb", "team": "Team Picnic PostNL", "cost": 56, "cat": "angel", "special": null}, {"bib": 176, "name": "Tim Naberman", "nat": "nl", "team": "Team Picnic PostNL", "cost": 38, "cat": "angel", "special": null}, {"bib": 177, "name": "Sean Flynn", "nat": "gb", "team": "Team Picnic PostNL", "cost": 68, "cat": "angel", "special": null}, {"bib": 181, "name": "Marc Hirschi", "nat": "ch", "team": "Tudor Pro Cycling Team", "cost": 82, "cat": "diablo", "special": null}, {"bib": 182, "name": "Sebastian Kolze Changizi", "nat": "dk", "team": "Tudor Pro Cycling Team", "cost": 47, "cat": "angel", "special": null}, {"bib": 183, "name": "Aivaras Mikutis", "nat": "lt", "team": "Tudor Pro Cycling Team", "cost": 51, "cat": "angel", "special": null}, {"bib": 184, "name": "Florian Stork", "nat": "de", "team": "Tudor Pro Cycling Team", "cost": 72, "cat": "malin", "special": null}, {"bib": 185, "name": "Yannis Voisard", "nat": "ch", "team": "Tudor Pro Cycling Team", "cost": 71, "cat": "malin", "special": null}, {"bib": 186, "name": "Luc Wirtgen", "nat": "lu", "team": "Tudor Pro Cycling Team", "cost": 54, "cat": "angel", "special": null}, {"bib": 187, "name": "Robin Donzé", "nat": "ch", "team": "Tudor Pro Cycling Team", "cost": 46, "cat": "angel", "special": null}, {"bib": 191, "name": "Tom Pidcock", "nat": "gb", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 100, "cat": "tentation", "special": null}, {"bib": 192, "name": "Mark Donovan", "nat": "gb", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 68, "cat": "angel", "special": null}, {"bib": 193, "name": "Quinten Hermans", "nat": "be", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 81, "cat": "diablo", "special": null}, {"bib": 194, "name": "Damien Howson", "nat": "au", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 63, "cat": "angel", "special": null}, {"bib": 195, "name": "Xandro Meurisse", "nat": "be", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 78, "cat": "malin", "special": null}, {"bib": 196, "name": "Brent Van Moer", "nat": "be", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 75, "cat": "malin", "special": null}, {"bib": 197, "name": "Nickolas Zukowsky", "nat": "ca", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 72, "cat": "malin", "special": null}, {"bib": 201, "name": "Ben Oliver", "nat": "nz", "team": "Modern Adventure Pro Cycling", "cost": 67, "cat": "angel", "special": null}, {"bib": 202, "name": "Robin Carpenter", "nat": "us", "team": "Modern Adventure Pro Cycling", "cost": 46, "cat": "angel", "special": null}, {"bib": 203, "name": "Samuel Boardman", "nat": "us", "team": "Modern Adventure Pro Cycling", "cost": 31, "cat": "angel", "special": null}, {"bib": 204, "name": "Stefan de Bod", "nat": "za", "team": "Modern Adventure Pro Cycling", "cost": 62, "cat": "angel", "special": null}, {"bib": 205, "name": "Kieran Haug", "nat": "us", "team": "Modern Adventure Pro Cycling", "cost": 36, "cat": "angel", "special": null}, {"bib": 206, "name": "Byron Munton", "nat": "za", "team": "Modern Adventure Pro Cycling", "cost": 46, "cat": "angel", "special": null}, {"bib": 207, "name": "Riley Pickrell", "nat": "ca", "team": "Modern Adventure Pro Cycling", "cost": 57, "cat": "angel", "special": null}, {"bib": 211, "name": "Jerome Gauthier", "nat": "ca", "team": "Canada", "cost": 35, "cat": "angel", "special": null}, {"bib": 212, "name": "Samuel Couture", "nat": "ca", "team": "Canada", "cost": 20, "cat": "angel", "special": null}, {"bib": 213, "name": "Jacob Roy", "nat": "ca", "team": "Canada", "cost": 20, "cat": "angel", "special": null}, {"bib": 214, "name": "Gabriel Seguin", "nat": "ca", "team": "Canada", "cost": 23, "cat": "angel", "special": null}, {"bib": 215, "name": "Adam Smith", "nat": "ca", "team": "Canada", "cost": 31, "cat": "angel", "special": null}, {"bib": 216, "name": "Jonas Walton", "nat": "ca", "team": "Canada", "cost": 27, "cat": "angel", "special": null}], "teamOrder": ["UAE Team Emirates-XRG", "Red Bull-BORA-hansgrohe", "Team Visma | Lease a Bike", "Decathlon CMA CGM Team", "Lidl-Trek", "XDS Astana Team", "Bahrain Victorious", "Netcompany INEOS", "Soudal Quick-Step", "Alpecin-Premier Tech", "Uno-X Mobility", "Team Jayco-AlUla", "EF Education-EasyPost", "NSN Cycling Team", "Movistar Team", "Lotto-Intermarché", "Groupama-FDJ United", "Team Picnic PostNL", "Tudor Pro Cycling Team", "Pinarello-Q36.5 Pro Cycling Team", "Modern Adventure Pro Cycling", "Canada"], "superTeam": "UAE Team Emirates-XRG", "raceName": "GP Québec 2026", "closeAt": "2026-09-11T16:00:00+02:00"};
 const RIDERS = DATA.riders;
 const CLOSE_AT = DATA.closeAt ? new Date(DATA.closeAt) : null;
 
@@ -761,6 +898,9 @@ const CLOSE_TAUNTS = [
   "J'avais dit que le temps tournait. Tu ne m'as pas cru.",
   "Les indécis n'ont pas leur place ici. Prochaine fois, peut-être."
 ];
+// Un seul message par chargement de page (pas d'alternance) — il peut changer
+// si on recharge la page (F5), puisqu'il est retiré à ce moment-là.
+const CLOSED_TAUNT_MSG = pickRandom(CLOSE_TAUNTS);
 
 function formatCloseDate(d){
   try{
@@ -778,7 +918,7 @@ function updateCloseBanner(){
   const diff = CLOSE_AT - now;
   if(diff <= 0){
     el.className = "close-banner closed";
-    el.innerHTML = `🔒 <b>C'est trop tard.</b> Les picks sont clos depuis le ${formatCloseDate(CLOSE_AT)}. ${pickRandom(CLOSE_TAUNTS)}`;
+    el.innerHTML = `🔒 <b>C'est trop tard.</b> Les picks sont clos depuis le ${formatCloseDate(CLOSE_AT)}. ${CLOSED_TAUNT_MSG}`;
     return;
   }
   const totalSeconds = Math.floor(diff/1000);
@@ -1067,8 +1207,12 @@ function showAngelDevil(e){
 }
 function hideAngelDevil(){ document.getElementById("angelTooltip").classList.remove("show"); }
 
-function closeWelcome(){
+function closeWelcome(startTuto){
   document.getElementById("welcomeOverlay").classList.remove("show");
+  if(startTuto === false){
+    skipAllTutorials();
+    return;
+  }
   if(!skipTutorials) startTour();
 }
 
@@ -1126,6 +1270,8 @@ function tourNext(){
 }
 function openRules(){ document.getElementById("rulesOverlay").classList.add("show"); }
 function closeRules(){ document.getElementById("rulesOverlay").classList.remove("show"); }
+function openStrategy(){ document.getElementById("strategyOverlay").classList.add("show"); }
+function closeStrategy(){ document.getElementById("strategyOverlay").classList.remove("show"); }
 
 let completeNudgeShown = false;
 function maybeShowCompleteNudge(){
@@ -1155,6 +1301,7 @@ function slug(s){ return s.trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").repla
 function onNameInput(v){
   playerName = v;
   try{ window.storage.set("route666-playername", v, false); }catch(e){}
+  renderValidateRow();
 }
 
 function attemptToggle(bib){
@@ -1346,7 +1493,7 @@ function computeModifiers(){
   let net = 0;
   if(zeroTentActive) net += 20;
   if(stActive) net -= 10;
-  const coquinBonus = coquinActive ? leftover : 0;
+  const coquinBonus = coquinActive ? Math.min(leftover, 100) : 0;
 
   return {tentCount, angelCount, stCount, leftover, zeroTentActive, angelActive, stActive, coquinActive, coquinBonus, net};
 }
@@ -1384,7 +1531,7 @@ function renderStatus(){ document.getElementById("statusLine").textContent = sta
 
 function canValidate(){ return selected.length === SLOTS_MAX && playerName.trim() !== "" && leader !== null && !isClosed(); }
 function validationBlockReason(){
-  if(isClosed()) return `Les picks sont clos depuis le ${formatCloseDate(CLOSE_AT)}. ${pickRandom(CLOSE_TAUNTS)}`;
+  if(isClosed()) return `Les picks sont clos depuis le ${formatCloseDate(CLOSE_AT)}. ${CLOSED_TAUNT_MSG}`;
   if(selected.length !== SLOTS_MAX) return `Complète ton équipe (${selected.length}/${SLOTS_MAX}).`;
   if(playerName.trim() === "") return "Indique ton pseudo en haut de page.";
   if(leader === null) return "Désigne ton Leader.";
@@ -1429,7 +1576,7 @@ function buildExportObject(isDraft){
     modifiers: {
       zeroTentationBonus: m.zeroTentActive ? 20 : 0,
       angelCount: m.angelCount,
-      coquinBonus: m.coquinActive ? m.leftover : 0,
+      coquinBonus: m.coquinActive ? m.coquinBonus : 0,
       superteamMalus: m.stActive ? -10 : 0,
       netEstimate: m.net,
     },
@@ -1451,7 +1598,7 @@ function buildRecapText(){
   lines.push(`Bonus/malus estimés :`);
   lines.push(`  Résiste à la Tentation : ${m.zeroTentActive?'+20%':'+0%'}`);
   lines.push(`  Picks Angel (${m.angelCount}) : bonus déterminé au classement final (voir règles)`);
-  lines.push(`  Budget coquin (Leader) : ${m.coquinActive?'+'+m.leftover+'%':'+0%'}`);
+  lines.push(`  Budget coquin (Leader) : ${m.coquinActive?'+'+m.coquinBonus+'%':'+0%'}`);
   lines.push(`  Superteam 666 Team (${m.stCount}/2) : ${m.stActive?'-10%':'+0%'}`);
   lines.push(`  --> Net estimé hors bonus Angel (hors budget coquin) : ${m.net>=0?'+':''}${m.net}%`);
   return lines.join("\n");
@@ -1505,6 +1652,40 @@ function handleImportDraft(files){
   });
 }
 
+async function sha256Hex(text){
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+function askPassword(title, body){
+  return new Promise(resolve=>{
+    document.getElementById("pwdTitle").textContent = title;
+    document.getElementById("pwdBody").textContent = body;
+    const input = document.getElementById("pwdInput");
+    input.value = "";
+    document.getElementById("passwordOverlay").classList.add("show");
+    setTimeout(()=>input.focus(), 50);
+
+    const submitBtn = document.getElementById("pwdSubmitBtn");
+    const cancelBtn = document.getElementById("pwdCancelBtn");
+
+    function cleanup(){
+      document.getElementById("passwordOverlay").classList.remove("show");
+      submitBtn.removeEventListener("click", onSubmit);
+      cancelBtn.removeEventListener("click", onCancel);
+      input.removeEventListener("keydown", onKey);
+    }
+    function onSubmit(){ const v = input.value; cleanup(); resolve(v); }
+    function onCancel(){ cleanup(); resolve(null); }
+    function onKey(e){ if(e.key === "Enter") onSubmit(); }
+
+    submitBtn.addEventListener("click", onSubmit);
+    cancelBtn.addEventListener("click", onCancel);
+    input.addEventListener("keydown", onKey);
+  });
+}
+
 async function validateFinal(){
   if(!canValidate() || validating) return;
   validating = true;
@@ -1513,7 +1694,7 @@ async function validateFinal(){
 
   if(isClosed()){
     validating = false;
-    statusMsg = `Les picks sont clos depuis le ${formatCloseDate(CLOSE_AT)}. ${pickRandom(CLOSE_TAUNTS)}`;
+    statusMsg = `Les picks sont clos depuis le ${formatCloseDate(CLOSE_AT)}. ${CLOSED_TAUNT_MSG}`;
     render();
     return;
   }
@@ -1522,19 +1703,60 @@ async function validateFinal(){
   const teamSlug = slug(name);
   const key = `route666-team:${teamSlug}`;
 
+  let account;
   try{
-    const existing = await window.storage.get(key, true);
-    if(existing && existing.value){
+    account = await window.storageGlobal.get(teamSlug);
+  }catch(e){
+    validating = false;
+    statusMsg = "Impossible de vérifier ton pseudo pour l'instant (connexion ?). Réessaie dans un instant.";
+    render();
+    return;
+  }
+
+  if(account && account.value){
+    const pwd = await askPassword(`Bon retour, ${name}`, `Le pseudo "${name}" est déjà enregistré (peut-être sur une autre course). Entre ton mot de passe pour confirmer que c'est bien toi et enregistrer cette équipe.`);
+    if(pwd === null){
       validating = false;
-      statusMsg = `Le pseudo "${name}" est déjà pris pour cette course — choisis-en un autre (ou vérifie que tu n'as pas déjà validé).`;
+      statusMsg = "Validation annulée.";
       render();
       return;
     }
-  }catch(e){
-    validating = false;
-    statusMsg = "Impossible de vérifier les pseudos existants pour l'instant (connexion ?). Réessaie dans un instant.";
-    render();
-    return;
+    const enteredHash = await sha256Hex(pwd);
+    if(enteredHash !== account.value){
+      validating = false;
+      statusMsg = `Mot de passe incorrect pour "${name}" — validation refusée.`;
+      render();
+      return;
+    }
+  } else {
+    const pwd = await askPassword(`Choisis un mot de passe pour "${name}"`, "Il protège ton pseudo sur toutes les courses de la saison — retiens-le bien, il te sera redemandé si tu reviens sous ce même pseudo.");
+    if(pwd === null){
+      validating = false;
+      statusMsg = "Validation annulée.";
+      render();
+      return;
+    }
+    if(pwd.trim() === ""){
+      validating = false;
+      statusMsg = "Mot de passe vide — choisis-en un pour continuer.";
+      render();
+      return;
+    }
+    try{
+      const hash = await sha256Hex(pwd);
+      const saved = await window.storageGlobal.set(teamSlug, hash);
+      if(!saved){
+        validating = false;
+        statusMsg = "Impossible d'enregistrer ton mot de passe pour l'instant (connexion ?). Réessaie.";
+        render();
+        return;
+      }
+    }catch(e){
+      validating = false;
+      statusMsg = "Impossible d'enregistrer ton mot de passe pour l'instant (connexion ?). Réessaie.";
+      render();
+      return;
+    }
   }
 
   const obj = buildExportObject(false);
@@ -1554,35 +1776,69 @@ async function validateFinal(){
     return;
   }
 
-  downloadJSON(obj, `route666-${teamSlug}.json`);
   validating = false;
   finalized = true;
   render();
 }
 
+let categoryFilter = null;
+let boardSort = "team";
+
+function toggleCatFilter(cat){
+  categoryFilter = (categoryFilter === cat) ? null : cat;
+  document.querySelectorAll(".cat-filter-chip").forEach(el=>{
+    el.classList.toggle("active", el.dataset.cat === categoryFilter);
+  });
+  renderBoard();
+}
+
+function setBoardSort(mode){
+  boardSort = mode;
+  document.getElementById("sortByTeamBtn").classList.toggle("active", mode === "team");
+  document.getElementById("sortByCostBtn").classList.toggle("active", mode === "cost");
+  renderBoard();
+}
+
+function riderRowHTML(r, globalRemaining, extra){
+  const isSel = selected.includes(r.bib);
+  let disabled = finalized && !isSel;
+  if(!isSel && !finalized){
+    if(globalRemaining <= 0) disabled = true;
+    const meta = CAT_META[r.cat];
+    if(countCat(r.cat) >= meta.max) disabled = true;
+  }
+  return `<div class="rr ${r.cat} ${isSel?'selected':''} ${disabled?'disabled':''}" onclick="attemptToggle(${r.bib})">
+    <span class="fi fi-${r.nat}"></span>${extra||''}<span class="rn">${r.name}</span><span class="rc">${r.cost}</span><span class="chk">✓</span>
+  </div>`;
+}
+
 function renderBoard(){
   const el = document.getElementById("board");
   const globalRemaining = SLOTS_MAX - selected.length;
+  const filtered = categoryFilter ? RIDERS.filter(r=>r.cat===categoryFilter) : RIDERS;
+
+  if(boardSort === "cost"){
+    el.className = "board board-flat";
+    const sorted = [...filtered].sort((a,b)=>b.cost-a.cost);
+    el.innerHTML = sorted.map(r=>{
+      const isSt = r.team === DATA.superTeam;
+      const extra = `<span class="rcat-emoji">${CAT_EMOJI[r.cat]||''}</span><span class="rteam">${r.team}${isSt?' <b class="st-tag">666 👿</b>':''}</span>`;
+      return riderRowHTML(r, globalRemaining, extra);
+    }).join("");
+    return;
+  }
+
+  el.className = "board";
   let html = "";
   DATA.teamOrder.forEach(team=>{
-    const riders = RIDERS.filter(r=>r.team===team);
+    const riders = filtered.filter(r=>r.team===team);
+    if(riders.length === 0) return;
     let extraClass = "", badge = "";
     if(team === DATA.superTeam){ extraClass="st"; badge=`<span class="badge st">666 TEAM 👿</span>`; }
     const tc = (DATA.teamColors && DATA.teamColors[team]) || {c1:"#3a414b", c2:"#5a626e", text:"#ffffff"};
     const thStyle = `background:linear-gradient(100deg, ${tc.c1}, ${tc.c2}); color:${tc.text};`;
     let rows = "";
-    riders.forEach(r=>{
-      const isSel = selected.includes(r.bib);
-      let disabled = finalized && !isSel;
-      if(!isSel && !finalized){
-        if(globalRemaining <= 0) disabled = true;
-        const meta = CAT_META[r.cat];
-        if(countCat(r.cat) >= meta.max) disabled = true;
-      }
-      rows += `<div class="rr ${r.cat} ${isSel?'selected':''} ${disabled?'disabled':''}" onclick="attemptToggle(${r.bib})">
-        <span class="fi fi-${r.nat}"></span><span class="rn">${r.name}</span><span class="rc">${r.cost}</span><span class="chk">✓</span>
-      </div>`;
-    });
+    riders.forEach(r=>{ rows += riderRowHTML(r, globalRemaining); });
     html += `<div class="tc ${extraClass}"><div class="th" style="${thStyle}"><span class="tn">${team}</span>${badge}</div>${rows}</div>`;
   });
   el.innerHTML = html;
@@ -1597,7 +1853,7 @@ function renderScoringStrip(){
   }
   el.innerHTML = `
     <div class="tlabel">🏁 Comment on marque des points</div>
-    <div class="scoring-row">${chips}<div class="spos more">11 → 30<div class="sp-pts">18 → 1</div></div></div>
+    <div class="scoring-row">${chips}<div class="spos more">11 → 30<div class="sp-pts">${BAREME[10]} → ${BAREME[29]}</div></div></div>
     <div class="mnote">Chaque coureur rapporte les points de sa position d'arrivée (top 30 seulement). Ton total d'équipe, ensuite modifié par tes bonus/malus ci-dessous, c'est ton score final.</div>
   `;
 }
@@ -1785,20 +2041,72 @@ async function exportTeamsImage(){
   }
 }
 
+function computeTeamsStats(teams){
+  const pickCounts = {};
+  const catCounts = {tentation:0, diablo:0, malin:0, angel:0};
+  const realTeamCounts = {};
+  teams.forEach(t=>{
+    t.riders.forEach(r=>{
+      pickCounts[r.bib] = (pickCounts[r.bib]||0) + 1;
+      catCounts[r.cat] = (catCounts[r.cat]||0) + 1;
+      realTeamCounts[r.team] = (realTeamCounts[r.team]||0) + 1;
+    });
+  });
+  const totalPicks = teams.length * SLOTS_MAX;
+
+  const tentationRiders = RIDERS.filter(r=>r.cat==="tentation");
+  const tentationRanked = tentationRiders.map(r=>({...r, count: pickCounts[r.bib]||0})).sort((a,b)=>a.count-b.count);
+  const snubbedCount = tentationRanked.length ? tentationRanked[0].count : 0;
+  const mostSnubbed = tentationRanked.filter(r=>r.count===snubbedCount);
+
+  const angelRiders = RIDERS.filter(r=>r.cat==="angel");
+  const angelRanked = angelRiders.map(r=>({...r, count: pickCounts[r.bib]||0})).sort((a,b)=>b.count-a.count);
+  const topAngelCount = angelRanked.length ? angelRanked[0].count : 0;
+  const topAngels = angelRanked.filter(r=>r.count===topAngelCount && topAngelCount>0);
+
+  const teamRanked = Object.entries(realTeamCounts).sort((a,b)=>b[1]-a[1]);
+  const topRealTeam = teamRanked.length ? teamRanked[0] : null;
+
+  const pct = {};
+  ["tentation","diablo","malin","angel"].forEach(c=>{
+    pct[c] = totalPicks ? Math.round((catCounts[c]||0)/totalPicks*1000)/10 : 0;
+  });
+
+  return { mostSnubbed, topAngels, topRealTeam, pct, teamsCount: teams.length };
+}
+
+function buildTeamsStatsHTML(teams){
+  const s = computeTeamsStats(teams);
+  const snubbedNames = s.mostSnubbed.map(r=>r.name).join(", ") || "—";
+  const angelNames = s.topAngels.length ? s.topAngels.map(r=>r.name).join(", ") : "personne ne se dégage";
+  const realTeamLine = s.topRealTeam ? `${s.topRealTeam[0]} (${s.topRealTeam[1]} sélections cumulées)` : "—";
+  return `
+    <div class="team-card" style="background:var(--panel-2);">
+      <div class="tc-head"><span class="tc-name">📊 Un peu de statistiques, avant les compos</span></div>
+      <div class="tc-riders" style="line-height:1.9;">
+        🔥 <b>Tentation le(s) plus boudé(s)</b> : ${snubbedNames}<br>
+        😇 <b>Angel le(s) plus choisi(s)</b> : ${angelNames}<br>
+        🚴 <b>Équipe (réelle) la plus piochée</b> : ${realTeamLine}<br>
+        📈 <b>Répartition moyenne des ${s.teamsCount} équipe${s.teamsCount>1?'s':''}</b> :
+        🔥 ${s.pct.tentation}% · 😈 ${s.pct.diablo}% · 😏 ${s.pct.malin}% · 😇 ${s.pct.angel}%
+      </div>
+    </div>
+  `;
+}
+
 async function renderTeamsTab(){
   const el = document.getElementById("teamsContent");
   el.innerHTML = `<div class="empty-note">Chargement…</div>`;
-  let storagePublished = false;
-  try{
-    const r = await window.storage.get("route666-published", true);
-    storagePublished = r && r.value === "true";
-  }catch(e){}
-  const published = publishedMemory || storagePublished || isClosed();
-  document.getElementById("tabBtnTeams").classList.toggle("locked", !published);
-  if(!published){
-    el.innerHTML = CLOSE_AT
-      ? `<div class="empty-note">Les équipes seront visibles à tous après la clôture des picks, le ${formatCloseDate(CLOSE_AT)} — histoire que personne ne copie les pronos des autres avant.</div>`
-      : `<div class="empty-note">Pas encore ouvert par l'organisateur — reviens quand des équipes auront été importées.</div>`;
+  const unlocked = isClosed() || adminUnlocked;
+  document.getElementById("tabBtnTeams").classList.toggle("locked", !unlocked);
+
+  if(!unlocked){
+    try{
+      const teams = await fetchAllTeams();
+      el.innerHTML = `<div class="empty-note">${teams.length} équipe${teams.length>1?'s':''} déjà enregistrée${teams.length>1?'s':''}. Les compositions restent secrètes jusqu'à la clôture des picks${CLOSE_AT ? ' (' + formatCloseDate(CLOSE_AT) + ')' : ''} — histoire que personne ne copie les pronos des autres avant.</div>`;
+    }catch(e){
+      el.innerHTML = `<div class="empty-note">Les compositions restent secrètes jusqu'à la clôture des picks.</div>`;
+    }
     return;
   }
   try{
@@ -1808,7 +2116,7 @@ async function renderTeamsTab(){
       return;
     }
     teams.sort((a,b)=>a.player.localeCompare(b.player));
-    el.innerHTML = `
+    el.innerHTML = buildTeamsStatsHTML(teams) + `
       <div class="teams-toolbar">
         <button class="btn" onclick="exportTeamsImage()">📷 Exporter en image</button>
         <button class="btn" onclick="exportTeamsText()">📄 Exporter en texte</button>
@@ -2011,6 +2319,7 @@ function tryAdminUnlock(){
     adminUnlocked = true;
     document.getElementById("adminLockedForm").style.display = "none";
     document.getElementById("adminUnlockedArea").style.display = "block";
+    if(activeTab === "teams") renderTeamsTab();
   } else {
     alert("Mot de passe incorrect.");
   }
@@ -2108,12 +2417,7 @@ async function saveResults(){
   resetIdleTimer();
   updateCloseBanner();
   setInterval(updateCloseBanner, 1000);
-  try{
-    const pub = await window.storage.get("route666-published", true);
-    document.getElementById("tabBtnTeams").classList.toggle("locked", !((pub && pub.value === "true") || isClosed()));
-  }catch(e){
-    document.getElementById("tabBtnTeams").classList.toggle("locked", !isClosed());
-  }
+  document.getElementById("tabBtnTeams").classList.toggle("locked", !isClosed());
   try{
     const res = await window.storage.get("route666-results", true);
     document.getElementById("tabBtnResult").classList.toggle("locked", !(res && res.value));
