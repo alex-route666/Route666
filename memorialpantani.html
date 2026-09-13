@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -374,6 +373,7 @@
   .modal h2{font-family:'Space Grotesk',sans-serif;font-size:1.2em;margin:0 0 4px;}
   .modal .msub{font-size:0.8em;color:var(--dim);margin-bottom:14px;}
   .modal textarea{width:100%;height:180px;background:var(--bg);border:1px solid var(--line);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.72em;border-radius:4px;padding:10px;margin-bottom:12px;}
+  .pwd-input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--paper);font-family:'IBM Plex Sans',sans-serif;font-size:0.9em;border-radius:4px;padding:10px 12px;margin-top:12px;}
   .modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
   .modal input[type=password]{
     width:100%;background:var(--bg);border:1px solid var(--line);color:var(--paper);
@@ -465,8 +465,8 @@
   <div class="header-top">
     <div>
       <div class="eyebrow">UCI · COURSE D'UN JOUR · 12 SEPTEMBRE 2026 · ITALIE</div>
-      <h1>ROUTE 6<span class="six">6</span>6 🏴‍☠️</h1>
-      <div class="subtitle">Memorial Pantani — Draft du jour</div>
+      <h1>ROUTE 6<span class="six">6</span>6</h1>
+      <div class="subtitle">GP Industria & Artigianato — Draft du jour</div>
     </div>
     <div style="text-align:right;">
       <svg class="header-devil" width="76" height="76" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -745,6 +745,18 @@
   </div>
 </div>
 
+<div class="overlay" id="passwordOverlay">
+  <div class="modal">
+    <h2 id="pwdTitle" style="color:var(--superteam);">🔐 Mot de passe</h2>
+    <div class="msub" id="pwdBody" style="font-size:0.88em;line-height:1.5;color:var(--paper);"></div>
+    <input type="password" id="pwdInput" class="pwd-input" autocomplete="off" placeholder="Ton mot de passe">
+    <div class="modal-actions">
+      <button class="btn" id="pwdCancelBtn">Annuler</button>
+      <button class="btn final" id="pwdSubmitBtn">Valider</button>
+    </div>
+  </div>
+</div>
+
 <div class="hesitation-bubble" id="hesitationBubble">
   <div class="hb-close" onclick="dismissHesitation()">✕</div>
   <div class="hb-tag" id="hbTag"></div>
@@ -840,6 +852,27 @@ const DATA = {"riders": [{"bib": 1, "name": "Michael Storer", "nat": "au", "team
         }
         return { keys, prefix, shared: false };
       }catch(e){ return { keys: [], prefix, shared: false }; }
+    }
+  };
+
+  // Canal global (une seule collection Firestore partagée par TOUTES les courses de
+  // la saison, indépendamment de RACE_SLUG) — utilisé uniquement pour les comptes
+  // pseudo/mot de passe, afin qu'un même pseudo désigne bien la même personne d'une
+  // course à l'autre (nécessaire pour un classement général cohérent).
+  const GLOBAL_ACCOUNTS_COLLECTION = "route666_accounts";
+  window.storageGlobal = {
+    async get(key){
+      try{
+        const snap = await db.collection(GLOBAL_ACCOUNTS_COLLECTION).doc(key).get();
+        if(!snap.exists) return null;
+        return { key, value: snap.data().value };
+      }catch(e){ return null; }
+    },
+    async set(key, value){
+      try{
+        await db.collection(GLOBAL_ACCOUNTS_COLLECTION).doc(key).set({ value, updatedAt: Date.now() });
+        return { key, value };
+      }catch(e){ return null; }
     }
   };
 })();
@@ -1017,13 +1050,6 @@ const WELCOME_VARIANTS = [
   `On dit que l'enfer est pavé de bonnes intentions. Ton équipe pour ${DATA.raceName}, elle, ferait mieux d'être pavée de bons choix.`,
   `Range ton âme, sors tes stats. ${DATA.raceName} ne se joue pas au sentiment. Enfin... un peu quand même. J'aime bien ça.`,
   `${DATA.raceName} sera long. Ton équipe des enfers doit tenir la distance. Construis-la comme si ta vie en dépendait. Un peu comme la mienne, en fait.`,
-
-  // Édition spéciale Memorial Pantani — clins d'œil au Pirate
-  `Hisse le drapeau noir. Sur ${DATA.raceName}, seuls les pirates attaquent quand tout le monde attend.`,
-  `Pas besoin de peigne pour gagner, juste des jambes et du culot. Bienvenue sur ${DATA.raceName}.`,
-  `Le bandana est optionnel. L'audace, non. Compose ton équipe pour ${DATA.raceName}.`,
-  `On n'attend pas le bon moment pour attaquer. On attaque, et le bon moment suit. À toi de jouer sur ${DATA.raceName}.`,
-  `Une tête rasée, une boucle d'oreille, et l'envie de tout emporter en danseuse — voilà l'esprit qu'il te faut pour ${DATA.raceName}.`,
 ];
 
 const STANDING_RIDERS = RIDERS.filter(r=>r.cost >= 70);
@@ -1051,13 +1077,6 @@ const NUDGE_VARIANTS = [
   `Tu veux un signe ? En voilà un : {NAME}, {COST} points. Si ce n'est pas un signe, je ne sais plus ce qu'est un signe.`,
   `{NAME} m'a supplié de te convaincre. Il a des enfants virtuels à nourrir. Ne sois pas celui qui l'ignore.`,
   `Petite confidence entre nous : je n'ai jamais aimé un coureur autant que {NAME} cette semaine. Prends-en de la graine.`,
-
-  // Édition spéciale Memorial Pantani — clins d'œil pirate/chauve
-  `Arrrr, prends {NAME}, moussaillon. Le Pirate n'attend jamais deux fois.`,
-  `T'as pas besoin de cheveux pour avoir du cran. Prends {NAME} et attaque, comme au bon vieux temps.`,
-  `{NAME} n'a pas de bandana, mais il a l'âme d'un pirate. Embarque-le.`,
-  `Un vrai pirate ne recule jamais. {NAME} non plus, apparemment. Prends-le.`,
-  `Crâne rasé, cœur gros comme ça — {NAME} a tout du pirate qu'il te faut.`,
 ];
 
 const MOCK_VARIANTS = [
@@ -1282,6 +1301,7 @@ function slug(s){ return s.trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").repla
 function onNameInput(v){
   playerName = v;
   try{ window.storage.set("route666-playername", v, false); }catch(e){}
+  renderValidateRow();
 }
 
 function attemptToggle(bib){
@@ -1632,6 +1652,40 @@ function handleImportDraft(files){
   });
 }
 
+async function sha256Hex(text){
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+function askPassword(title, body){
+  return new Promise(resolve=>{
+    document.getElementById("pwdTitle").textContent = title;
+    document.getElementById("pwdBody").textContent = body;
+    const input = document.getElementById("pwdInput");
+    input.value = "";
+    document.getElementById("passwordOverlay").classList.add("show");
+    setTimeout(()=>input.focus(), 50);
+
+    const submitBtn = document.getElementById("pwdSubmitBtn");
+    const cancelBtn = document.getElementById("pwdCancelBtn");
+
+    function cleanup(){
+      document.getElementById("passwordOverlay").classList.remove("show");
+      submitBtn.removeEventListener("click", onSubmit);
+      cancelBtn.removeEventListener("click", onCancel);
+      input.removeEventListener("keydown", onKey);
+    }
+    function onSubmit(){ const v = input.value; cleanup(); resolve(v); }
+    function onCancel(){ cleanup(); resolve(null); }
+    function onKey(e){ if(e.key === "Enter") onSubmit(); }
+
+    submitBtn.addEventListener("click", onSubmit);
+    cancelBtn.addEventListener("click", onCancel);
+    input.addEventListener("keydown", onKey);
+  });
+}
+
 async function validateFinal(){
   if(!canValidate() || validating) return;
   validating = true;
@@ -1649,19 +1703,60 @@ async function validateFinal(){
   const teamSlug = slug(name);
   const key = `route666-team:${teamSlug}`;
 
+  let account;
   try{
-    const existing = await window.storage.get(key, true);
-    if(existing && existing.value){
+    account = await window.storageGlobal.get(teamSlug);
+  }catch(e){
+    validating = false;
+    statusMsg = "Impossible de vérifier ton pseudo pour l'instant (connexion ?). Réessaie dans un instant.";
+    render();
+    return;
+  }
+
+  if(account && account.value){
+    const pwd = await askPassword(`Bon retour, ${name}`, `Le pseudo "${name}" est déjà enregistré (peut-être sur une autre course). Entre ton mot de passe pour confirmer que c'est bien toi et enregistrer cette équipe.`);
+    if(pwd === null){
       validating = false;
-      statusMsg = `Le pseudo "${name}" est déjà pris pour cette course — choisis-en un autre (ou vérifie que tu n'as pas déjà validé).`;
+      statusMsg = "Validation annulée.";
       render();
       return;
     }
-  }catch(e){
-    validating = false;
-    statusMsg = "Impossible de vérifier les pseudos existants pour l'instant (connexion ?). Réessaie dans un instant.";
-    render();
-    return;
+    const enteredHash = await sha256Hex(pwd);
+    if(enteredHash !== account.value){
+      validating = false;
+      statusMsg = `Mot de passe incorrect pour "${name}" — validation refusée.`;
+      render();
+      return;
+    }
+  } else {
+    const pwd = await askPassword(`Choisis un mot de passe pour "${name}"`, "Il protège ton pseudo sur toutes les courses de la saison — retiens-le bien, il te sera redemandé si tu reviens sous ce même pseudo.");
+    if(pwd === null){
+      validating = false;
+      statusMsg = "Validation annulée.";
+      render();
+      return;
+    }
+    if(pwd.trim() === ""){
+      validating = false;
+      statusMsg = "Mot de passe vide — choisis-en un pour continuer.";
+      render();
+      return;
+    }
+    try{
+      const hash = await sha256Hex(pwd);
+      const saved = await window.storageGlobal.set(teamSlug, hash);
+      if(!saved){
+        validating = false;
+        statusMsg = "Impossible d'enregistrer ton mot de passe pour l'instant (connexion ?). Réessaie.";
+        render();
+        return;
+      }
+    }catch(e){
+      validating = false;
+      statusMsg = "Impossible d'enregistrer ton mot de passe pour l'instant (connexion ?). Réessaie.";
+      render();
+      return;
+    }
   }
 
   const obj = buildExportObject(false);
@@ -1758,7 +1853,7 @@ function renderScoringStrip(){
   }
   el.innerHTML = `
     <div class="tlabel">🏁 Comment on marque des points</div>
-    <div class="scoring-row">${chips}<div class="spos more">11 → 30<div class="sp-pts">18 → 1</div></div></div>
+    <div class="scoring-row">${chips}<div class="spos more">11 → 30<div class="sp-pts">${BAREME[10]} → ${BAREME[29]}</div></div></div>
     <div class="mnote">Chaque coureur rapporte les points de sa position d'arrivée (top 30 seulement). Ton total d'équipe, ensuite modifié par tes bonus/malus ci-dessous, c'est ton score final.</div>
   `;
 }
