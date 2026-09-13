@@ -251,7 +251,7 @@ async function renderCalendar(){
     enCoursHTML.push(`<div class="race-card open"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">Clôture ${formatDateTime(r.closeAt)}</span></div><div style="display:flex;align-items:center;gap:8px;"><span class="rc-status">ouvre encore ${countdownStr(r.closeAtDate-now)}</span><a class="rc-link" href="${r.file}">Pronostiquer</a></div></div>`);
   });
   pending.forEach(r=>{
-    enCoursHTML.push(`<div class="race-card pending"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><span class="rc-status">clôturée, résultat en attente</span></div>`);
+    enCoursHTML.push(`<div class="race-card pending"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><div style="display:flex;align-items:center;gap:8px;"><span class="rc-status">clôturée, résultat en attente</span><a class="rc-link" href="${r.file}">Ouvrir</a></div></div>`);
   });
   html += enCoursHTML.length ? enCoursHTML.join("") : `<div class="empty-note">Aucune course en cours actuellement.</div>`;
 
