@@ -13,7 +13,10 @@
       "index": 4,
       "name": "GP de Montréal",
       "date": "2026-09-13",
-      "status": "planned"
+      "status": "live",
+      "file": "route666-montreal.html",
+      "raceName": "GP de Montréal 2026",
+      "closeAt": "2026-09-13T16:15:00+02:00"
     },
     {
       "index": 5,
