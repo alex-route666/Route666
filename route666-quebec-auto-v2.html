@@ -619,6 +619,16 @@
         <div class="admin-status" id="adminResultsStatus"></div>
       </div>
 
+      <div class="modal-section">
+        <h3>Libérer un pseudo</h3>
+        <p>Si quelqu'un a oublié son mot de passe (ou pour un pseudo créé par erreur), retire l'association pseudo/mot de passe — valable sur <b>toutes</b> les courses de la saison. La personne pourra recréer un mot de passe sous ce même pseudo au prochain essai.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <input type="text" id="releasePseudoInput" placeholder="pseudo à libérer" style="flex:1;min-width:160px;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:7px 10px;border-radius:4px;font-family:'IBM Plex Sans',sans-serif;font-size:0.85em;">
+          <button class="btn" onclick="releasePseudo()">Libérer ce pseudo</button>
+        </div>
+        <div class="admin-status" id="adminReleaseStatus"></div>
+      </div>
+
       <div class="modal-actions" style="margin-top:16px;">
         <button class="btn" onclick="closeAdmin()">Fermer</button>
       </div>
@@ -642,8 +652,8 @@
     <h2 id="welcomeTitle" style="color:var(--superteam);">😈 La Route 666</h2>
     <div class="msub" id="welcomeText" style="font-size:0.95em;line-height:1.6;color:var(--paper);"></div>
     <div class="modal-actions" style="flex-wrap:wrap;">
-      <button class="btn final" onclick="closeWelcome(true)">JE FERME ET JE FAIS MES PICKS</button>
-      <button class="btn" onclick="closeWelcome(false)">Passer le tuto, je connais déjà</button>
+      <button class="btn final" onclick="closeWelcome(true)">Suivre le tutoriel avant de jouer</button>
+      <button class="btn" onclick="closeWelcome(false)">Tut tut tut, je connais les règles, laisse moi tranquille</button>
     </div>
     <div class="mnote" style="margin-top:8px;">L'icône <b>i</b> en haut à droite permet de relire les règles à tout moment, tuto ou pas.</div>
   </div>
@@ -873,6 +883,12 @@ const DATA = {"riders": [{"bib": 1, "name": "Isaac del Toro", "nat": "mx", "team
         await db.collection(GLOBAL_ACCOUNTS_COLLECTION).doc(key).set({ value, updatedAt: Date.now() });
         return { key, value };
       }catch(e){ return null; }
+    },
+    async delete(key){
+      try{
+        await db.collection(GLOBAL_ACCOUNTS_COLLECTION).doc(key).delete();
+        return true;
+      }catch(e){ return false; }
     }
   };
 })();
@@ -2393,6 +2409,28 @@ async function saveResults(){
   statusEl.textContent = `Résultat enregistré (${recognized}/${order.length} lignes reconnues). Onglet Résultat actualisé.`
     + (unmatched.length ? ` Non reconnu(e)s : ${unmatched.join(", ")}.` : "");
   if(activeTab === "result") renderResultTab();
+}
+
+async function releasePseudo(){
+  const statusEl = document.getElementById("adminReleaseStatus");
+  const input = document.getElementById("releasePseudoInput");
+  const name = input.value.trim();
+  if(name === ""){ statusEl.textContent = "Indique un pseudo à libérer."; return; }
+  const key = slug(name);
+  try{
+    const existing = await window.storageGlobal.get(key);
+    if(!existing || !existing.value){
+      statusEl.textContent = `Aucun compte trouvé pour "${name}".`;
+      return;
+    }
+    const ok = await window.storageGlobal.delete(key);
+    statusEl.textContent = ok
+      ? `Pseudo "${name}" libéré — il pourra recréer un mot de passe au prochain essai, sur n'importe quelle course.`
+      : `Échec de la libération (connexion ?). Réessaie dans un instant.`;
+    if(ok) input.value = "";
+  }catch(e){
+    statusEl.textContent = "Échec de la libération (connexion ?). Réessaie dans un instant.";
+  }
 }
 
 /* ---------------- init ---------------- */
