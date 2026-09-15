@@ -2460,6 +2460,13 @@ async function releasePseudo(){
     const res = await window.storage.get("route666-results", true);
     document.getElementById("tabBtnResult").classList.toggle("locked", !(res && res.value));
   }catch(e){}
+
+  // Permet à la landing page (ou un lien direct) d'ouvrir une page course
+  // directement sur un onglet précis, via #teams ou #result dans l'URL.
+  const hashTab = (window.location.hash || "").replace("#", "");
+  if(hashTab === "teams" || hashTab === "result"){
+    switchTab(hashTab);
+  }
 })();
 </script>
 
