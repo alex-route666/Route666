@@ -271,7 +271,7 @@ function buildCalendarHTML(data){
   let html = "";
   html += `<div class="section-title">✅ Terminées</div>`;
   html += data.finished.length
-    ? data.finished.map(r=>`<div class="race-card finished"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><a class="rc-link" href="${r.file}">Voir le résultat</a></div>`).join("")
+    ? data.finished.map(r=>`<div class="race-card finished"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><a class="rc-link" href="${r.file}#result">Voir le résultat</a></div>`).join("")
     : `<div class="empty-note">Aucune course terminée pour l'instant.</div>`;
 
   html += `<div class="section-title">🕒 En cours</div>`;
