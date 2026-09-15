@@ -72,6 +72,16 @@
   }
   .race-card.finished .rc-link{background:var(--good);color:#fff;box-shadow:none;}
   .empty-note{color:var(--dim);font-size:0.85em;font-style:italic;padding:10px 0;}
+  .refresh-row{
+    display:flex;justify-content:space-between;align-items:center;margin-top:20px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.72em;color:var(--dim-2);
+  }
+  .refresh-btn{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.85em;
+    background:var(--panel-2);border:1px solid var(--line);color:var(--paper);
+    padding:6px 12px;border-radius:5px;cursor:pointer;
+  }
+  .refresh-btn:hover{background:var(--panel);}
   .ranking-row{
     display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);
     border-radius:6px;padding:10px 14px;margin-bottom:6px;
@@ -165,6 +175,17 @@ function computeTeamScore(team, order){
   return Math.round(finalScore*10)/10;
 }
 
+// Vérification légère : une seule lecture (le doc résultat), sans charger toutes les équipes.
+// Utilisée par le calendrier — beaucoup plus économe que fetchRaceTeamsAndResults.
+async function checkRaceFinished(raceNameForSlug){
+  if(!db) return false;
+  const coll = "route666_" + raceSlug(raceNameForSlug);
+  try{
+    const resultsDoc = await db.collection(coll).doc("route666-results").get();
+    return resultsDoc.exists;
+  }catch(e){ return false; }
+}
+
 async function fetchRaceTeamsAndResults(raceNameForSlug){
   if(!db) return null;
   const coll = "route666_" + raceSlug(raceNameForSlug);
@@ -218,11 +239,14 @@ async function showPanel(name){
   if(name==="rank") renderRanking();
 }
 
-async function renderCalendar(){
-  const el = document.getElementById("calContent");
+// Cache : une seule vraie interrogation Firebase par chargement de page (ou clic sur
+// "Actualiser"). Le compte à rebours, lui, se recalcule chaque seconde en local à partir
+// de ce cache, sans jamais retoucher Firebase.
+let calendarCache = null;
+
+async function loadCalendarData(){
   const races = await loadManifest();
   const now = new Date();
-
   const finished = [], open = [], pending = [], planned = [];
   for(const r of races){
     if(r.status !== "live" || !r.file || !r.closeAt){
@@ -231,33 +255,39 @@ async function renderCalendar(){
     }
     const closeAt = new Date(r.closeAt);
     if(now < closeAt){
-      open.push({...r, closeAtDate: closeAt});
+      open.push({...r, closeAtISO: r.closeAt});
     } else {
-      const rr = await fetchRaceTeamsAndResults(r.raceName || r.name);
-      if(rr && rr.finished) finished.push(r);
+      const isFinished = await checkRaceFinished(r.raceName || r.name);
+      if(isFinished) finished.push(r);
       else pending.push(r);
     }
   }
+  calendarCache = { finished, open, pending, planned, fetchedAt: now };
+  return calendarCache;
+}
 
+function buildCalendarHTML(data){
+  const now = new Date();
   let html = "";
   html += `<div class="section-title">✅ Terminées</div>`;
-  html += finished.length
-    ? finished.map(r=>`<div class="race-card finished"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><a class="rc-link" href="${r.file}">Voir le résultat</a></div>`).join("")
+  html += data.finished.length
+    ? data.finished.map(r=>`<div class="race-card finished"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><a class="rc-link" href="${r.file}">Voir le résultat</a></div>`).join("")
     : `<div class="empty-note">Aucune course terminée pour l'instant.</div>`;
 
   html += `<div class="section-title">🕒 En cours</div>`;
   const enCoursHTML = [];
-  open.forEach(r=>{
-    enCoursHTML.push(`<div class="race-card open"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">Clôture ${formatDateTime(r.closeAt)}</span></div><div style="display:flex;align-items:center;gap:8px;"><span class="rc-status">ouvre encore ${countdownStr(r.closeAtDate-now)}</span><a class="rc-link" href="${r.file}">Pronostiquer</a></div></div>`);
+  data.open.forEach(r=>{
+    const closeAtDate = new Date(r.closeAtISO);
+    enCoursHTML.push(`<div class="race-card open"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">Clôture ${formatDateTime(r.closeAtISO)}</span></div><div style="display:flex;align-items:center;gap:8px;"><span class="rc-status">ouvre encore ${countdownStr(closeAtDate-now)}</span><a class="rc-link" href="${r.file}">Pronostiquer</a></div></div>`);
   });
-  pending.forEach(r=>{
+  data.pending.forEach(r=>{
     enCoursHTML.push(`<div class="race-card pending"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><div style="display:flex;align-items:center;gap:8px;"><span class="rc-status">clôturée, résultat en attente</span><a class="rc-link" href="${r.file}">Ouvrir</a></div></div>`);
   });
   html += enCoursHTML.length ? enCoursHTML.join("") : `<div class="empty-note">Aucune course en cours actuellement.</div>`;
 
   html += `<div class="section-title">📅 À venir</div>`;
-  html += planned.length
-    ? planned.map(r=>{
+  html += data.planned.length
+    ? data.planned.map(r=>{
         const openDay = new Date(r.date + "T00:00:00");
         openDay.setDate(openDay.getDate()-1);
         openDay.setHours(17,0,0,0);
@@ -267,8 +297,24 @@ async function renderCalendar(){
       }).join("")
     : `<div class="empty-note">Rien de plus au calendrier pour l'instant.</div>`;
 
-  el.innerHTML = html;
+  const fetchedStr = data.fetchedAt.toLocaleTimeString("fr-FR", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+  html += `<div class="refresh-row"><span>Dernière vérification : ${fetchedStr}</span><button class="refresh-btn" onclick="refreshCalendar()">🔄 Actualiser</button></div>`;
+
+  return html;
 }
+
+function renderCalendarFromCache(){
+  if(!calendarCache) return;
+  document.getElementById("calContent").innerHTML = buildCalendarHTML(calendarCache);
+}
+
+async function renderCalendar(){
+  document.getElementById("calContent").innerHTML = `<div class="loading">Chargement du calendrier…</div>`;
+  const data = await loadCalendarData();
+  document.getElementById("calContent").innerHTML = buildCalendarHTML(data);
+}
+
+function refreshCalendar(){ renderCalendar(); }
 
 async function renderRanking(){
   const el = document.getElementById("rankContent");
@@ -310,8 +356,11 @@ async function renderRanking(){
   `).join("") + `<div class="caveat">Classement basé sur ${racesCounted} course${racesCounted>1?'s':''} terminée${racesCounted>1?'s':''}, cumul par pseudo. ⚠️ Le système de connexion (pseudo + mot de passe) n'est pas encore actif — deux personnes différentes utilisant le même pseudo sur deux courses seraient ici comptées comme une seule. À prendre avec cette réserve tant que le login n'est pas en place.</div>`;
 }
 
+// Une seule vraie vérification Firebase au chargement. Ensuite, le compte à rebours
+// se recalcule chaque seconde en local (gratuit) — aucun nouvel appel Firebase tant
+// que la personne n'a pas cliqué sur "Actualiser".
 renderCalendar();
-setInterval(renderCalendar, 30000);
+setInterval(renderCalendarFromCache, 1000);
 </script>
 
 </body>
