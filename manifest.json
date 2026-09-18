@@ -22,7 +22,10 @@
       "index": 7,
       "name": "Flandrien 0.0 Classic",
       "date": "2026-09-19",
-      "status": "planned"
+      "status": "live",
+      "file": "route666-flandrien.html",
+      "raceName": "Flandrien 0.0 Classic 2026",
+      "closeAt": "2026-09-19T12:45:00+02:00"
     },
     {
       "index": 8,
