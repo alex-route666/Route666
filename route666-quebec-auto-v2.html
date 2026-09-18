@@ -94,6 +94,16 @@
     padding:4px 0;
   }
   .admin-entry:hover{color:var(--header-accent);}
+  .calendar-link{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.68em;
+    color:rgba(255,245,238,0.65);
+    text-decoration:none;
+    white-space:nowrap;
+    display:block;
+    padding:2px 0;
+  }
+  .calendar-link:hover{color:var(--header-accent);}
   .tabs{display:flex;gap:2px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.15);margin-top:4px;}
   .close-banner{
     margin-top:10px;padding:8px 12px;border-radius:6px;
@@ -480,6 +490,7 @@
         <path d="M40 66 q10 8 20 0" stroke="#f2c14e" stroke-width="2" fill="none" opacity="0.9" stroke-linecap="round"/>
       </svg>
       <div class="admin-entry" onclick="openAdmin()">🔒 Accès Satan</div>
+      <a class="calendar-link" href="index.html">📅 Calendrier</a>
     </div>
   </div>
   <div class="tabs">
