@@ -1,0 +1,2527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Route 666 — GP d'Isbergues</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/7.2.3/css/flag-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --bg:#f8f1ea;
+    --bg-2:#f0e2d8;
+    --panel:#fffbf7;
+    --panel-2:#f8ece3;
+    --line:#e4cdbe;
+    --paper:#2a1417;
+    --dim:#8c6d6a;
+    --dim-2:#b9a09a;
+
+    --angel:#d8ded9;
+    --malin:#e0703f;
+    --diablo:#9c2d6b;
+    --tentation:#d81633;
+
+    --ember-1:#170406;
+    --ember-2:#4a0710;
+    --ember-glow:rgba(216,22,51,0.5);
+    --ember-text:#f7e2df;
+
+    --superteam:#b1122f;
+
+    --good:#1f8a55;
+    --bad:#d81633;
+
+    --header-bg1:#e0102c;
+    --header-bg2:#8f0d21;
+    --header-text:#fff5ee;
+    --header-accent:#f2c14e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 1100px 600px at 10% -10%, rgba(216,22,51,0.06), transparent 55%),
+      radial-gradient(ellipse 900px 600px at 100% 10%, rgba(156,45,107,0.05), transparent 55%),
+      linear-gradient(180deg, var(--bg), var(--bg-2) 45%);
+    color:var(--paper);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+
+  header{
+    padding:20px 22px 0;
+    background:linear-gradient(120deg, var(--header-bg1), var(--header-bg2) 75%);
+    position:relative;
+    overflow:hidden;
+    color:var(--header-text);
+  }
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;}
+  .header-devil{
+    flex-shrink:0;opacity:0.92;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.68em;
+    letter-spacing:0.06em;
+    color:var(--header-accent);
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:2em;
+    letter-spacing:0.01em;
+    margin:4px 0 0;
+    color:var(--header-text);
+  }
+  h1 .six{color:var(--header-accent);text-shadow:0 0 16px rgba(242,193,78,0.5);}
+  .subtitle{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:0.9em;
+    color:rgba(255,245,238,0.75);
+    margin-top:2px;
+    padding-bottom:8px;
+  }
+  .admin-entry{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.68em;
+    color:rgba(255,245,238,0.65);
+    cursor:pointer;
+    white-space:nowrap;
+    padding:4px 0;
+  }
+  .admin-entry:hover{color:var(--header-accent);}
+  .calendar-link{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.68em;
+    color:rgba(255,245,238,0.65);
+    text-decoration:none;
+    white-space:nowrap;
+    display:block;
+    padding:2px 0;
+  }
+  .calendar-link:hover{color:var(--header-accent);}
+  .tabs{display:flex;gap:2px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.15);margin-top:4px;}
+  .close-banner{
+    margin-top:10px;padding:8px 12px;border-radius:6px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.78em;text-align:center;
+    background:rgba(0,0,0,0.25);color:var(--header-text);border:1px solid rgba(255,255,255,0.15);
+  }
+  .close-banner.urgent{
+    background:linear-gradient(90deg, #4a0710, #170406);
+    border-color:#ff2222;color:#ffdada;font-weight:700;
+    animation:hackPulse 1.4s ease-in-out infinite;
+  }
+  .close-banner.closed{
+    background:#0a0000;border-color:#ff2222;color:#ff8080;font-weight:700;
+  }
+  .tab{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:0.85em;
+    padding:9px 18px;
+    cursor:pointer;
+    color:rgba(255,245,238,0.6);
+    border-bottom:2px solid transparent;
+  }
+  .tab.active{color:var(--header-accent);border-bottom-color:var(--header-accent);}
+  .tab.locked{color:rgba(255,245,238,0.3);cursor:not-allowed;}
+
+  main{max-width:1500px;margin:0 auto;padding:16px 18px 60px;}
+  .panel-block{display:none;}
+  .panel-block.active{display:block;}
+
+  .name-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  .name-row label{font-family:'IBM Plex Mono',monospace;font-size:0.75em;color:var(--dim);}
+  .name-row input{
+    background:var(--panel);border:1px solid var(--line);color:var(--paper);
+    padding:7px 10px;border-radius:4px;font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.85em;width:220px;
+  }
+  .name-row input:disabled{opacity:0.6;}
+  .iolinks{display:flex;gap:14px;margin-left:auto;}
+  .iolink{
+    font-family:'IBM Plex Mono',monospace;font-size:0.72em;color:var(--superteam);
+    cursor:pointer;text-decoration:underline;
+  }
+
+  .dash{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+  .gauge{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 16px;}
+  .gauge .glabel{font-family:'IBM Plex Mono',monospace;font-size:0.7em;letter-spacing:0.05em;color:var(--dim);text-transform:uppercase;}
+  .gauge .gvalue{font-family:'Space Grotesk', sans-serif;font-weight:700;font-size:1.7em;margin:2px 0 8px;}
+  .gauge .gvalue small{font-size:0.44em;color:var(--dim);font-weight:600;margin-left:4px;letter-spacing:0.03em;}
+  .ticks{display:flex;gap:3px;}
+  .tick{flex:1;height:9px;border-radius:1px;background:var(--panel-2);border:1px solid var(--line);}
+  .tick.on{background:var(--tentation);border-color:var(--tentation);box-shadow:0 0 6px rgba(216,22,51,0.4);}
+  .tick.on.budget{background:var(--diablo);border-color:var(--diablo);box-shadow:0 0 6px rgba(156,45,107,0.4);}
+
+  .cats{display:grid;grid-template-columns:repeat(4, 1fr);gap:10px;margin-bottom:14px;}  .cat-card{border-radius:6px;padding:11px 13px;border:1px solid var(--line);background:var(--panel);position:relative;overflow:hidden;}
+  .cat-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;}
+  .cat-card.angel::before{background:var(--angel);}
+  .cat-card.malin::before{background:var(--malin);}
+  .cat-card.diablo::before{background:var(--diablo);}
+  .cat-card.tentation{background:linear-gradient(135deg, var(--ember-1), var(--ember-2));border-color:var(--tentation);box-shadow:0 0 20px var(--ember-glow);}
+  .cat-card.tentation::before{background:var(--tentation);box-shadow:0 0 14px var(--ember-glow);}
+  .cat-card.tentation .cat-name,.cat-card.tentation .cat-range,.cat-card.tentation .cat-remain,.cat-card.tentation .cat-remain b{color:var(--ember-text);}
+  .cat-name{font-family:'Space Grotesk', sans-serif;font-weight:700;font-size:0.94em;margin-bottom:1px;}
+  .cat-range{font-size:0.68em;color:var(--dim);font-family:'IBM Plex Mono',monospace;}
+  .cat-remain{margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:0.72em;color:var(--dim);}
+  .cat-rule-note{margin-top:6px;font-size:0.66em;line-height:1.4;color:var(--dim);}
+  .cat-remain b{font-size:1.15em;color:var(--paper);font-family:'Space Grotesk',sans-serif;}
+  .cat-pips{display:flex;gap:2px;margin-top:5px;flex-wrap:wrap;}
+  .pip{width:7px;height:7px;border-radius:1px;background:var(--panel-2);border:1px solid var(--line);}
+  .pip.on.angel{background:var(--angel);border-color:var(--angel);}
+  .pip.on.malin{background:var(--malin);border-color:var(--malin);}
+  .pip.on.diablo{background:var(--diablo);border-color:var(--diablo);}
+  .pip.on.tentation{background:var(--tentation);border-color:var(--tentation);}
+  .cat-picks{margin-top:8px;display:flex;flex-direction:column;gap:3px;}
+  .cat-pick-tag{
+    display:flex;align-items:center;gap:5px;font-size:0.68em;padding:3px 6px;
+    border-radius:3px;background:rgba(0,0,0,0.05);cursor:pointer;color:var(--paper);
+  }
+  .cat-pick-tag:hover{background:rgba(0,0,0,0.10);}
+  .cat-pick-tag .fi{width:12px;flex-shrink:0;}
+  .cat-pick-tag b{font-family:'IBM Plex Mono',monospace;font-size:0.95em;}
+  .cat-card.tentation .cat-pick-tag{background:rgba(255,255,255,0.08);color:var(--ember-text);}
+
+  .scoring-strip{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-bottom:14px;}
+  .scoring-strip .tlabel{font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--dim);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:9px;}
+  .scoring-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;}
+  .spos{
+    flex-shrink:0;min-width:44px;text-align:center;padding:6px 4px;border-radius:5px;
+    background:var(--panel-2);border:1px solid var(--line);
+  }
+  .spos .sp-rank{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.72em;color:var(--dim);}
+  .spos .sp-pts{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:0.85em;color:var(--paper);margin-top:2px;}
+  .spos.gold{background:linear-gradient(160deg,#f2c14e,#c9922a);border:none;}
+  .spos.gold .sp-rank,.spos.gold .sp-pts{color:#3a2400;}
+  .spos.silver{background:linear-gradient(160deg,#dfe4e8,#b7c0c8);border:none;}
+  .spos.silver .sp-rank,.spos.silver .sp-pts{color:#2a3238;}
+  .spos.bronze{background:linear-gradient(160deg,#d69a6a,#a86a3d);border:none;}
+  .spos.bronze .sp-rank,.spos.bronze .sp-pts{color:#3a2000;}
+  .spos.more{min-width:80px;background:var(--panel);}
+  .spos.more .sp-rank{font-size:0.68em;}
+
+  .teampanel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-bottom:12px;min-height:52px;}
+  .teampanel .tlabel{font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--dim);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{display:flex;align-items:center;gap:6px;padding:4px 9px 4px 7px;border-radius:4px;font-size:0.78em;cursor:pointer;border:1px solid var(--line);background:var(--panel-2);transition:transform 0.1s ease;}
+  .chip:hover{transform:translateY(-1px);}
+  .chip .cflag{width:14px;}
+  .chip .cname{white-space:nowrap;}
+  .chip .ccost{font-family:'IBM Plex Mono',monospace;font-weight:700;}
+  .chip .cx{color:var(--dim);font-size:0.85em;margin-left:2px;}
+  .chip.angel{border-left:3px solid var(--angel);}
+  .chip.malin{border-left:3px solid var(--malin);}
+  .chip.diablo{border-left:3px solid var(--diablo);}
+  .chip.tentation{background:linear-gradient(135deg, var(--ember-1), var(--ember-2));border-left:3px solid var(--tentation);box-shadow:0 0 10px var(--ember-glow);color:var(--ember-text);}
+  .chip.tentation .cx{color:var(--ember-text);opacity:0.7;}
+  .chip.leader{box-shadow:0 0 0 2px var(--tentation), 0 0 12px rgba(216,22,51,0.4);}
+  .empty-note{color:var(--dim-2);font-size:0.82em;font-style:italic;}
+
+  .coquin-panel{background:linear-gradient(155deg, rgba(177,18,47,0.06), var(--panel));border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-bottom:12px;}
+  .coquin-panel .tlabel{font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--superteam);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;}
+  .coquin-desc{font-size:0.8em;color:var(--dim);margin-bottom:8px;}
+  .coquin-pills{display:flex;flex-wrap:wrap;gap:6px;}
+  .cpill{padding:4px 10px;border-radius:14px;font-size:0.76em;cursor:pointer;border:1px solid var(--line);background:var(--panel-2);display:flex;align-items:center;gap:5px;}
+  .cpill:hover{filter:brightness(1.05);}
+  .cpill.chosen{background:rgba(216,22,51,0.10);border-color:var(--tentation);color:var(--tentation);font-weight:600;}
+
+  .modifiers{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 14px;margin-bottom:16px;}
+  .modifiers .tlabel{font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--dim);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
+  .mrow{display:flex;align-items:center;justify-content:space-between;padding:5px 0;font-size:0.8em;border-bottom:1px solid rgba(0,0,0,0.05);gap:10px;}
+  .mrow:last-child{border-bottom:none;}
+  .mrow .mtext{color:var(--dim);flex:1;}
+  .mrow .mtext b{color:var(--paper);font-weight:600;}
+  .mrow .mtext .warn{color:var(--bad);font-style:italic;}
+  .mrow .mval{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:0.95em;padding:2px 8px;border-radius:3px;white-space:nowrap;}
+  .mval.pos{color:var(--good);background:rgba(31,138,85,0.10);}
+  .mval.neg{color:var(--bad);background:rgba(216,22,51,0.10);}
+  .mval.off{color:var(--dim-2);background:rgba(0,0,0,0.03);}
+  .mval.pending{color:var(--superteam);background:rgba(232,191,90,0.14);}
+  .mtotal{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.95em;}
+  .mnote{font-size:0.68em;color:var(--dim-2);margin-top:6px;font-style:italic;}
+
+  .status{min-height:20px;font-size:0.78em;color:var(--bad);margin-bottom:10px;font-weight:500;}
+
+  .validate-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+  .btn{
+    font-family:'Space Grotesk', sans-serif;font-weight:600;font-size:0.85em;
+    padding:10px 18px;border-radius:5px;cursor:pointer;border:1px solid var(--line);
+    background:var(--panel-2);color:var(--paper);
+  }
+  .btn:hover{filter:brightness(0.97);}
+  .btn.primary{background:linear-gradient(120deg, var(--tentation), #ff5a72);color:#fff;border:none;font-weight:700;}
+  .btn.final{background:linear-gradient(120deg, var(--superteam), #e0293f);color:#fff;border:none;font-weight:700;}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;filter:none;}
+
+  .finalized-banner{
+    background:linear-gradient(120deg, rgba(177,18,47,0.12), rgba(216,22,51,0.06));
+    border:1px solid var(--superteam);border-radius:6px;padding:12px 16px;margin-bottom:16px;font-size:0.85em;
+  }
+  .finalized-banner a{color:var(--superteam);cursor:pointer;text-decoration:underline;}
+
+  .board-toolbar{
+    display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:12px;
+    padding-bottom:10px;border-bottom:1px solid var(--line);
+  }
+  .cat-filter-bar{display:flex;align-items:center;gap:6px;}
+  .cat-filter-label{font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--dim);}
+  .cat-filter-chip{
+    font-size:1.1em;padding:3px 8px;border-radius:5px;cursor:pointer;
+    border:1px solid var(--line);background:var(--panel);opacity:0.55;
+  }
+  .cat-filter-chip.active{opacity:1;border-color:var(--superteam);background:var(--panel-2);box-shadow:0 0 0 1px var(--superteam);}
+  .board-sort-bar{display:flex;gap:2px;background:var(--panel-2);border-radius:6px;padding:2px;}
+  .sort-btn{
+    font-family:'IBM Plex Mono',monospace;font-size:0.72em;padding:5px 10px;border-radius:4px;
+    cursor:pointer;color:var(--dim);
+  }
+  .sort-btn.active{background:var(--panel);color:var(--paper);font-weight:600;}
+  .strategy-btn{
+    margin-left:auto;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.78em;
+    padding:6px 12px;border-radius:6px;cursor:pointer;color:var(--superteam);
+    border:1px solid var(--superteam);background:rgba(232,191,90,0.08);
+  }
+  .strategy-btn:hover{background:rgba(232,191,90,0.18);}
+
+  .board{display:grid;grid-template-columns:repeat(4, 1fr);gap:8px;}
+  .board.board-flat{display:flex;flex-direction:column;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px;}
+  .board-flat .rr{border-radius:3px;}
+  .rcat-emoji{flex-shrink:0;margin-right:2px;}
+  .rteam{flex:1;font-size:0.82em;color:var(--dim);}
+  .st-tag{color:var(--superteam);font-family:'IBM Plex Mono',monospace;font-weight:700;}
+  .tc{background:var(--panel);border:1px solid var(--line);border-top:2px solid #d8c0b0;border-radius:4px;overflow:hidden;}
+  .tc.st{border-top:2px solid var(--superteam);box-shadow:0 0 14px rgba(177,18,47,0.25) inset;}
+  .th{display:flex;align-items:center;gap:6px;padding:5px 8px 4px;border-bottom:1px solid var(--line);}
+  .th .tn{font-family:'Space Grotesk', sans-serif;font-weight:600;font-size:0.72em;color:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+  .badge{font-family:'IBM Plex Mono',monospace;font-size:0.6em;font-weight:700;padding:1px 4px;border-radius:3px;letter-spacing:0.02em;flex-shrink:0;}
+  .badge.st{background:rgba(177,18,47,0.10);color:var(--superteam);border:1px solid rgba(177,18,47,0.4);}
+
+  .rr{display:flex;align-items:center;gap:5px;padding:2px 8px;font-size:0.72em;line-height:1.5;cursor:pointer;border-bottom:1px solid rgba(0,0,0,0.04);border-left:3px solid transparent;user-select:none;}
+  .rr:last-child{border-bottom:none;}
+  .rr:hover{filter:brightness(0.97);}
+  .rr.angel{background:rgba(159,176,182,0.16);border-left-color:var(--angel);}
+  .rr.malin{background:rgba(232,152,58,0.18);border-left-color:var(--malin);}
+  .rr.diablo{background:rgba(156,45,107,0.15);border-left-color:var(--diablo);}
+  .rr.tentation{background:linear-gradient(135deg, var(--ember-1), var(--ember-2));border-left-color:var(--tentation);box-shadow:inset 0 0 16px var(--ember-glow);}
+  .rr.tentation .rn, .rr.tentation .rc{color:var(--ember-text);}
+  .rr.selected{box-shadow:inset 0 0 0 1px rgba(42,20,23,0.5);filter:brightness(0.95);}
+  .rr.tentation.selected{box-shadow:inset 0 0 0 1px rgba(255,255,255,0.6), inset 0 0 16px var(--ember-glow);}
+  .rr.disabled{opacity:0.35;cursor:not-allowed;}
+  .rr .fi{width:13px;flex-shrink:0;border-radius:1px;}
+  .rr .rn{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .rr .rc{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:0.98em;width:28px;text-align:right;flex-shrink:0;}
+  .rr .chk{width:11px;flex-shrink:0;text-align:center;font-size:0.85em;color:var(--good);opacity:0;}
+  .rr.selected .chk{opacity:1;}
+
+  /* ---- sticky reminder ---- */
+  .sticky-bar{
+    position:fixed;bottom:16px;right:16px;z-index:900;
+    background:rgba(42,20,23,0.9);color:#f5ece6;
+    border-radius:20px;padding:8px 16px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.72em;
+    display:flex;gap:12px;align-items:center;
+    box-shadow:0 4px 16px rgba(0,0,0,0.25);
+    opacity:0;pointer-events:none;transition:opacity 0.25s ease, transform 0.25s ease;
+    transform:translateY(8px);
+  }
+  .sticky-bar.show{opacity:1;transform:translateY(0);}
+  .sticky-bar b{color:var(--header-accent);font-family:'Space Grotesk',sans-serif;}
+  .sticky-bar .sep{color:rgba(255,255,255,0.3);}
+
+  .hesitation-bubble{
+    position:fixed;bottom:16px;left:16px;z-index:900;max-width:320px;
+    background:#0a0000;
+    background-image:repeating-linear-gradient(0deg, rgba(255,20,20,0.05) 0px, rgba(255,20,20,0.05) 1px, transparent 1px, transparent 3px);
+    border:1px solid #ff2222;
+    border-radius:2px;padding:14px 34px 16px 16px;
+    box-shadow:0 0 26px rgba(255,20,20,0.55), inset 0 0 30px rgba(255,0,0,0.10);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78em;color:#ff5252;line-height:1.55;
+    display:none;
+  }
+  .hesitation-bubble.show{display:block;animation:hackGlitchIn 0.35s steps(3) 1, hackPulse 1.7s ease-in-out infinite;}
+  .hesitation-bubble .hb-tag{
+    font-size:0.68em;letter-spacing:0.09em;color:#ff8080;margin-bottom:8px;
+    display:flex;align-items:center;gap:6px;text-transform:uppercase;font-weight:700;
+  }
+  .hesitation-bubble .hb-tag::before{content:'●';color:#ff1a1a;animation:hackBlink 1s step-start infinite;}
+  .hesitation-bubble .hb-text{color:#ffdada;text-shadow:0 0 6px rgba(255,40,40,0.4);}
+  .hesitation-bubble .hb-close{
+    position:absolute;top:8px;right:10px;cursor:pointer;color:#ff8080;font-size:0.95em;font-family:'IBM Plex Mono',monospace;
+  }
+  @keyframes hackGlitchIn{
+    0%{ transform:translate(0,0); clip-path:inset(0 0 0 0); }
+    30%{ transform:translate(-3px,1px); clip-path:inset(10% 0 40% 0); }
+    60%{ transform:translate(3px,-1px); clip-path:inset(60% 0 5% 0); }
+    100%{ transform:translate(0,0); clip-path:inset(0 0 0 0); }
+  }
+  @keyframes hackPulse{
+    0%,100%{ box-shadow:0 0 26px rgba(255,20,20,0.55), inset 0 0 30px rgba(255,0,0,0.10); }
+    50%{ box-shadow:0 0 42px rgba(255,20,20,0.9), inset 0 0 40px rgba(255,0,0,0.16); }
+  }
+  @keyframes hackBlink{ 50%{ opacity:0.15; } }
+
+  .angel-hover{cursor:help;border-bottom:1px dotted var(--dim);}
+  .angel-tooltip{
+    position:fixed;z-index:1100;display:none;
+    background:linear-gradient(155deg, var(--ember-2), var(--ember-1));
+    color:var(--ember-text);border:1px solid var(--tentation);
+    border-radius:6px;padding:8px 12px;font-size:0.75em;max-width:220px;
+    pointer-events:none;box-shadow:0 4px 14px rgba(216,22,51,0.3);
+  }
+  .angel-tooltip.show{display:block;}
+
+  /* ---- modal ---- */
+  .overlay{position:fixed;inset:0;background:rgba(20,8,10,0.55);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+  .overlay.show{display:flex;}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:8px;max-width:640px;width:100%;max-height:85vh;overflow-y:auto;padding:22px 24px;}
+  .modal h2{font-family:'Space Grotesk',sans-serif;font-size:1.2em;margin:0 0 4px;}
+  .modal .msub{font-size:0.8em;color:var(--dim);margin-bottom:14px;}
+  .modal textarea{width:100%;height:180px;background:var(--bg);border:1px solid var(--line);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.72em;border-radius:4px;padding:10px;margin-bottom:12px;}
+  .pwd-input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--paper);font-family:'IBM Plex Sans',sans-serif;font-size:0.9em;border-radius:4px;padding:10px 12px;margin-top:12px;}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
+  .modal input[type=password]{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--paper);
+    padding:9px 10px;border-radius:4px;font-family:'IBM Plex Mono',monospace;margin-bottom:10px;
+  }
+  .modal-section{border-top:1px solid var(--line);margin-top:16px;padding-top:16px;}
+  .tour-step-label{
+    font-family:'IBM Plex Mono',monospace;font-size:0.68em;color:var(--dim);
+    letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px;
+  }
+  .guide-toast{
+    position:fixed;bottom:16px;right:16px;z-index:950;max-width:300px;
+    background:linear-gradient(155deg, var(--panel-2), var(--panel));
+    border:1px solid var(--tentation);border-radius:10px;padding:14px 18px;
+    font-size:0.82em;color:var(--paper);box-shadow:0 6px 22px rgba(216,22,51,0.25);
+    display:none;
+  }
+  .guide-toast.show{display:block;}
+
+  .rules-fab{
+    position:fixed;top:16px;right:16px;z-index:940;
+    width:34px;height:34px;border-radius:50%;
+    background:var(--panel-2);border:1px solid var(--tentation);
+    color:var(--tentation);font-family:'Space Grotesk',sans-serif;font-weight:700;font-style:italic;
+    display:flex;align-items:center;justify-content:center;font-size:1.1em;
+    cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,0.2);
+  }
+  .rules-fab:hover{background:var(--tentation);color:#fff;}
+  .modal-section h3{font-family:'Space Grotesk',sans-serif;font-size:0.95em;margin:0 0 8px;}
+  .modal-section p{font-size:0.78em;color:var(--dim);margin:0 0 10px;}
+  .admin-status{font-size:0.8em;margin-top:8px;color:var(--good);}
+  #resultsPaste{height:260px;font-family:'IBM Plex Mono',monospace;font-size:0.7em;white-space:pre;}
+
+  /* ---- teams / results tab ---- */
+  .team-card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin-bottom:10px;}
+  .team-card .tc-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+  .team-card .tc-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.05em;color:var(--superteam);}
+  .team-card .tc-riders{font-size:0.78em;color:var(--dim);}
+  .team-card .tc-cost{color:var(--dim);font-size:0.85em;}
+  .team-card .tc-leader{
+    font-weight:600;font-size:0.85em;margin:8px 0;padding:6px 10px;
+    background:rgba(216,22,51,0.06);border-left:3px solid var(--tentation);border-radius:3px;
+  }
+  .tc-riderlist{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}
+  .rider-tag{
+    font-size:0.74em;padding:3px 8px;border-radius:12px;
+    background:var(--panel-2);border:1px solid var(--line);color:var(--paper);
+  }
+  .rider-tag b{font-family:'IBM Plex Mono',monospace;margin-left:3px;}
+  .rider-tag.is-leader{background:rgba(232,191,90,0.14);border-color:var(--superteam);font-weight:600;}
+  .tc-modifiers{display:flex;flex-direction:column;gap:3px;font-size:0.78em;color:var(--dim);margin-top:8px;padding-top:8px;border-top:1px solid var(--line);}
+  .mod-line{display:flex;justify-content:space-between;}
+  .mod-line b{color:var(--dim-2);font-family:'IBM Plex Mono',monospace;}
+  .mod-line b.pos{color:var(--good);}
+  .mod-line b.neg{color:var(--bad);}
+  .mod-total{display:flex;justify-content:space-between;font-weight:700;color:var(--paper);margin-top:2px;font-family:'Space Grotesk',sans-serif;}
+  .teams-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+
+  #imageExportContainer{position:fixed;left:-9999px;top:0;width:1100px;padding:36px;background:#170a0c;}
+  .ie-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2.2em;color:#fff5ee;}
+  .ie-sub{font-family:'Space Grotesk',sans-serif;color:#e8bf5a;font-size:1em;margin-bottom:20px;}
+  .ie-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:14px;}
+  .ie-card{background:#241014;border:1px solid #4a262c;border-radius:8px;padding:14px 16px;}
+  .ie-player{font-family:'Space Grotesk',sans-serif;font-weight:700;color:#e8bf5a;font-size:1.05em;margin-bottom:8px;}
+  .ie-rider{font-family:'IBM Plex Sans',sans-serif;color:#f0e6df;font-size:0.85em;padding:2px 0;}
+  .team-card .tc-score{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3em;color:var(--tentation);}
+  .rank-badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:22px;height:22px;border-radius:50%;
+    background:var(--panel-2);border:1px solid var(--line);
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.75em;margin-right:8px;
+  }
+  .rank-badge.gold{background:linear-gradient(135deg,#f2c14e,#c9922a);color:#3a2400;border:none;}
+
+  .calc-block{margin-top:10px;font-size:0.78em;color:var(--dim);}
+  .calc-block summary{cursor:pointer;color:var(--superteam);font-weight:600;font-family:'Space Grotesk',sans-serif;}
+  .calc-line{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px solid rgba(0,0,0,0.04);}
+  .calc-line b{font-family:'IBM Plex Mono',monospace;color:var(--paper);flex-shrink:0;}
+  .calc-line.calc-sum{border-top:1px solid var(--line);margin-top:4px;font-weight:600;}
+  .calc-line.calc-final{border-top:2px solid var(--tentation);margin-top:4px;font-weight:700;color:var(--paper);font-size:1.05em;}
+
+  @media (max-width: 1200px){ .board{grid-template-columns:repeat(2,1fr);} .cats{grid-template-columns:repeat(2,1fr);} .dash{grid-template-columns:1fr;} }
+  @media (max-width: 640px){ .board{grid-template-columns:1fr;} .cats{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <div class="eyebrow">UCI · COURSE D'UN JOUR · 20 SEPTEMBRE 2026 · FRANCE</div>
+      <h1>ROUTE 6<span class="six">6</span>6</h1>
+      <div class="subtitle">GP d'Isbergues — Draft du jour</div>
+    </div>
+    <div style="text-align:right;">
+      <svg class="header-devil" width="76" height="76" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30 38 C18 30 12 16 16 4 C24 10 30 20 32 30 Z" fill="#1a0508" opacity="0.85"/>
+        <path d="M70 38 C82 30 88 16 84 4 C76 10 70 20 68 30 Z" fill="#1a0508" opacity="0.85"/>
+        <path d="M30 38 C18 30 12 16 16 4 C24 10 30 20 32 30 Z" fill="none" stroke="#f2c14e" stroke-width="1.4" opacity="0.7"/>
+        <path d="M70 38 C82 30 88 16 84 4 C76 10 70 20 68 30 Z" fill="none" stroke="#f2c14e" stroke-width="1.4" opacity="0.7"/>
+        <circle cx="50" cy="55" r="26" fill="#1a0508" opacity="0.9"/>
+        <circle cx="50" cy="55" r="26" fill="none" stroke="#f2c14e" stroke-width="1.4" opacity="0.8"/>
+        <path d="M38 50 q12 -10 24 0" stroke="#f2c14e" stroke-width="2" fill="none" opacity="0.9" stroke-linecap="round"/>
+        <path d="M40 66 q10 8 20 0" stroke="#f2c14e" stroke-width="2" fill="none" opacity="0.9" stroke-linecap="round"/>
+      </svg>
+      <div class="admin-entry" onclick="openAdmin()">🔒 Accès Satan</div>
+      <a class="calendar-link" href="index.html">📅 Calendrier</a>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" id="tabBtnDraft" onclick="switchTab('draft')">Draft</div>
+    <div class="tab locked" id="tabBtnTeams" onclick="switchTab('teams')">Teams</div>
+    <div class="tab locked" id="tabBtnResult" onclick="switchTab('result')">Résultat</div>
+  </div>
+  <div class="close-banner" id="closeBanner" style="display:none;"></div>
+</header>
+
+<main>
+
+  <div class="panel-block active" id="panelDraft">
+
+    <div class="name-row">
+      <label for="playerNameInput">Ton pseudo</label>
+      <input type="text" id="playerNameInput" placeholder="ex: Alexandre" oninput="onNameInput(this.value)">
+      <div class="iolinks">
+        <label style="display:flex;align-items:center;gap:4px;font-size:0.75em;color:var(--dim);cursor:pointer;"><input type="checkbox" id="skipTutoCheckbox" onchange="onSkipTutoToggle(this.checked)">Mode sans tuto</label>
+        <span class="iolink" onclick="exportDraft()">💾 Exporter ma sélection</span>
+        <span class="iolink" onclick="document.getElementById('importDraftInput').click()">📂 Importer ma sélection</span>
+        <input type="file" id="importDraftInput" accept="application/json" style="display:none" onchange="handleImportDraft(this.files)">
+      </div>
+    </div>
+
+    <div class="dash">
+      <div class="gauge">
+        <div class="glabel">Budget</div>
+        <div class="gvalue"><span id="budgetVal">666</span><small>/ 666 PTS RESTANTS</small></div>
+        <div class="ticks" id="budgetTicks"></div>
+      </div>
+      <div class="gauge">
+        <div class="glabel">Effectif</div>
+        <div class="gvalue"><span id="slotsVal">8</span><small>/ 8 PLACES RESTANTES</small></div>
+        <div class="ticks" id="slotsTicks"></div>
+      </div>
+    </div>
+
+    <div class="cats" id="catCards"></div>
+
+    <div class="scoring-strip" id="scoringStrip"></div>
+
+    <div class="coquin-panel" id="leaderPanel"></div>
+
+    <div class="status" id="statusLine"></div>
+
+    <div class="modifiers">
+      <div class="tlabel">Bonus / malus</div>
+      <div id="modRows"></div>
+      <div class="mtotal"><span>Modificateur net estimé (équipe)</span><span id="modTotal">+0%</span></div>
+      <div class="mrow" id="coquinTotal" style="margin-top:6px;border-top:1px solid var(--line);padding-top:8px;">
+        <span class="mtext">Budget coquin (non compté dans le total ci-dessus)</span>
+        <span class="mval off">+0%</span>
+      </div>
+    </div>
+
+    <div id="finalizedBanner"></div>
+
+    <div class="validate-row" id="validateRow"></div>
+
+    <div class="board-toolbar">
+      <div class="cat-filter-bar" id="catFilterBar">
+        <span class="cat-filter-label">Filtrer :</span>
+        <span class="cat-filter-chip" data-cat="tentation" onclick="toggleCatFilter('tentation')">🔥</span>
+        <span class="cat-filter-chip" data-cat="diablo" onclick="toggleCatFilter('diablo')">😈</span>
+        <span class="cat-filter-chip" data-cat="malin" onclick="toggleCatFilter('malin')">😏</span>
+        <span class="cat-filter-chip" data-cat="angel" onclick="toggleCatFilter('angel')">😇</span>
+      </div>
+      <div class="board-sort-bar">
+        <span class="sort-btn active" id="sortByTeamBtn" onclick="setBoardSort('team')">Par équipe</span>
+        <span class="sort-btn" id="sortByCostBtn" onclick="setBoardSort('cost')">Par coût</span>
+      </div>
+      <div class="strategy-btn" onclick="openStrategy()">💡 Quelle est la meilleure stratégie ?</div>
+    </div>
+
+    <div class="board" id="board"></div>
+
+  </div>
+
+  <div class="panel-block" id="panelTeams">
+    <div id="teamsContent"></div>
+  </div>
+
+  <div id="imageExportContainer"></div>
+
+  <div class="panel-block" id="panelResult">
+    <div id="resultContent"></div>
+  </div>
+
+</main>
+
+<div class="sticky-bar" id="stickyBar">
+  <span><b id="stickySlots">8</b> places restantes</span>
+  <span class="sep">·</span>
+  <span><b id="stickyBudget">666</b> pts</span>
+</div>
+
+<div class="overlay" id="modalOverlay">
+  <div class="modal">
+    <h2>Récap de ton équipe</h2>
+    <div class="msub">Copie ce texte pour avoir l'avis d'un ami — rien n'est encore envoyé à l'organisateur.</div>
+    <textarea id="recapText" readonly></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="copyRecap()">Copier le récap</button>
+      <button class="btn primary" onclick="closeModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="adminOverlay">
+  <div class="modal">
+    <h2>Accès Satan 😈</h2>
+    <div class="msub" id="adminLockedMsg">Réservé à l'organisateur du jeu.</div>
+    <div id="adminLockedForm">
+      <input type="password" id="adminPwd" placeholder="Mot de passe organisateur">
+      <div class="modal-actions">
+        <button class="btn" onclick="closeAdmin()">Annuler</button>
+        <button class="btn final" onclick="tryAdminUnlock()">Entrer</button>
+      </div>
+    </div>
+    <div id="adminUnlockedArea" style="display:none;">
+
+      <div class="modal-section">
+        <h3>Importer les équipes des participants</h3>
+        <p>Sélectionne les fichiers .json envoyés par les participants. Chaque import publie/actualise l'onglet Teams.</p>
+        <input type="file" id="adminFileInput" accept="application/json" multiple onchange="handleAdminImport(this.files)">
+        <div class="admin-status" id="adminImportStatus"></div>
+      </div>
+
+      <div class="modal-section">
+        <h3>Résultat de la course</h3>
+        <p>Colle ici le classement copié depuis FirstCycling (rang, nom, équipe...) — une ligne par position, dans l'ordre d'arrivée. Les colonnes points/temps sont ignorées.</p>
+        <textarea id="resultsPaste" placeholder="1			Pidcock Tom	Pinarello-Q36.5 Pro Cycling Team	250	04:33:08&#10;2			Scaroni Christian	XDS Astana Team	170	+ 12&#10;..."></textarea>
+        <div class="modal-actions">
+          <button class="btn final" onclick="saveResults()">Enregistrer le résultat</button>
+        </div>
+        <div class="admin-status" id="adminResultsStatus"></div>
+      </div>
+
+      <div class="modal-section">
+        <h3>Libérer un pseudo</h3>
+        <p>Si quelqu'un a oublié son mot de passe (ou pour un pseudo créé par erreur), retire l'association pseudo/mot de passe — valable sur <b>toutes</b> les courses de la saison. La personne pourra recréer un mot de passe sous ce même pseudo au prochain essai.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <input type="text" id="releasePseudoInput" placeholder="pseudo à libérer" style="flex:1;min-width:160px;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:7px 10px;border-radius:4px;font-family:'IBM Plex Sans',sans-serif;font-size:0.85em;">
+          <button class="btn" onclick="releasePseudo()">Libérer ce pseudo</button>
+        </div>
+        <div class="admin-status" id="adminReleaseStatus"></div>
+      </div>
+
+      <div class="modal-actions" style="margin-top:16px;">
+        <button class="btn" onclick="closeAdmin()">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="tutoOverlay">
+  <div class="modal">
+    <h2 id="tutoTitle"></h2>
+    <ul id="tutoBody" style="font-size:0.85em;color:var(--dim);line-height:1.65;padding-left:20px;margin:0 0 16px;"></ul>
+    <div class="modal-actions">
+      <span class="iolink" onclick="skipAllTutorials()" style="margin-right:auto;">Ne plus jamais afficher ces messages</span>
+      <button class="btn final" onclick="confirmTutorial()">J'ai compris, je fonce</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="welcomeOverlay">
+  <div class="modal">
+    <h2 id="welcomeTitle" style="color:var(--superteam);">😈 La Route 666</h2>
+    <div class="msub" id="welcomeText" style="font-size:0.95em;line-height:1.6;color:var(--paper);"></div>
+    <div class="modal-actions" style="flex-wrap:wrap;">
+      <button class="btn final" onclick="closeWelcome(true)">Suivre le tutoriel avant de jouer</button>
+      <button class="btn" onclick="closeWelcome(false)">Tut tut tut, je connais les règles, laisse moi tranquille</button>
+    </div>
+    <div class="mnote" style="margin-top:8px;">L'icône <b>i</b> en haut à droite permet de relire les règles à tout moment, tuto ou pas.</div>
+  </div>
+</div>
+
+<div class="overlay" id="tourOverlay">
+  <div class="modal">
+    <div class="tour-step-label" id="tourStepLabel"></div>
+    <h2 id="tourTitle"></h2>
+    <div class="msub" id="tourBody" style="font-size:0.9em;line-height:1.6;color:var(--paper);"></div>
+    <div class="modal-actions" id="tourActions">
+      <button class="btn final" id="tourNextBtn" onclick="tourNext()">Suivant</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="rulesOverlay">
+  <div class="modal" style="max-height:80vh;overflow-y:auto;">
+    <h2 style="color:var(--superteam);">📖 Les règles, en entier</h2>
+    <div class="msub" style="font-size:0.88em;line-height:1.65;color:var(--paper);">
+
+      <p><b>Budget & effectif</b><br>
+      666 points à répartir sur 8 coureurs. Impossible de dépasser le budget ou le nombre de coureurs.</p>
+
+      <p><b>Les 4 familles de picks</b><br>
+      <span style="color:var(--tentation);">🔥 Picks Tentation</span> (90 ou + pts) — 1 maximum.<br>
+      <span style="color:var(--diablo);">😈 Picks Diablo</span> (80–89 pts) — 5 maximum.<br>
+      <span style="color:var(--malin);">😏 Picks Malin</span> (70–79 pts) — 5 maximum.<br>
+      😇 Picks Angel (0–69 pts) — 5 maximum.</p>
+
+      <p><b>Résiste à la Tentation</b><br>
+      Si tu ne prends aucun Pick Tentation : <b>+20%</b> sur ton score final.</p>
+
+      <p><b>Picks Angel</b><br>
+      Le bonus dépend de combien de tes Angels finissent dans le top 30 — pas de combien tu en as choisis : 1 Angel = <b>+50%</b>, 2 = <b>+75%</b>, 3 = <b>+100%</b>, 4 = <b>+150%</b>, 5 = <b>+200%</b>. Si l'un d'eux termine dans le top 10 : <b>+50%</b> de plus (une seule fois, même si plusieurs sont top 10). Si aucun ne finit dans le top 30, le bonus Angel est simplement de 0% — ça n'affecte pas tes autres bonus.</p>
+
+      <p><b>La 666 Team 👿</b><br>
+      L'équipe désignée par le coût moyen le plus élevé. À partir de 2 coureurs de cette équipe dans ton effectif : <b>-10%</b> sur tout ton score.</p>
+
+      <p><b>Le Leader & le budget coquin</b><br>
+      Une fois tes 8 coureurs choisis, désigne ton Leader. Il reçoit un bonus personnel égal au % de budget non dépensé — séparé du modificateur d'équipe.</p>
+
+      <p><b>Le barème</b><br>
+      Points attribués selon la position d'arrivée (1er = 200 pts, dégressif jusqu'à la 30e position).</p>
+
+      <p><b>Le calcul final</b><br>
+      Total brut (barème par coureur) × (1 + modificateur net%) + points du Leader × bonus budget coquin.</p>
+
+    </div>
+    <div class="modal-actions">
+      <button class="btn final" onclick="closeRules()">J'ai compris, retour au chaos</button>
+    </div>
+  </div>
+</div>
+
+<div class="rules-fab" id="rulesFab" onclick="openRules()" title="Voir les règles">i</div>
+
+<div class="overlay" id="strategyOverlay">
+  <div class="modal" style="max-height:80vh;overflow-y:auto;">
+    <h2 style="color:var(--superteam);">💡 Quelle est la meilleure stratégie ?</h2>
+    <div class="msub" style="font-size:0.88em;line-height:1.6;color:var(--paper);">
+      <p>Il n'y a pas de recette magique — voici 6 approches types, avec leur force et leur faiblesse.</p>
+
+      <p><b>1. Le Pari sur l'ultra favori</b><br>
+      Miser sur le meilleur Tentation, équilibrer le reste.<br>
+      <span style="color:var(--good);">✓ Force :</span> si ton ultra favori (souvent 120-150 pts au barème) performe, il peut porter l'équipe à lui seul.<br>
+      <span style="color:var(--bad);">✗ Faiblesse :</span> tu perds le +20% "Résiste à la Tentation", et s'il chute/abandonne, une grosse part du budget n'a rien rapporté — tout misé sur un seul cheval.</p>
+
+      <p><b>2. Résistance totale</b><br>
+      Zéro Tentation, budget étalé sur de bons Diablo/Malin.<br>
+      <span style="color:var(--good);">✓ Force :</span> le +20% "Résiste à la Tentation" est garanti quel que soit le résultat, et le risque est réparti sur plusieurs coureurs solides.<br>
+      <span style="color:var(--bad);">✗ Faiblesse :</span> tu te prives des meilleurs favoris de la course (justement ceux en Tentation) — ton plafond de points bruts est plus bas.</p>
+
+      <p><b>3. Escadron Angel</b><br>
+      0 Tentation + 5 Angels bon marché, en pariant sur 1-2 outsiders qui rentrent dans le top 30/top 10.<br>
+      <span style="color:var(--good);">✓ Force :</span> si ça sort, les bonus se cumulent (Angel jusqu'à +250% + Résiste à la Tentation +20%) sur un score brut pourtant modeste — le meilleur ratio risque/récompense du jeu.<br>
+      <span style="color:var(--bad);">✗ Faiblesse :</span> si aucun des 5 Angels ne rentre dans le top 30, le bonus Angel tombe à 0% et le score brut de départ est déjà faible (coureurs bon marché) — tout ou rien sur des outsiders imprévisibles.</p>
+
+      <p><b>4. Chasse au Budget Coquin</b><br>
+      Équipe économique, gros reliquat de budget, Leader bien choisi.<br>
+      <span style="color:var(--good);">✓ Force :</span> le bonus budget coquin (jusqu'à +100%, garanti, indépendant des résultats) double potentiellement les points de ton Leader.<br>
+      <span style="color:var(--bad);">✗ Faiblesse :</span> une équipe économique marque moins de points bruts partout ailleurs, et ce bonus ne profite qu'au Leader — s'il a une mauvaise course, tout ce reliquat de budget n'a servi à rien.</p>
+
+      <p><b>5. Tout au feeling</b><br>
+      Choisis les coureurs que tu vois performer, ajuste ton budget au fil de tes choix.<br>
+      <span style="color:var(--good);">✓ Force :</span> si tu repères un ou deux outsiders sous-évalués par le système de coûts, c'est là que vient ta vraie plus-value — pas des bonus, mais de ton flair.<br>
+      <span style="color:var(--bad);">✗ Faiblesse :</span> sans piloter consciemment les paliers (0 ou 1 Tentation, nombre d'Angels dans le top 30, seuil des 2 coureurs de la 666 Team), tu peux finir avec un modificateur net proche de 0%, voire négatif, alors qu'un seul ajustement (un Angel en moins, un Diablo en plus) l'aurait rendu largement positif.</p>
+
+      <p><b>6. Les coureurs borderline</b><br>
+      Entre un Tentation à 90 pts et un Diablo à 89, pourquoi hésiter ? Traque les coureurs à 1-2 points du palier supérieur.<br>
+      <span style="color:var(--good);">✓ Force :</span> un coureur à 89 pts a souvent un profil quasi identique à celui à 90 — l'écart ne tient qu'à un point de stat, pas de niveau. Tu payes le tarif Diablo (80-89) pour une valeur quasi-Tentation, et le budget économisé se recase ailleurs.<br>
+      <span style="color:var(--bad);">✗ Faiblesse :</span> tu raisonnes en seuils de coût plutôt qu'en forme du jour ou en profil de course — deux coureurs séparés d'un point (89/90, 79/80, 69/70) n'ont souvent presque rien à voir sur le terrain le jour J, donc l'optimisation reste parfois cosmétique.</p>
+
+      <p style="font-style:italic;color:var(--dim);">Dans tous les cas, un piège reste transversal : 2 coureurs ou plus de la 666 Team 👿 dans ton équipe, et c'est -10% sur tout ton score, quelle que soit la stratégie choisie.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn final" onclick="closeStrategy()">J'ai mon plan</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="passwordOverlay">
+  <div class="modal">
+    <h2 id="pwdTitle" style="color:var(--superteam);">🔐 Mot de passe</h2>
+    <div class="msub" id="pwdBody" style="font-size:0.88em;line-height:1.5;color:var(--paper);"></div>
+    <input type="password" id="pwdInput" class="pwd-input" autocomplete="off" placeholder="Ton mot de passe">
+    <div class="modal-actions">
+      <button class="btn" id="pwdCancelBtn">Annuler</button>
+      <button class="btn final" id="pwdSubmitBtn">Valider</button>
+    </div>
+  </div>
+</div>
+
+<div class="hesitation-bubble" id="hesitationBubble">
+  <div class="hb-close" onclick="dismissHesitation()">✕</div>
+  <div class="hb-tag" id="hbTag"></div>
+  <div class="hb-text"></div>
+</div>
+
+<div class="guide-toast" id="guideToast"></div>
+
+<div class="angel-tooltip" id="angelTooltip">👿 NE L'ÉCOUTE PAS, CE SONT DES PETITS COUREURS SANS AVENIR</div>
+
+<script>
+const DATA = {"riders": [{"bib": 1, "name": "Olav Kooij", "nat": "nl", "team": "Decathlon CMA CGM Team", "cost": 120, "cat": "tentation", "special": "st"}, {"bib": 11, "name": "Milan Fretin", "nat": "be", "team": "Cofidis", "cost": 92, "cat": "tentation", "special": null}, {"bib": 61, "name": "Anthony Turgis", "nat": "fr", "team": "Team TotalEnergies", "cost": 92, "cat": "tentation", "special": null}, {"bib": 71, "name": "Lukas Kubis", "nat": "sk", "team": "Unibet Rose Rockets", "cost": 90, "cat": "tentation", "special": null}, {"bib": 2, "name": "Cees Bol", "nat": "nl", "team": "Decathlon CMA CGM Team", "cost": 89, "cat": "diablo", "special": "st"}, {"bib": 33, "name": "Luca Mozzato", "nat": "it", "team": "Tudor Pro Cycling Team", "cost": 87, "cat": "diablo", "special": null}, {"bib": 76, "name": "Matyas Kopecky", "nat": "cz", "team": "Unibet Rose Rockets", "cost": 86, "cat": "diablo", "special": null}, {"bib": 17, "name": "Alexis Renard", "nat": "fr", "team": "Cofidis", "cost": 85, "cat": "diablo", "special": null}, {"bib": 44, "name": "Axel Huens", "nat": "fr", "team": "Groupama-FDJ United", "cost": 85, "cat": "diablo", "special": null}, {"bib": 7, "name": "Noa Isidore", "nat": "fr", "team": "Decathlon CMA CGM Team", "cost": 84, "cat": "diablo", "special": "st"}, {"bib": 13, "name": "Stanislaw Aniolkowski", "nat": "pl", "team": "Cofidis", "cost": 84, "cat": "diablo", "special": null}, {"bib": 23, "name": "Vito Braet", "nat": "be", "team": "Lotto-Intermarché", "cost": 84, "cat": "diablo", "special": null}, {"bib": 5, "name": "Tord Gudmestad", "nat": "no", "team": "Decathlon CMA CGM Team", "cost": 83, "cat": "diablo", "special": "st"}, {"bib": 46, "name": "Clément Russo", "nat": "fr", "team": "Groupama-FDJ United", "cost": 83, "cat": "diablo", "special": null}, {"bib": 63, "name": "Florian Dauphin", "nat": "fr", "team": "Team TotalEnergies", "cost": 83, "cat": "diablo", "special": null}, {"bib": 21, "name": "Matys Grisel", "nat": "fr", "team": "Lotto-Intermarché", "cost": 82, "cat": "diablo", "special": null}, {"bib": 51, "name": "Matteo Moschetti", "nat": "it", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 82, "cat": "diablo", "special": null}, {"bib": 57, "name": "Brent Van Moer", "nat": "be", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 82, "cat": "diablo", "special": null}, {"bib": 74, "name": "Jelle Johannink", "nat": "nl", "team": "Unibet Rose Rockets", "cost": 82, "cat": "diablo", "special": null}, {"bib": 4, "name": "Robbe Ghys", "nat": "be", "team": "Decathlon CMA CGM Team", "cost": 80, "cat": "diablo", "special": "st"}, {"bib": 42, "name": "Lewis Bower", "nat": "nz", "team": "Groupama-FDJ United", "cost": 80, "cat": "diablo", "special": null}, {"bib": 24, "name": "Joshua Giddings", "nat": "gb", "team": "Lotto-Intermarché", "cost": 79, "cat": "malin", "special": null}, {"bib": 31, "name": "Arvid de Kleijn", "nat": "nl", "team": "Tudor Pro Cycling Team", "cost": 79, "cat": "malin", "special": null}, {"bib": 72, "name": "Joren Bloem", "nat": "nl", "team": "Unibet Rose Rockets", "cost": 79, "cat": "malin", "special": null}, {"bib": 73, "name": "Hartthijs de Vries", "nat": "nl", "team": "Unibet Rose Rockets", "cost": 79, "cat": "malin", "special": null}, {"bib": 75, "name": "Tomas Kopecky", "nat": "cz", "team": "Unibet Rose Rockets", "cost": 79, "cat": "malin", "special": null}, {"bib": 82, "name": "Louis Hardouin", "nat": "fr", "team": "Van Rysel-Roubaix", "cost": 79, "cat": "malin", "special": null}, {"bib": 32, "name": "Robin Froidevaux", "nat": "ch", "team": "Tudor Pro Cycling Team", "cost": 78, "cat": "malin", "special": null}, {"bib": 56, "name": "Nicolò Parisini", "nat": "it", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 78, "cat": "malin", "special": null}, {"bib": 12, "name": "Piet Allegaert", "nat": "be", "team": "Cofidis", "cost": 77, "cat": "malin", "special": null}, {"bib": 14, "name": "Alex Kirsch", "nat": "lu", "team": "Cofidis", "cost": 77, "cat": "malin", "special": null}, {"bib": 53, "name": "Sam Bennett", "nat": "ie", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 77, "cat": "malin", "special": null}, {"bib": 64, "name": "Samuel Leroux", "nat": "fr", "team": "Team TotalEnergies", "cost": 77, "cat": "malin", "special": null}, {"bib": 45, "name": "Johan Jacobs", "nat": "ch", "team": "Groupama-FDJ United", "cost": 76, "cat": "malin", "special": null}, {"bib": 67, "name": "Jason Tesson", "nat": "fr", "team": "Team TotalEnergies", "cost": 76, "cat": "malin", "special": null}, {"bib": 54, "name": "Emmanuel Houcou", "nat": "fr", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 75, "cat": "malin", "special": null}, {"bib": 65, "name": "Lorrenzo Manzin", "nat": "fr", "team": "Team TotalEnergies", "cost": 75, "cat": "malin", "special": null}, {"bib": 81, "name": "Maxime Jarnet", "nat": "fr", "team": "Van Rysel-Roubaix", "cost": 75, "cat": "malin", "special": null}, {"bib": 83, "name": "Joppe Heremans", "nat": "be", "team": "Van Rysel-Roubaix", "cost": 75, "cat": "malin", "special": null}, {"bib": 6, "name": "Gianluca Pollefliet", "nat": "be", "team": "Decathlon CMA CGM Team", "cost": 74, "cat": "malin", "special": "st"}, {"bib": 77, "name": "Abram Stockman", "nat": "be", "team": "Unibet Rose Rockets", "cost": 74, "cat": "malin", "special": null}, {"bib": 86, "name": "Killian Théot", "nat": "fr", "team": "Van Rysel-Roubaix", "cost": 74, "cat": "malin", "special": null}, {"bib": 107, "name": "Morne Van Niekerk", "nat": "za", "team": "St Michel-Preference Home-Auber 93", "cost": 74, "cat": "malin", "special": null}, {"bib": 116, "name": "Alexander Konijn", "nat": "nl", "team": "Nice Métropole Côte d'Azur", "cost": 74, "cat": "malin", "special": null}, {"bib": 34, "name": "Sebastian Kolze Changizi", "nat": "dk", "team": "Tudor Pro Cycling Team", "cost": 73, "cat": "malin", "special": null}, {"bib": 41, "name": "Kevin Geniets", "nat": "lu", "team": "Groupama-FDJ United", "cost": 73, "cat": "malin", "special": null}, {"bib": 101, "name": "Romain Cardis", "nat": "fr", "team": "St Michel-Preference Home-Auber 93", "cost": 73, "cat": "malin", "special": null}, {"bib": 115, "name": "Tom Mainguenaud", "nat": "fr", "team": "Nice Métropole Côte d'Azur", "cost": 72, "cat": "malin", "special": null}, {"bib": 85, "name": "Joes Oosterlinck", "nat": "be", "team": "Van Rysel-Roubaix", "cost": 71, "cat": "malin", "special": null}, {"bib": 87, "name": "Daniel Årnes", "nat": "no", "team": "Van Rysel-Roubaix", "cost": 71, "cat": "malin", "special": null}, {"bib": 111, "name": "Victor Papon", "nat": "fr", "team": "Nice Métropole Côte d'Azur", "cost": 70, "cat": "malin", "special": null}, {"bib": 96, "name": "Jed Smithson", "nat": "gb", "team": "Hagens Berman Jayco", "cost": 69, "cat": "angel", "special": null}, {"bib": 102, "name": "Axel Bouquet", "nat": "fr", "team": "St Michel-Preference Home-Auber 93", "cost": 69, "cat": "angel", "special": null}, {"bib": 131, "name": "Mavric Beaune", "nat": "fr", "team": "Veloce Club Rouen 76", "cost": 69, "cat": "angel", "special": null}, {"bib": 55, "name": "Kamil Malecki", "nat": "pl", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 68, "cat": "angel", "special": null}, {"bib": 134, "name": "Jean-Louis Le Ny", "nat": "fr", "team": "Veloce Club Rouen 76", "cost": 68, "cat": "angel", "special": null}, {"bib": 15, "name": "Jan Maas", "nat": "nl", "team": "Cofidis", "cost": 67, "cat": "angel", "special": null}, {"bib": 35, "name": "Fabian Lienhard", "nat": "ch", "team": "Tudor Pro Cycling Team", "cost": 67, "cat": "angel", "special": null}, {"bib": 37, "name": "Seppe Van Den Boer", "nat": "be", "team": "Tudor Pro Cycling Team", "cost": 67, "cat": "angel", "special": null}, {"bib": 52, "name": "Mathis Avondts", "nat": "be", "team": "Pinarello-Q36.5 Pro Cycling Team", "cost": 67, "cat": "angel", "special": null}, {"bib": 144, "name": "Matteo Melotte", "nat": "be", "team": "Color Code-Alu Center", "cost": 67, "cat": "angel", "special": null}, {"bib": 25, "name": "Sébastien Grignard", "nat": "be", "team": "Lotto-Intermarché", "cost": 66, "cat": "angel", "special": null}, {"bib": 66, "name": "Nicola Marcerou", "nat": "fr", "team": "Team TotalEnergies", "cost": 65, "cat": "angel", "special": null}, {"bib": 62, "name": "Alexys Brunel", "nat": "fr", "team": "Team TotalEnergies", "cost": 64, "cat": "angel", "special": null}, {"bib": 16, "name": "Nicolas Debeaumarché", "nat": "fr", "team": "Cofidis", "cost": 63, "cat": "angel", "special": null}, {"bib": 27, "name": "Victor Vaneeckhoutte", "nat": "be", "team": "Lotto-Intermarché", "cost": 63, "cat": "angel", "special": null}, {"bib": 121, "name": "Quentin Bezza", "nat": "fr", "team": "SCO Dijon-Team Material-velo.com", "cost": 62, "cat": "angel", "special": null}, {"bib": 112, "name": "Clément Davy", "nat": "fr", "team": "Nice Métropole Côte d'Azur", "cost": 61, "cat": "angel", "special": null}, {"bib": 22, "name": "Thibaut Bernard", "nat": "be", "team": "Lotto-Intermarché", "cost": 60, "cat": "angel", "special": null}, {"bib": 126, "name": "Gaspard Paulouin", "nat": "fr", "team": "SCO Dijon-Team Material-velo.com", "cost": 60, "cat": "angel", "special": null}, {"bib": 26, "name": "Tars Poelvoorde", "nat": "be", "team": "Lotto-Intermarché", "cost": 59, "cat": "angel", "special": null}, {"bib": 113, "name": "Baptiste Gillet", "nat": "fr", "team": "Nice Métropole Côte d'Azur", "cost": 59, "cat": "angel", "special": null}, {"bib": 117, "name": "Laurens Huys", "nat": "be", "team": "Nice Métropole Côte d'Azur", "cost": 59, "cat": "angel", "special": null}, {"bib": 122, "name": "Farley Barber", "nat": "gb", "team": "SCO Dijon-Team Material-velo.com", "cost": 59, "cat": "angel", "special": null}, {"bib": 125, "name": "Marius Macé", "nat": "fr", "team": "SCO Dijon-Team Material-velo.com", "cost": 59, "cat": "angel", "special": null}, {"bib": 36, "name": "Jackson Medway", "nat": "au", "team": "Tudor Pro Cycling Team", "cost": 58, "cat": "angel", "special": null}, {"bib": 104, "name": "Thomas Champion", "nat": "fr", "team": "St Michel-Preference Home-Auber 93", "cost": 57, "cat": "angel", "special": null}, {"bib": 137, "name": "Clément Petit", "nat": "fr", "team": "Veloce Club Rouen 76", "cost": 57, "cat": "angel", "special": null}, {"bib": 84, "name": "Léandre Huck", "nat": "fr", "team": "Van Rysel-Roubaix", "cost": 55, "cat": "angel", "special": null}, {"bib": 127, "name": "Paul Picard", "nat": "fr", "team": "SCO Dijon-Team Material-velo.com", "cost": 54, "cat": "angel", "special": null}, {"bib": 97, "name": "Jasper Verbrugge", "nat": "be", "team": "Hagens Berman Jayco", "cost": 52, "cat": "angel", "special": null}, {"bib": 136, "name": "Louka Lesueur", "nat": "fr", "team": "Veloce Club Rouen 76", "cost": 52, "cat": "angel", "special": null}, {"bib": 142, "name": "Lucas Jacques", "nat": "be", "team": "Color Code-Alu Center", "cost": 51, "cat": "angel", "special": null}, {"bib": 3, "name": "Alexis Bouteloup", "nat": "fr", "team": "Decathlon CMA CGM Team", "cost": 50, "cat": "angel", "special": "st"}, {"bib": 103, "name": "Antoine Berger", "nat": "fr", "team": "St Michel-Preference Home-Auber 93", "cost": 48, "cat": "angel", "special": null}, {"bib": 123, "name": "Gabin Cler", "nat": "fr", "team": "SCO Dijon-Team Material-velo.com", "cost": 48, "cat": "angel", "special": null}, {"bib": 43, "name": "Titouan Fontaine", "nat": "fr", "team": "Groupama-FDJ United", "cost": 47, "cat": "angel", "special": null}, {"bib": 91, "name": "Riccardo Colombo", "nat": "it", "team": "Hagens Berman Jayco", "cost": 47, "cat": "angel", "special": null}, {"bib": 95, "name": "Giacomo Serangeli", "nat": "it", "team": "Hagens Berman Jayco", "cost": 46, "cat": "angel", "special": null}, {"bib": 47, "name": "Karl Sagnier", "nat": "fr", "team": "Groupama-FDJ United", "cost": 45, "cat": "angel", "special": null}, {"bib": 94, "name": "Mattia Sambinello", "nat": "it", "team": "Hagens Berman Jayco", "cost": 45, "cat": "angel", "special": null}, {"bib": 114, "name": "Jahkim Carty", "nat": "fr", "team": "Nice Métropole Côte d'Azur", "cost": 42, "cat": "angel", "special": null}, {"bib": 132, "name": "Justin Coron", "nat": "fr", "team": "Veloce Club Rouen 76", "cost": 41, "cat": "angel", "special": null}, {"bib": 133, "name": "Raphaël Hector", "nat": "fr", "team": "Veloce Club Rouen 76", "cost": 39, "cat": "angel", "special": null}, {"bib": 93, "name": "Carl Emil Just Pedersen", "nat": "dk", "team": "Hagens Berman Jayco", "cost": 36, "cat": "angel", "special": null}, {"bib": 141, "name": "Leo Schyns", "nat": "be", "team": "Color Code-Alu Center", "cost": 33, "cat": "angel", "special": null}, {"bib": 92, "name": "Vinnie Manion", "nat": "au", "team": "Hagens Berman Jayco", "cost": 29, "cat": "angel", "special": null}, {"bib": 124, "name": "Eliott Levon", "nat": "fr", "team": "SCO Dijon-Team Material-velo.com", "cost": 27, "cat": "angel", "special": null}, {"bib": 143, "name": "Louis Marx", "nat": "be", "team": "Color Code-Alu Center", "cost": 27, "cat": "angel", "special": null}, {"bib": 135, "name": "Enzo Lesueur", "nat": "fr", "team": "Veloce Club Rouen 76", "cost": 26, "cat": "angel", "special": null}, {"bib": 145, "name": "Gaspard Kets", "nat": "be", "team": "Color Code-Alu Center", "cost": 20, "cat": "angel", "special": null}], "teamOrder": ["Decathlon CMA CGM Team", "Cofidis", "Team TotalEnergies", "Unibet Rose Rockets", "Tudor Pro Cycling Team", "Groupama-FDJ United", "Lotto-Intermarché", "Pinarello-Q36.5 Pro Cycling Team", "Van Rysel-Roubaix", "St Michel-Preference Home-Auber 93", "Nice Métropole Côte d'Azur", "Hagens Berman Jayco", "Veloce Club Rouen 76", "Color Code-Alu Center", "SCO Dijon-Team Material-velo.com"], "superTeam": "Decathlon CMA CGM Team", "raceName": "GP d'Isbergues 2026", "closeAt": "2026-09-20T11:50:00+02:00"};
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+  const firebaseConfig = {
+    apiKey: "AIzaSyBGSI8w5yY8sRDhLdszp-XCKOhskkdb6g8",
+    authDomain: "route666-196ae.firebaseapp.com",
+    projectId: "route666-196ae",
+    storageBucket: "route666-196ae.firebasestorage.app",
+    messagingSenderId: "495971545546",
+    appId: "1:495971545546:web:fc126bd1fbd70f97525f33"
+  };
+  let db = null;
+  try{
+    if(typeof firebase !== "undefined"){
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+    }
+  }catch(e){ db = null; }
+
+  // Une collection Firestore distincte par course (dérivée du nom de la course),
+  // créée automatiquement au premier écrit — aucune action manuelle nécessaire
+  // dans la console Firebase, et aucun risque de collision entre deux courses
+  // qui auraient un joueur au même pseudo.
+  const RACE_SLUG = (DATA.raceName || "default")
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+  const SHARED_COLLECTION = "route666_" + RACE_SLUG;
+  const PERSONAL_PREFIX = "route666_personal_" + RACE_SLUG + "_";
+
+  // Pont : remplace le window.storage utilisé par le reste du jeu par de vrais
+  // appels Firestore (partagé) / localStorage (personnel), avec le même contrat
+  // (get/set/list, même forme de retour) — aucune autre partie du code ne change.
+  window.storage = {
+    async get(key, shared){
+      if(shared){
+        try{
+          const snap = await db.collection(SHARED_COLLECTION).doc(key).get();
+          if(!snap.exists) return null;
+          return { key, value: snap.data().value, shared: true };
+        }catch(e){ return null; }
+      }
+      try{
+        const v = localStorage.getItem(PERSONAL_PREFIX+key);
+        if(v === null) return null;
+        return { key, value: v, shared: false };
+      }catch(e){ return null; }
+    },
+    async set(key, value, shared){
+      if(shared){
+        try{
+          await db.collection(SHARED_COLLECTION).doc(key).set({ value, updatedAt: Date.now() });
+          return { key, value, shared: true };
+        }catch(e){ return null; }
+      }
+      try{
+        localStorage.setItem(PERSONAL_PREFIX+key, value);
+        return { key, value, shared: false };
+      }catch(e){ return null; }
+    },
+    async list(prefix, shared){
+      if(shared){
+        try{
+          const snap = await db.collection(SHARED_COLLECTION).get();
+          const keys = [];
+          snap.forEach(d=>{ if(!prefix || d.id.startsWith(prefix)) keys.push(d.id); });
+          return { keys, prefix, shared: true };
+        }catch(e){ return { keys: [], prefix, shared: true }; }
+      }
+      try{
+        const keys = [];
+        for(let i=0;i<localStorage.length;i++){
+          const k = localStorage.key(i);
+          if(k && k.indexOf(PERSONAL_PREFIX) === 0){
+            const short = k.slice(PERSONAL_PREFIX.length);
+            if(!prefix || short.startsWith(prefix)) keys.push(short);
+          }
+        }
+        return { keys, prefix, shared: false };
+      }catch(e){ return { keys: [], prefix, shared: false }; }
+    }
+  };
+
+  // Canal global (une seule collection Firestore partagée par TOUTES les courses de
+  // la saison, indépendamment de RACE_SLUG) — utilisé uniquement pour les comptes
+  // pseudo/mot de passe, afin qu'un même pseudo désigne bien la même personne d'une
+  // course à l'autre (nécessaire pour un classement général cohérent).
+  const GLOBAL_ACCOUNTS_COLLECTION = "route666_accounts";
+  window.storageGlobal = {
+    async get(key){
+      try{
+        const snap = await db.collection(GLOBAL_ACCOUNTS_COLLECTION).doc(key).get();
+        if(!snap.exists) return null;
+        return { key, value: snap.data().value };
+      }catch(e){ return null; }
+    },
+    async set(key, value){
+      try{
+        await db.collection(GLOBAL_ACCOUNTS_COLLECTION).doc(key).set({ value, updatedAt: Date.now() });
+        return { key, value };
+      }catch(e){ return null; }
+    },
+    async delete(key){
+      try{
+        await db.collection(GLOBAL_ACCOUNTS_COLLECTION).doc(key).delete();
+        return true;
+      }catch(e){ return false; }
+    }
+  };
+})();
+</script>
+<script>
+const RIDERS = DATA.riders;
+const CLOSE_AT = DATA.closeAt ? new Date(DATA.closeAt) : null;
+
+const URGENT_TAUNTS = [
+  "Grouille-toi, le diable n'attend pas les lambins.",
+  "Tic-tac. Chaque seconde perdue, c'est un regret en plus.",
+  "Dépêche-toi, ou tu goûteras à l'enfer des indécis.",
+  "Le sablier tourne. Moi, j'ai tout mon temps. Toi, non.",
+  "Ceux qui traînent finissent toujours derniers. Bouge.",
+  "J'aime le suspense, mais là tu exagères un peu, non ?",
+  "Encore là ? Envoie tes picks avant que je me fâche.",
+  "Le portail se referme bientôt. Dépose ton âme — et ton équipe — à temps."
+];
+const CLOSE_TAUNTS = [
+  "Trop tard, mon ami. L'enfer ne connaît pas la seconde chance.",
+  "Fallait y penser avant. Profite du spectacle depuis les tribunes.",
+  "Le portail est fermé. Reviens la prochaine fois, si tu l'oses.",
+  "J'avais dit que le temps tournait. Tu ne m'as pas cru.",
+  "Les indécis n'ont pas leur place ici. Prochaine fois, peut-être."
+];
+// Un seul message par chargement de page (pas d'alternance) — il peut changer
+// si on recharge la page (F5), puisqu'il est retiré à ce moment-là.
+const CLOSED_TAUNT_MSG = pickRandom(CLOSE_TAUNTS);
+
+function formatCloseDate(d){
+  try{
+    return d.toLocaleString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  }catch(e){ return d.toString(); }
+}
+function isClosed(){ return !!(CLOSE_AT && new Date() >= CLOSE_AT); }
+
+function updateCloseBanner(){
+  const el = document.getElementById("closeBanner");
+  if(!el) return;
+  if(!CLOSE_AT){ el.style.display = "none"; return; }
+  el.style.display = "block";
+  const now = new Date();
+  const diff = CLOSE_AT - now;
+  if(diff <= 0){
+    el.className = "close-banner closed";
+    el.innerHTML = `🔒 <b>C'est trop tard.</b> Les picks sont clos depuis le ${formatCloseDate(CLOSE_AT)}. ${CLOSED_TAUNT_MSG}`;
+    return;
+  }
+  const totalSeconds = Math.floor(diff/1000);
+  const days = Math.floor(totalSeconds/86400);
+  const hours = Math.floor((totalSeconds%86400)/3600);
+  const minutes = Math.floor((totalSeconds%3600)/60);
+  const seconds = totalSeconds%60;
+  const urgent = diff <= 3600*1000;
+  let timeStr;
+  if(days>0) timeStr = `${days}j ${hours}h ${minutes}m`;
+  else if(hours>0) timeStr = `${hours}h ${minutes}m ${seconds}s`;
+  else timeStr = `${minutes}m ${seconds}s`;
+  if(urgent){
+    el.className = "close-banner urgent";
+    const tauntIdx = Math.floor(now.getTime()/12000) % URGENT_TAUNTS.length;
+    el.innerHTML = `😈 <b>Plus que ${timeStr}</b> avant la clôture des picks ! ${URGENT_TAUNTS[tauntIdx]}`;
+  } else {
+    el.className = "close-banner";
+    el.innerHTML = `⏳ Clôture des picks : <b>${formatCloseDate(CLOSE_AT)}</b> — encore ${timeStr}`;
+  }
+}
+const BY_BIB = {};
+RIDERS.forEach(r => BY_BIB[r.bib] = r);
+
+const CAT_META = {
+  tentation: {label:"Picks Tentation 🔥", range:"90 ou +", max:1},
+  diablo:    {label:"Picks Diablo 😈",    range:"80 – 89",  max:5},
+  malin:     {label:"Picks Malin 😏",     range:"70 – 79",  max:5},
+  angel:     {label:"Picks Angel 😇",     range:"0 – 69",   max:5},
+};
+const CAT_ORDER = ["tentation","diablo","malin","angel"];
+const CAT_EMOJI = {tentation:"🔥", diablo:"😈", malin:"😏", angel:"😇"};
+const BAREME = [200,175,150,125,100,90,80,70,60,50,45,40,35,30,25,20,18,16,14,12,10,9,8,7,6,5,4,3,2,1];
+
+const TUTO_CONTENT = {
+  tentation: {
+    title: "🔥 Tu cèdes à la Tentation",
+    bullets: [
+      "C'est l'un des coureurs les plus chers de tout le peloton — il va dévorer une bonne partie de tes 666 points d'un coup.",
+      "Tu n'as droit qu'à UN SEUL Pick Tentation. Une fois posé, impossible d'en reprendre un autre : tout repose sur lui.",
+      "S'il déçoit le jour de la course, aucun rattrapage possible sur ce poste.",
+      "Le vrai piège est ailleurs : n'en prendre AUCUN te rapporte +20% sur ton score final. Résister à la tentation paie parfois plus que d'y céder."
+    ]
+  },
+  diablo: {
+    title: "😈 Un Pick Diablo entre dans la danse",
+    bullets: [
+      "Cher, mais pas autant qu'un Tentation — jusqu'à 5 dans ton équipe, un vrai levier de performance.",
+      "Chaque Diablo grignote ton budget — vérifie qu'il t'en reste assez pour tes Angels et ton Leader."
+    ]
+  },
+  malin: {
+    title: "😏 Un Pick Malin rejoint l'équipe",
+    bullets: [
+      "Ni cher ni négligeable — jusqu'à 5 dans ton équipe, ce sont eux qui tiennent la baraque sans faire de bruit.",
+      "Aucun bonus, aucun malus attaché : leur rôle, c'est de bien courir pour pas cher et de te laisser du budget ailleurs.",
+      "Une équipe pleine de Malins qui marquent est souvent plus solide qu'un seul coup d'éclat raté."
+    ]
+  },
+  angel: {
+    title: "😇 Un Pick Angel descend parmi les tiens",
+    bullets: [
+      "Le moins cher de tous — jusqu'à 5 possibles. Ce qui compte, ce n'est PAS combien tu en choisis, mais combien finissent dans le top 30 : 1=+50%, 2=+75%, 3=+100%, 4=+150%, 5=+200%. Si l'un d'eux termine dans le top 10, +50% de plus.",
+      "Ce bonus se cumule avec le +20% \"Résiste à la Tentation\" : c'est la vraie voie pour construire un gros score sans miser gros.",
+      "Le piège n'existe plus : si aucun de tes Angels ne finit dans le top 30, tu obtiens simplement +0% de bonus Angel — tes autres bonus (Résiste à la Tentation, budget coquin) restent intacts. Choisis-les pour leurs chances réelles, ça reste le meilleur moyen de gonfler ton score."
+    ]
+  },
+};
+
+function getTutoContent(key){
+  if(key === "superteam"){
+    return {
+      title: "👿 Tu piques un coureur de la 666 Team",
+      bullets: [
+        `Aucun souci pour l'instant — un seul coureur de <b>${DATA.superTeam}</b> ne déclenche rien.`,
+        `Mais à partir de 2 coureurs de la 666 Team dans ton équipe, tu perds -10% sur TOUT ton score.`,
+        `Choisis-les avec parcimonie.`
+      ]
+    };
+  }
+  return TUTO_CONTENT[key];
+}
+
+let skipTutorials = false;
+let seenTutorials = {};
+let pendingBib = null;
+let pendingQueue = [];
+
+const BUDGET_MAX = 666;
+const SLOTS_MAX = 8;
+
+const WELCOME_VARIANTS = [
+  `Bienvenue sur la Route 666. Le chemin qui peut te mener à la victoire sur ${DATA.raceName} est semé d'embûches. Seuls les bons choix te permettront de créer l'équipe des enfers.`,
+  `Ah, un nouveau venu... ${DATA.raceName} t'attend, et moi aussi. Choisis bien : l'équipe des enfers ne se construit pas par hasard.`,
+  `666 points. ${SLOTS_MAX} âmes à choisir. ${DATA.raceName} ne pardonnera pas les choix faciles. Montre-moi ce que tu as dans le ventre.`,
+  `Ils sont tous là, prêts à courir ${DATA.raceName}. À toi de repérer ceux qui te feront gagner — et ceux qui te perdront.`,
+  `La Route 666 commence ici. ${DATA.raceName} sera ton juge. Moi, je ne fais que regarder... et sourire.`,
+  `Chaque pick est un pacte. Sur ${DATA.raceName}, certains te rapporteront gros, d'autres te coûteront tout. À toi de choisir tes complices.`,
+  `Bienvenue, mortel. ${DATA.raceName} approche, et ton équipe des enfers n'existe pas encore. Il est temps d'y remédier.`,
+  `666 points à dépenser, une seule course à gagner : ${DATA.raceName}. Ne gâche rien. Je surveille chaque choix.`,
+  `Tu crois pouvoir composer l'équipe parfaite pour ${DATA.raceName} ? Prouve-le. L'enfer aime les audacieux... et dévore les imprudents.`,
+  `La route vers ${DATA.raceName} passe par ici. Choisis tes coureurs, résiste ou cède à la tentation — dans tous les cas, je gagne toujours un peu.`,
+  `Assieds-toi. Respire. ${DATA.raceName} ne se gagne pas en un clic, mais en huit bons choix. Je t'observe depuis le début, tu sais.`,
+  `666 points, ${SLOTS_MAX} âmes, une seule route. Celle de ${DATA.raceName}. Ne me déçois pas, j'ai fait le déplacement pour toi.`,
+  `On m'a dit que tu voulais gagner sur ${DATA.raceName}. Intéressant. Voyons si tu as vraiment ce qu'il faut, ou si tu es juste un touriste.`,
+  `Ferme les yeux. Imagine ton équipe parfaite pour ${DATA.raceName}. Maintenant ouvre-les et prouve que tu n'as pas menti.`,
+  `Ici, ce ne sont pas des points qu'on distribue. Ce sont des âmes. Choisis les tiennes pour ${DATA.raceName}, et choisis bien.`,
+  `${DATA.raceName} va faire des dégâts. Ton équipe des enfers doit être prête à encaisser. Je t'aide un peu... ou pas.`,
+  `Tu sens cette odeur de soufre ? C'est juste moi, impatient de voir ton équipe pour ${DATA.raceName}.`,
+  `Il paraît que tu es doué. On va vite le savoir. ${DATA.raceName} ne ment jamais sur les vrais talents.`,
+  `Bienvenue dans mon antre. ${DATA.raceName} approche, et je n'ai encore vu aucune équipe digne de ce nom. Change ça.`,
+  `666 points à dilapider ou à faire fructifier — à toi de voir. ${DATA.raceName} jugera ton sens des priorités.`,
+  `J'ai déjà vu mille équipes se former pour des courses comme ${DATA.raceName}. La plupart m'ont fait rire. Fais mieux.`,
+  `Une route, huit coureurs, un pacte avec moi. ${DATA.raceName} n'attend que ça pour commencer.`,
+  `Tu veux gagner ? Moi aussi, à ma façon. Composons ensemble ton équipe pour ${DATA.raceName} — enfin, composons, façon de parler.`,
+  `Les meilleurs choix pour ${DATA.raceName} ne sont jamais les plus évidents. Retiens bien ça, ça pourrait te servir. Ou pas.`,
+  `${SLOTS_MAX} coureurs, 666 points, zéro seconde chance. ${DATA.raceName} ne rembourse pas les regrets.`,
+  `Chaque équipe des enfers a un architecte. Aujourd'hui, c'est toi. ${DATA.raceName} sera ton chef-d'œuvre — ou ta ruine.`,
+  `On raconte que ${DATA.raceName} a déjà brisé des rêves de fantasy plus solides que le tien. On va voir ce que tu vaux.`,
+  `Tu veux jouer avec moi ? Très bien. ${DATA.raceName} sera notre terrain de jeu. Amuse-toi, je m'amuse déjà.`,
+  `Je ne choisis jamais à ta place. Je me contente de... suggérer. Fortement. Pour ${DATA.raceName}, tu vas vite comprendre.`,
+  `${DATA.raceName} arrive à grands pas. Ton équipe des enfers, elle, n'existe encore que dans ta tête. Corrige ça.`,
+  `Ici on ne prie pas les anges avant la course. On les recrute. Bienvenue sur la Route 666, direction ${DATA.raceName}.`,
+  `Un dernier conseil avant de commencer : ne me fais pas confiance. Mais écoute-moi quand même. Pour ${DATA.raceName}, ça peut payer.`,
+  `Certains viennent ici pour le fun. D'autres pour gagner sur ${DATA.raceName}. Toi, tu es plutôt du genre à vouloir les deux, non ?`,
+  `${DATA.raceName} approche et je sens déjà l'odeur des bons et des mauvais choix. Fais en sorte que la tienne soit la bonne.`,
+  `Bienvenue, future légende ou future blague. ${DATA.raceName} tranchera. Moi, je me contente de regarder le spectacle.`,
+  `Tu crois que le hasard fait bien les choses ? Sur ${DATA.raceName}, c'est ton équipe qui décide. Alors, décide bien.`,
+  `On dit que l'enfer est pavé de bonnes intentions. Ton équipe pour ${DATA.raceName}, elle, ferait mieux d'être pavée de bons choix.`,
+  `Range ton âme, sors tes stats. ${DATA.raceName} ne se joue pas au sentiment. Enfin... un peu quand même. J'aime bien ça.`,
+  `${DATA.raceName} sera long. Ton équipe des enfers doit tenir la distance. Construis-la comme si ta vie en dépendait. Un peu comme la mienne, en fait.`,
+];
+
+const STANDING_RIDERS = RIDERS.filter(r=>r.cost >= 70);
+
+const NUDGE_VARIANTS = [
+  `Tu l'aimes bien {NAME}, je le sais... Donc prends-le... Sinon il va t'en vouloir...`,
+  `Tu as envie de cliquer sur {NAME}, alors clique. T'as quoi à perdre ?`,
+  `Psst... {NAME}. {COST} points. C'est presque un cadeau. Un cadeau empoisonné, peut-être, mais un cadeau quand même.`,
+  `{NAME} te regarde. Il attend. Il commence à s'impatienter...`,
+  `On a les mêmes goûts, toi et moi... {NAME}, pour {COST} points, c'est too good to refuse.`,
+  `Tu hésites encore ? {NAME} ne coûte que {COST} points. Fais-moi confiance, je ne mens jamais. Enfin, presque.`,
+  `Chhh... {NAME} t'attend. Une occasion pareille ne se représentera pas deux fois...`,
+  `Vas-y, ose. {NAME}. Personne ne te jugera. Sauf moi, un peu.`,
+  `{NAME}, {COST} points seulement... tu ne trouveras pas mieux. Ou alors je mens. Un peu.`,
+  `Le temps passe, et {NAME} est toujours là, à {COST} points. Une occasion pareille ne se représentera pas deux fois...`,
+  `C'est moi, {NAME}, j'ai pris le contrôle de cette page pour te dire que je ne finirai pas la course. C'est une info exclusive que je te donne. À toi seul........`,
+  `{NAME} !!!!!!!!!!!!! L'homme qui va changer ton équipe et la rendre imbattable. CLIQUE SUR SON NOM VAS-Y`,
+  `Il s'appelle {NAME}, et il ne va pas sentir les pédales... Il est dans la forme de sa vie. Car j'ai pénétré son âme.`,
+  `C'est moi, {NAME}, qui t'écrit. Si tu ne me choisis pas.... Tu vas faire une grave erreur. Je sais où tu habites. Tes murs ne sont pas très épais... Ils sont confortables... Accueillants..`,
+  `Écoute-moi bien. {NAME}. {COST} points. Si tu ne le prends pas, je reviendrai te le rappeler. Encore. Et encore.`,
+  `J'ai vu l'avenir. Dans toutes les versions où tu gagnes, {NAME} est dans ton équipe. Tire tes propres conclusions.`,
+  `Entre nous : {NAME} n'a jamais été aussi peu cher. {COST} points. Une erreur de prix, presque. Profite avant qu'on corrige.`,
+  `Tic, tac. {NAME} attend toujours. Tic, tac. Combien de temps comptes-tu le faire poireauter encore ?`,
+  `Signé : moi. Objet : {NAME}. Contenu : prends-le. C'est tout. C'est court parce que c'est important.`,
+  `Tu veux un signe ? En voilà un : {NAME}, {COST} points. Si ce n'est pas un signe, je ne sais plus ce qu'est un signe.`,
+  `{NAME} m'a supplié de te convaincre. Il a des enfants virtuels à nourrir. Ne sois pas celui qui l'ignore.`,
+  `Petite confidence entre nous : je n'ai jamais aimé un coureur autant que {NAME} cette semaine. Prends-en de la graine.`,
+];
+
+const MOCK_VARIANTS = [
+  `Tu as choisi {NAME} ? Tu as perdu la tête... Tu sais très bien qu'il ne va pas être fiable.`,
+  `{NAME} dans ton équipe... risqué. Très risqué. Mais bon, c'est ton enterrement.`,
+  `Ah, {NAME}. Intéressant choix. J'espère pour toi qu'il n'a pas mal aux jambes ce jour-là.`,
+  `{NAME}, vraiment ? Je pensais que tu avais plus de flair que ça.`,
+  `Tu as misé sur {NAME}. Courageux. Ou inconscient. On verra bien.`,
+  `{NAME} dans l'équipe des enfers... Il va falloir qu'il assure. Sinon, tu sais ce qui t'attend.`,
+  `{NAME}... sérieusement ? J'ai vu passer de meilleurs choix dans mon sommeil. Et je ne dors jamais.`,
+  `Tu sais que {NAME} m'a personnellement déçu la dernière fois ? Enfin. Si tu veux tenter le diable...`,
+  `Intéressant pari sur {NAME}. J'espère que tu as un plan B. Et un plan C. Et peut-être un plan D.`,
+  `{NAME} dans ton équipe. Bold move. Je retiens ton audace. Et ton nom, pour plus tard.`,
+  `Je ne dis rien sur {NAME}. Je souris juste. C'est pire, je sais.`,
+  `{NAME}. Hm. On va dire que c'est un choix "de cœur" plutôt que "de raison". Je respecte. Un peu.`,
+];
+
+const SIXTYSIX_VARIANTS = [
+  `{NAME}... 66 points. Tu vois le clin d'œil ? Le diable ne fait jamais rien au hasard.`,
+  `66. Le nombre qui précède le mien. {NAME} est à un souffle de la perfection infernale.`,
+  `Regarde bien : {NAME} coûte 66 points. Coïncidence ? Je ne crois pas au hasard, moi.`,
+  `66 points. Il ne manque qu'un zéro pour que ce soit mon numéro personnel. Prends {NAME}, c'est un signe.`,
+  `Tu ne trouveras jamais plus proche de 666 que {NAME}, à 66 points pile. Ignore ça à tes risques et périls.`,
+];
+
+const CULT_VARIANTS = [
+  `J'ai très envie que tu me choisisses. Je suis un coureur très sage et très gentil. Je m'appelle {NAME}. Viens me faire un bisou ?`,
+  `{NAME} coûte {COST} points. C'est un bug. Profite de la situation.`,
+  `Si tu choisis {NAME}, je viendrai te récompenser, tous les jours, tous les soirs, toutes les nuits jusqu'à ta mort prochaine.`,
+  `AHAHAHAHAAAHAHAHAHAAH {NAME} AHAHAHAAHAHAHA`,
+  `À 22 heures, une messe noire sera organisée et tu devras venir avec {NAME}. Ne nous fais pas faux bond. Surtout pas.`,
+  `Cette eau que boit {NAME}, elle est BENITE. BENIIIIIIITE.`,
+  `Consécratiooooooooooon. {NAME} mérite la consécratioooooooooooooon`,
+  `Non non non non non non je ne suis pas fou, laissez moi !!!! Laissez moi choisir {NAME}. AU SECOURS`,
+  `1307, Ordre du Temple, un blasphème fut prononcé. Accusation proférée : l'homme n'avait pas choisi {NAME}.`,
+  `J'ai confié LE secret à {NAME}. Je peux aussi te le confier.`,
+  `du PAIN, du VIN et {NAME}`,
+  `Mi sangas pro la vundoj de inferaj trancxoj! La Diablo estas vivanta ene de mia korpo! {NAME}, mi glutos vian animon!`,
+  `ECOUTE. ECOUTE-MOI BIEN. {NAME}. C'est tout. C'est le message. Fin de la transmission.`,
+  `Je ne suis pas censé te dire ça mais... {NAME} a signé un pacte. Avec moi. Hier soir. Prends-le, il te le revaudra.`,
+  `{NAME} n'est pas un coureur. {NAME} est une prophétie. Accomplis-la.`,
+  `798 générations de diables t'observent en ce moment précis. Elles attendent que tu choisisses {NAME}.`,
+  `STOP. ARRÊTE TOUT. {NAME} est disponible. Pourquoi tu fais encore défiler la page ?`,
+  `Je t'ai vu hésiter. Je vois tout. {NAME}. Maintenant. Pas dans 10 secondes. MAINTENANT.`,
+  `Il y a un cercle, tracé à la craie, sous ton bureau. Au centre : le nom {NAME}. Ce n'était pas un hasard.`,
+  `{NAME}. Répète ce nom trois fois devant ton écran. Il se peut qu'il apparaisse dans ton équipe.`,
+  `Renonce à tout le reste. {NAME} suffira. {NAME} suffit toujours.`,
+  `Les cloches ont sonné treize fois cette nuit. Un signe. Le nom qu'elles épelaient : {NAME}.`,
+  `JE. NE. PLAISANTE. PAS. {NAME}. TOUT DE SUITE.`,
+  `{NAME} m'a promis de finir la course pieds nus s'il le fallait. Un tel dévouement mérite une place dans ton équipe.`,
+  `Trois anges sont tombés du ciel en apprenant que tu hésitais encore pour {NAME}. Trois. Trois anges de moins à cause de toi.`,
+  `Sacrifie un Pick Angel si il le faut, mais prends {NAME}. Certaines dettes se paient plus tard.`,
+  `{NAME} a vendu son âme pour gagner cette course. Littéralement. À moi. C'est une histoire vraie. Enfin, presque.`,
+  `psssssssssssssst. viens voir. {NAME}. c'est un secret entre toi et moi. dis-le à personne.`,
+  `Le grimoire dit : "Celui qui ignore {NAME} connaîtra le malheur des Picks manqués." Je n'invente rien, c'est écrit noir sur rouge.`,
+  `TU M'ENTENDS ? {NAME}. IL FAUT LE PRENDRE. LES VOIX DANS LES MURS SONT D'ACCORD AVEC MOI.`,
+  `Je collectionne les âmes des indécis. Ne fais pas partie de ma collection. Prends {NAME} et libère-toi.`,
+  `{NAME} a une aura particulière aujourd'hui. Je la sens depuis les enfers. C'est du lourd.`,
+  `Chaque seconde sans {NAME} dans ton équipe, une bougie s'éteint quelque part. Pense aux bougies.`,
+  `Ce n'est pas moi qui parle là. C'est {NAME}, à travers moi. Il te supplie. Écoute-le.`,
+  `666 secondes. C'est le temps qu'il te reste pour choisir {NAME} avant que je me fâche. Vraiment fâché.`,
+  `Un pigeon vient de se poser sur mon écran et il regarde fixement {NAME}. Les signes, ça ne s'ignore pas.`,
+  `{NAME}, {COST} points. Soit c'est une erreur de prix, soit c'est un piège. Dans le doute, fonce.`,
+  `{COST} points pour {NAME} ? Quelqu'un a dû se tromper dans le calcul. Ne réfléchis pas, achète avant correction.`,
+];
+
+const RIVAL_VARIANTS = [
+  `Ne me choisis pas. Ne me choisis pas. Ne me choisis pas. Choisis mon rival, {RIVAL}.`,
+  `Ne me choisis pas, choisis {RIVAL} à la place. Il te mentira moins que moi.`,
+  `Entre {NAME} et {RIVAL}, mon cœur penche pour... peu importe, c'est ton choix. Enfin, normalement.`,
+];
+
+function pickRandom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+const HACK_TAGS = ["SIGNAL INTERCEPTÉ", "CONNEXION ÉTABLIE...", "INTRUSION DÉTECTÉE", "///ACCÈS NON AUTORISÉ///", "IL EST DANS LA MACHINE", ">>> MESSAGE ENTRANT", "QUELQU'UN A PRIS LE CONTRÔLE"];
+
+let idleTimer = null;
+function resetIdleTimer(){
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(maybeShowHesitationBubble, 58000 + Math.random()*5000);
+}
+function maybeShowHesitationBubble(){
+  if(finalized){ resetIdleTimer(); return; }
+  const notSelected = STANDING_RIDERS.filter(r=>!selected.includes(r.bib));
+  const isSelected = STANDING_RIDERS.filter(r=>selected.includes(r.bib));
+  const canNudge = notSelected.length > 0 && selected.length < SLOTS_MAX;
+  const canMock = isSelected.length > 0;
+  if(!canNudge && !canMock){ resetIdleTimer(); return; }
+  const useNudge = canNudge && (!canMock || Math.random() < 0.6);
+  let rider, rival, template;
+  if(useNudge){
+    const sixtySixPool = notSelected.filter(r=>r.cost === 66);
+    const roll = Math.random();
+    if(sixtySixPool.length > 0 && roll < 0.15){
+      rider = pickRandom(sixtySixPool);
+      template = pickRandom(SIXTYSIX_VARIANTS);
+    } else if(notSelected.length >= 2 && roll < 0.32){
+      rider = pickRandom(notSelected);
+      rival = pickRandom(notSelected.filter(r=>r.bib !== rider.bib));
+      template = pickRandom(RIVAL_VARIANTS);
+    } else if(roll < 0.70){
+      rider = pickRandom(notSelected);
+      template = pickRandom(CULT_VARIANTS);
+    } else {
+      rider = pickRandom(notSelected);
+      template = pickRandom(NUDGE_VARIANTS);
+    }
+  } else {
+    rider = pickRandom(isSelected);
+    template = pickRandom(MOCK_VARIANTS);
+  }
+  const text = template.replace(/{NAME}/g, rider.name).replace(/{COST}/g, rider.cost).replace(/{RIVAL}/g, rival ? rival.name : "");
+  const el = document.getElementById("hesitationBubble");
+  document.getElementById("hbTag").textContent = pickRandom(HACK_TAGS);
+  el.querySelector(".hb-text").textContent = text;
+  el.classList.remove("show");
+  void el.offsetWidth;
+  el.classList.add("show");
+  resetIdleTimer();
+}
+function dismissHesitation(){ document.getElementById("hesitationBubble").classList.remove("show"); }
+
+function showAngelDevil(e){
+  const tip = document.getElementById("angelTooltip");
+  tip.style.left = (e.clientX + 12) + "px";
+  tip.style.top = (e.clientY + 12) + "px";
+  tip.classList.add("show");
+}
+function hideAngelDevil(){ document.getElementById("angelTooltip").classList.remove("show"); }
+
+function closeWelcome(startTuto){
+  document.getElementById("welcomeOverlay").classList.remove("show");
+  if(startTuto === false){
+    skipAllTutorials();
+    return;
+  }
+  if(!skipTutorials) startTour();
+}
+
+const TOUR_STEPS = [
+  {
+    anchor: null,
+    title: "💰 Les règles de base",
+    body: `Tu as <b>${BUDGET_MAX} points</b> à dépenser pour composer une équipe de <b>${SLOTS_MAX} coureurs</b>. Maximum par catégorie : <b>1 Pick Tentation</b>, <b>5 Diablo</b>, <b>5 Malin</b>, <b>5 Angel</b>.`
+  },
+  {
+    anchor: "#board",
+    title: "🎨 Les 4 familles de picks",
+    body: `<span style="color:var(--tentation);">🔥 Tentation</span> (90 ou +) · <span style="color:var(--diablo);">😈 Diablo</span> (80–89) · <span style="color:var(--malin);">😏 Malin</span> (70–79) · 😇 Angel (0–69). Chaque famille a sa couleur dans la startlist juste en dessous.`
+  },
+  {
+    anchor: ".modifiers",
+    title: "⚖️ Bonus & malus",
+    body: `Résister à la Tentation, miser sur les Angels, éviter la 666 Team... chaque choix influence un modificateur qui vient gonfler ou plomber ton score final.`
+  },
+  {
+    anchor: null,
+    title: "👉 À toi de jouer",
+    body: `Clique un premier coureur dans la startlist pour commencer. Une fois tes ${SLOTS_MAX} coureurs choisis, reviens ici en haut pour découvrir tes bonus/malus et désigner ton Leader.`
+  },
+];
+let tourIndex = 0;
+function startTour(){
+  tourIndex = 0;
+  showTourStep();
+}
+function showTourStep(){
+  const step = TOUR_STEPS[tourIndex];
+  const isLast = tourIndex === TOUR_STEPS.length-1;
+  document.getElementById("tourStepLabel").textContent = `Étape ${tourIndex+1} / ${TOUR_STEPS.length}`;
+  document.getElementById("tourTitle").textContent = step.title;
+  document.getElementById("tourBody").innerHTML = step.body;
+  document.getElementById("tourActions").innerHTML = isLast
+    ? `<button class="btn" onclick="openRules()" style="margin-right:8px;">📖 Voir le résumé complet des règles</button><button class="btn final" id="tourNextBtn" onclick="tourNext()">C'est parti</button>`
+    : `<button class="btn final" id="tourNextBtn" onclick="tourNext()">Suivant</button>`;
+  document.getElementById("tourOverlay").classList.add("show");
+  if(step.anchor){
+    const target = document.querySelector(step.anchor);
+    if(target) setTimeout(()=>target.scrollIntoView({behavior:"smooth", block:"center"}), 50);
+  } else {
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+}
+function tourNext(){
+  tourIndex++;
+  if(tourIndex >= TOUR_STEPS.length){
+    document.getElementById("tourOverlay").classList.remove("show");
+    return;
+  }
+  showTourStep();
+}
+function openRules(){ document.getElementById("rulesOverlay").classList.add("show"); }
+function closeRules(){ document.getElementById("rulesOverlay").classList.remove("show"); }
+function openStrategy(){ document.getElementById("strategyOverlay").classList.add("show"); }
+function closeStrategy(){ document.getElementById("strategyOverlay").classList.remove("show"); }
+
+let completeNudgeShown = false;
+function maybeShowCompleteNudge(){
+  if(skipTutorials || completeNudgeShown || selected.length !== SLOTS_MAX) return;
+  completeNudgeShown = true;
+  const toast = document.getElementById("guideToast");
+  toast.innerHTML = `<b style="color:var(--tentation);">Équipe complète !</b><br>Direction les bonus/malus et le choix de ton Leader 👑, juste au-dessus de la startlist.`;
+  toast.classList.add("show");
+  window.scrollTo({top:0, behavior:"smooth"});
+  setTimeout(()=>toast.classList.remove("show"), 9000);
+}
+
+let selected = [];
+let statusMsg = "";
+let leader = null;
+let playerName = "";
+let finalized = false;
+let activeTab = "draft";
+let adminUnlocked = false;
+
+function selectedRiders(){ return selected.map(b => BY_BIB[b]); }
+function totalCost(){ return selectedRiders().reduce((s,r)=>s+r.cost,0); }
+function countCat(cat){ return selectedRiders().filter(r=>r.cat===cat).length; }
+function countTeam(team){ return selectedRiders().filter(r=>r.team===team).length; }
+function slug(s){ return s.trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,""); }
+
+function onNameInput(v){
+  playerName = v;
+  try{ window.storage.set("route666-playername", v, false); }catch(e){}
+  renderValidateRow();
+}
+
+function attemptToggle(bib){
+  if(finalized) return;
+  const r = BY_BIB[bib];
+  const idx = selected.indexOf(bib);
+  if(idx !== -1){
+    selected.splice(idx,1);
+    if(leader === bib) leader = null;
+    statusMsg = "";
+    render();
+    resetIdleTimer();
+    return;
+  }
+  if(selected.length >= SLOTS_MAX){
+    statusMsg = "Équipe déjà complète (" + SLOTS_MAX + "/" + SLOTS_MAX + ") — retire un coureur pour en changer.";
+    render(); return;
+  }
+  const meta = CAT_META[r.cat];
+  if(countCat(r.cat) >= meta.max){
+    statusMsg = `Quota atteint pour ${meta.label} (max ${meta.max}).`;
+    render(); return;
+  }
+  const tc = totalCost();
+  if(tc + r.cost > BUDGET_MAX){
+    statusMsg = `Budget dépassé — il ne reste que ${BUDGET_MAX-tc} pts (${r.name} coûte ${r.cost}).`;
+    render(); return;
+  }
+  const queue = [];
+  if(!skipTutorials && !seenTutorials[r.cat]) queue.push(r.cat);
+  if(!skipTutorials && r.team === DATA.superTeam && !seenTutorials["superteam"]) queue.push("superteam");
+  if(queue.length > 0){
+    pendingBib = bib;
+    pendingQueue = queue;
+    showNextTutorial();
+    return;
+  }
+  finalizeSelection(bib);
+}
+
+function finalizeSelection(bib){
+  selected.push(bib);
+  statusMsg = "";
+  render();
+  resetIdleTimer();
+  maybeShowCompleteNudge();
+}
+
+function showNextTutorial(){
+  const key = pendingQueue[0];
+  const t = getTutoContent(key);
+  document.getElementById("tutoTitle").textContent = t.title;
+  document.getElementById("tutoBody").innerHTML = t.bullets.map(b=>`<li>${b}</li>`).join("");
+  document.getElementById("tutoOverlay").classList.add("show");
+}
+
+function confirmTutorial(){
+  const key = pendingQueue.shift();
+  if(key){
+    seenTutorials[key] = true;
+    try{ window.storage.set("route666-seen-tutorials", JSON.stringify(seenTutorials), false); }catch(e){}
+  }
+  if(pendingQueue.length > 0){
+    showNextTutorial();
+    return;
+  }
+  document.getElementById("tutoOverlay").classList.remove("show");
+  const bib = pendingBib;
+  pendingBib = null;
+  if(bib !== null) finalizeSelection(bib);
+}
+
+function skipAllTutorials(){
+  skipTutorials = true;
+  document.getElementById("skipTutoCheckbox").checked = true;
+  try{ window.storage.set("route666-skip-tutorials", "true", false); }catch(e){}
+  document.getElementById("tutoOverlay").classList.remove("show");
+  pendingQueue = [];
+  const bib = pendingBib;
+  pendingBib = null;
+  if(bib !== null) finalizeSelection(bib);
+}
+
+function onSkipTutoToggle(checked){
+  skipTutorials = checked;
+  try{ window.storage.set("route666-skip-tutorials", checked?"true":"false", false); }catch(e){}
+}
+
+function toggleLeader(bib){
+  if(finalized) return;
+  leader = (leader === bib) ? null : bib;
+  render();
+}
+
+function ticksHTML(remaining, max, cls){
+  let h = "";
+  for(let i=0;i<max;i++){
+    const on = i < remaining;
+    h += `<div class="tick ${on?('on '+cls):''}"></div>`;
+  }
+  return h;
+}
+
+function renderDash(){
+  const tc = totalCost();
+  const remainingBudget = BUDGET_MAX - tc;
+  document.getElementById("budgetVal").textContent = remainingBudget;
+  document.getElementById("budgetTicks").innerHTML = ticksHTML(Math.round(remainingBudget/66.6), 10, "budget");
+
+  const remainingSlots = SLOTS_MAX - selected.length;
+  document.getElementById("slotsVal").textContent = remainingSlots;
+  document.getElementById("slotsTicks").innerHTML = ticksHTML(remainingSlots, SLOTS_MAX, "");
+
+  document.getElementById("stickySlots").textContent = remainingSlots;
+  document.getElementById("stickyBudget").textContent = remainingBudget;
+}
+
+function renderCatCards(){
+  const globalRemaining = SLOTS_MAX - selected.length;
+  const el = document.getElementById("catCards");
+  el.innerHTML = CAT_ORDER.map(cat=>{
+    const meta = CAT_META[cat];
+    const catCount = countCat(cat);
+    const catRemaining = meta.max - catCount;
+    const remain = Math.max(0, Math.min(catRemaining, globalRemaining));
+    const pipsMax = meta.max;
+    let pips = "";
+    for(let i=0;i<pipsMax;i++){
+      pips += `<div class="pip ${i<remain?('on '+cat):''}"></div>`;
+    }
+    const picks = selectedRiders().filter(r=>r.cat===cat).sort((a,b)=>b.cost-a.cost);
+    const picksHTML = picks.map(r=>`
+      <div class="cat-pick-tag" onclick="attemptToggle(${r.bib})">
+        <span class="fi fi-${r.nat}"></span><span style="flex:1;">${r.name}</span><b>${r.cost}</b>
+      </div>`).join("");
+    const ruleNote = cat === "angel"
+      ? `<div class="cat-rule-note">Le bonus dépend du nombre d'Angels dans le top 30 (pas du nombre choisi) : 1=+50%, 2=+75%, 3=+100%, 4=+150%, 5=+200%. +50% de plus si l'un d'eux est top 10.</div>`
+      : '';
+    return `<div class="cat-card ${cat}">
+      <div class="cat-name">${meta.label}</div>
+      <div class="cat-range">${meta.range}</div>
+      <div class="cat-remain"><b>${remain}</b> place${remain>1?'s':''} possible${remain>1?'s':''}</div>
+      <div class="cat-pips">${pips}</div>
+      ${ruleNote}
+      ${picksHTML ? `<div class="cat-picks">${picksHTML}</div>` : ''}
+    </div>`;
+  }).join("");
+}
+
+function renderLeaderPanel(){
+  const el = document.getElementById("leaderPanel");
+  const complete = selected.length === SLOTS_MAX;
+  const leftover = BUDGET_MAX - totalCost();
+
+  if(!complete){
+    el.innerHTML = `<div class="tlabel">Leader 👑</div>
+      <div class="coquin-desc">Complète ton équipe (${selected.length}/${SLOTS_MAX}) pour désigner ton Leader — c'est lui qui reçoit le bonus de budget non dépensé.</div>`;
+    return;
+  }
+  const sortedSelected = [...selected].sort((a,b)=> BY_BIB[b].cost - BY_BIB[a].cost);
+  const pills = sortedSelected.map(bib=>{
+    const r = BY_BIB[bib];
+    return `<div class="cpill ${leader===bib?'chosen':''}" onclick="toggleLeader(${r.bib})">
+      <span class="fi fi-${r.nat}"></span>${r.name} <span class="mono" style="opacity:0.7;">${r.cost}</span>
+    </div>`;
+  }).join("");
+  const leaderName = leader ? BY_BIB[leader].name : null;
+  let desc;
+  if(leftover > 0){
+    desc = `Il te reste <b class="mono" style="color:var(--tentation)">${leftover} pts</b> non dépensés → un bonus de <b class="mono" style="color:var(--tentation)">+${leftover}%</b> ira à ton Leader. ${leaderName ? `Leader actuel : <b>${leaderName}</b>.` : "Choisis ton Leader ci-dessous."}`;
+  } else {
+    desc = `Budget entièrement dépensé — pas de bonus budget coquin cette fois, mais désigne quand même ton Leader. ${leaderName ? `Leader actuel : <b>${leaderName}</b>.` : ""}`;
+  }
+  el.innerHTML = `<div class="tlabel">Leader 👑</div><div class="coquin-desc">${desc}</div><div class="coquin-pills">${pills}</div>`;
+}
+
+function computeModifiers(){
+  const tentCount = countCat("tentation");
+  const angelCount = countCat("angel");
+  const stCount = countTeam(DATA.superTeam);
+  const complete = selected.length === SLOTS_MAX;
+  const leftover = BUDGET_MAX - totalCost();
+
+  const zeroTentActive = tentCount === 0;
+  const angelActive = angelCount > 0; // active = éligible ; le % réel dépend du classement final
+  const stActive = stCount >= 2;
+  const coquinActive = complete && leftover > 0 && leader !== null;
+
+  let net = 0;
+  if(zeroTentActive) net += 20;
+  if(stActive) net -= 10;
+  const coquinBonus = coquinActive ? Math.min(leftover, 100) : 0;
+
+  return {tentCount, angelCount, stCount, leftover, zeroTentActive, angelActive, stActive, coquinActive, coquinBonus, net};
+}
+
+function renderModifiers(){
+  const m = computeModifiers();
+  const stRemaining = Math.max(0, 2 - m.stCount);
+  const stText = m.stActive
+    ? `Malus déclenché : <b>${m.stCount}</b> coureurs de <b>${DATA.superTeam}</b> 👿 dans ton équipe`
+    : `Plus que <b>${stRemaining}</b> coureur${stRemaining>1?'s':''} de <b>${DATA.superTeam}</b> 👿 à sélectionner et tu déclenches le malus`;
+  const rows = [
+    { text: `Résiste à la Tentation — <b>${m.tentCount}/1</b> Pick Tentation choisi`, val: m.zeroTentActive ? "+20%" : "+0%", cls: m.zeroTentActive ? "pos" : "off" },
+    { text: `<span class="angel-hover" onmouseenter="showAngelDevil(event)" onmouseleave="hideAngelDevil()">Le bonus Angel dépend du classement final</span> — <b>${m.angelCount}</b> choisi${m.angelCount>1?'s':''}. Ce qui compte, c'est combien finissent dans le top 30 (et si l'un d'eux est top 10) — <b>pas</b> combien tu en as pris.`, val: m.angelActive ? "à déterminer" : "+0%", cls: m.angelActive ? "pending" : "off" },
+    { text: stText, val: m.stActive ? "-10%" : "+0%", cls: m.stActive ? "neg" : "off" },
+  ];
+  document.getElementById("modRows").innerHTML = rows.map(r=>`
+    <div class="mrow"><span class="mtext">${r.text}</span><span class="mval ${r.cls}">${r.val}</span></div>
+  `).join("");
+
+  const totalEl = document.getElementById("modTotal");
+  totalEl.textContent = (m.net>=0?"+":"") + m.net + "%";
+  totalEl.style.color = m.net > 0 ? "var(--good)" : (m.net < 0 ? "var(--bad)" : "var(--dim)");
+
+  const coquinRowText = m.coquinActive
+    ? `Budget coquin attribué au Leader <b>${BY_BIB[leader].name}</b>`
+    : `Budget coquin <b>(non attribué${selected.length===SLOTS_MAX ? '' : ' — équipe incomplète'})</b>`;
+  const coquinEl = document.getElementById("coquinTotal");
+  coquinEl.querySelector(".mtext").innerHTML = coquinRowText;
+  const coquinVal = coquinEl.querySelector(".mval");
+  coquinVal.textContent = m.coquinActive ? `+${m.coquinBonus}%` : "+0%";
+  coquinVal.className = "mval " + (m.coquinActive ? "pos" : "off");
+}
+
+function renderStatus(){ document.getElementById("statusLine").textContent = statusMsg; }
+
+function canValidate(){ return selected.length === SLOTS_MAX && playerName.trim() !== "" && leader !== null && !isClosed(); }
+function validationBlockReason(){
+  if(isClosed()) return `Les picks sont clos depuis le ${formatCloseDate(CLOSE_AT)}. ${CLOSED_TAUNT_MSG}`;
+  if(selected.length !== SLOTS_MAX) return `Complète ton équipe (${selected.length}/${SLOTS_MAX}).`;
+  if(playerName.trim() === "") return "Indique ton pseudo en haut de page.";
+  if(leader === null) return "Désigne ton Leader.";
+  return "";
+}
+
+let validating = false;
+function renderValidateRow(){
+  const el = document.getElementById("validateRow");
+  if(finalized){ el.innerHTML = ""; return; }
+  const ok = canValidate() && !validating;
+  el.innerHTML = `
+    <button class="btn" ${ok?'':'disabled'} onclick="openProvisional()">Valider provisoirement</button>
+    <button class="btn final" ${ok?'':'disabled'} onclick="validateFinal()">${validating ? 'Enregistrement…' : 'Valider définitivement'}</button>
+    ${!ok && !validating ? `<div class="status" style="margin:auto 0;">${validationBlockReason()}</div>` : ''}
+  `;
+}
+
+function renderFinalizedBanner(){
+  const el = document.getElementById("finalizedBanner");
+  if(!finalized){ el.innerHTML = ""; return; }
+  el.innerHTML = `<div class="finalized-banner">
+    🔒 Équipe enregistrée et verrouillée — elle est bien reçue, pas besoin d'envoyer quoi que ce soit.
+    <a onclick="unlockFinal()">Ce n'est pas définitif, je veux modifier</a>
+  </div>`;
+}
+function unlockFinal(){ finalized = false; render(); }
+
+function buildExportObject(isDraft){
+  const m = computeModifiers();
+  return {
+    game: "route666",
+    race: DATA.raceName,
+    player: playerName.trim(),
+    submittedAt: new Date().toISOString(),
+    draft: !!isDraft,
+    leaderBib: leader,
+    leaderName: leader ? BY_BIB[leader].name : null,
+    totalCost: totalCost(),
+    leftover: m.leftover,
+    riders: selectedRiders().map(r=>({bib:r.bib, name:r.name, team:r.team, cat:r.cat, cost:r.cost})),
+    modifiers: {
+      zeroTentationBonus: m.zeroTentActive ? 20 : 0,
+      angelCount: m.angelCount,
+      coquinBonus: m.coquinActive ? m.coquinBonus : 0,
+      superteamMalus: m.stActive ? -10 : 0,
+      netEstimate: m.net,
+    },
+  };
+}
+
+function buildRecapText(){
+  const m = computeModifiers();
+  const lines = [];
+  lines.push(`ROUTE 666 — ${DATA.raceName}`);
+  lines.push(`Joueur : ${playerName.trim()}`);
+  lines.push(`Leader : 👑 ${BY_BIB[leader].name}`);
+  lines.push(``);
+  lines.push(`Équipe (${selected.length}/${SLOTS_MAX}) — coût total ${totalCost()}/${BUDGET_MAX} pts`);
+  [...selectedRiders()].sort((a,b)=>b.cost-a.cost).forEach(r=>{
+    lines.push(`  #${r.bib} ${r.name} — ${r.team} — ${CAT_META[r.cat].label.replace(/\s*[^\s]+$/,'')} — ${r.cost} pts${r.bib===leader?' [LEADER]':''}`);
+  });
+  lines.push(``);
+  lines.push(`Bonus/malus estimés :`);
+  lines.push(`  Résiste à la Tentation : ${m.zeroTentActive?'+20%':'+0%'}`);
+  lines.push(`  Picks Angel (${m.angelCount}) : bonus déterminé au classement final (voir règles)`);
+  lines.push(`  Budget coquin (Leader) : ${m.coquinActive?'+'+m.coquinBonus+'%':'+0%'}`);
+  lines.push(`  Superteam 666 Team (${m.stCount}/2) : ${m.stActive?'-10%':'+0%'}`);
+  lines.push(`  --> Net estimé hors bonus Angel (hors budget coquin) : ${m.net>=0?'+':''}${m.net}%`);
+  return lines.join("\n");
+}
+
+function openProvisional(){
+  if(!canValidate()) return;
+  document.getElementById("recapText").value = buildRecapText();
+  document.getElementById("modalOverlay").classList.add("show");
+}
+function closeModal(){ document.getElementById("modalOverlay").classList.remove("show"); }
+function copyRecap(){
+  const ta = document.getElementById("recapText");
+  ta.select();
+  try{ navigator.clipboard.writeText(ta.value); }catch(e){ try{ document.execCommand('copy'); }catch(e2){} }
+}
+
+function downloadJSON(obj, filename){
+  const blob = new Blob([JSON.stringify(obj, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+
+function exportDraft(){
+  if(selected.length === 0){ statusMsg = "Sélectionne au moins un coureur avant d'exporter."; render(); return; }
+  const name = playerName.trim() || "brouillon";
+  downloadJSON(buildExportObject(true), `route666-${slug(name)}-brouillon.json`);
+}
+
+function handleImportDraft(files){
+  if(!files || !files[0]) return;
+  const file = files[0];
+  file.text().then(text=>{
+    try{
+      const obj = JSON.parse(text);
+      if(obj.game !== "route666"){ statusMsg = "Fichier non reconnu."; render(); return; }
+      playerName = obj.player || "";
+      document.getElementById("playerNameInput").value = playerName;
+      selected = (obj.riders||[]).map(r=>r.bib).filter(b => BY_BIB[b]);
+      leader = (obj.leaderBib && selected.includes(obj.leaderBib)) ? obj.leaderBib : null;
+      finalized = false;
+      statusMsg = "";
+      render();
+    }catch(e){
+      statusMsg = "Impossible de lire ce fichier.";
+      render();
+    }
+  });
+}
+
+async function sha256Hex(text){
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+function askPassword(title, body){
+  return new Promise(resolve=>{
+    document.getElementById("pwdTitle").textContent = title;
+    document.getElementById("pwdBody").textContent = body;
+    const input = document.getElementById("pwdInput");
+    input.value = "";
+    document.getElementById("passwordOverlay").classList.add("show");
+    setTimeout(()=>input.focus(), 50);
+
+    const submitBtn = document.getElementById("pwdSubmitBtn");
+    const cancelBtn = document.getElementById("pwdCancelBtn");
+
+    function cleanup(){
+      document.getElementById("passwordOverlay").classList.remove("show");
+      submitBtn.removeEventListener("click", onSubmit);
+      cancelBtn.removeEventListener("click", onCancel);
+      input.removeEventListener("keydown", onKey);
+    }
+    function onSubmit(){ const v = input.value; cleanup(); resolve(v); }
+    function onCancel(){ cleanup(); resolve(null); }
+    function onKey(e){ if(e.key === "Enter") onSubmit(); }
+
+    submitBtn.addEventListener("click", onSubmit);
+    cancelBtn.addEventListener("click", onCancel);
+    input.addEventListener("keydown", onKey);
+  });
+}
+
+async function validateFinal(){
+  if(!canValidate() || validating) return;
+  validating = true;
+  statusMsg = "";
+  render();
+
+  if(isClosed()){
+    validating = false;
+    statusMsg = `Les picks sont clos depuis le ${formatCloseDate(CLOSE_AT)}. ${CLOSED_TAUNT_MSG}`;
+    render();
+    return;
+  }
+
+  const name = playerName.trim();
+  const teamSlug = slug(name);
+  const key = `route666-team:${teamSlug}`;
+
+  let account;
+  try{
+    account = await window.storageGlobal.get(teamSlug);
+  }catch(e){
+    validating = false;
+    statusMsg = "Impossible de vérifier ton pseudo pour l'instant (connexion ?). Réessaie dans un instant.";
+    render();
+    return;
+  }
+
+  if(account && account.value){
+    const pwd = await askPassword(`Bon retour, ${name}`, `Le pseudo "${name}" est déjà enregistré (peut-être sur une autre course). Entre ton mot de passe pour confirmer que c'est bien toi et enregistrer cette équipe.`);
+    if(pwd === null){
+      validating = false;
+      statusMsg = "Validation annulée.";
+      render();
+      return;
+    }
+    const enteredHash = await sha256Hex(pwd);
+    if(enteredHash !== account.value){
+      validating = false;
+      statusMsg = `Mot de passe incorrect pour "${name}" — validation refusée.`;
+      render();
+      return;
+    }
+  } else {
+    const pwd = await askPassword(`Choisis un mot de passe pour "${name}"`, "Il protège ton pseudo sur toutes les courses de la saison — retiens-le bien, il te sera redemandé si tu reviens sous ce même pseudo.");
+    if(pwd === null){
+      validating = false;
+      statusMsg = "Validation annulée.";
+      render();
+      return;
+    }
+    if(pwd.trim() === ""){
+      validating = false;
+      statusMsg = "Mot de passe vide — choisis-en un pour continuer.";
+      render();
+      return;
+    }
+    try{
+      const hash = await sha256Hex(pwd);
+      const saved = await window.storageGlobal.set(teamSlug, hash);
+      if(!saved){
+        validating = false;
+        statusMsg = "Impossible d'enregistrer ton mot de passe pour l'instant (connexion ?). Réessaie.";
+        render();
+        return;
+      }
+    }catch(e){
+      validating = false;
+      statusMsg = "Impossible d'enregistrer ton mot de passe pour l'instant (connexion ?). Réessaie.";
+      render();
+      return;
+    }
+  }
+
+  const obj = buildExportObject(false);
+  try{
+    const saved = await window.storage.set(key, JSON.stringify(obj), true);
+    if(!saved){
+      validating = false;
+      statusMsg = "L'enregistrement a échoué (connexion ?). Réessaie dans un instant.";
+      render();
+      return;
+    }
+    await window.storage.set("route666-published", "true", true);
+  }catch(e){
+    validating = false;
+    statusMsg = "L'enregistrement a échoué (connexion ?). Réessaie dans un instant.";
+    render();
+    return;
+  }
+
+  validating = false;
+  finalized = true;
+  render();
+}
+
+let categoryFilter = null;
+let boardSort = "team";
+
+function toggleCatFilter(cat){
+  categoryFilter = (categoryFilter === cat) ? null : cat;
+  document.querySelectorAll(".cat-filter-chip").forEach(el=>{
+    el.classList.toggle("active", el.dataset.cat === categoryFilter);
+  });
+  renderBoard();
+}
+
+function setBoardSort(mode){
+  boardSort = mode;
+  document.getElementById("sortByTeamBtn").classList.toggle("active", mode === "team");
+  document.getElementById("sortByCostBtn").classList.toggle("active", mode === "cost");
+  renderBoard();
+}
+
+function riderRowHTML(r, globalRemaining, extra){
+  const isSel = selected.includes(r.bib);
+  let disabled = finalized && !isSel;
+  if(!isSel && !finalized){
+    if(globalRemaining <= 0) disabled = true;
+    const meta = CAT_META[r.cat];
+    if(countCat(r.cat) >= meta.max) disabled = true;
+  }
+  return `<div class="rr ${r.cat} ${isSel?'selected':''} ${disabled?'disabled':''}" onclick="attemptToggle(${r.bib})">
+    <span class="fi fi-${r.nat}"></span>${extra||''}<span class="rn">${r.name}</span><span class="rc">${r.cost}</span><span class="chk">✓</span>
+  </div>`;
+}
+
+function renderBoard(){
+  const el = document.getElementById("board");
+  const globalRemaining = SLOTS_MAX - selected.length;
+  const filtered = categoryFilter ? RIDERS.filter(r=>r.cat===categoryFilter) : RIDERS;
+
+  if(boardSort === "cost"){
+    el.className = "board board-flat";
+    const sorted = [...filtered].sort((a,b)=>b.cost-a.cost);
+    el.innerHTML = sorted.map(r=>{
+      const isSt = r.team === DATA.superTeam;
+      const extra = `<span class="rcat-emoji">${CAT_EMOJI[r.cat]||''}</span><span class="rteam">${r.team}${isSt?' <b class="st-tag">666 👿</b>':''}</span>`;
+      return riderRowHTML(r, globalRemaining, extra);
+    }).join("");
+    return;
+  }
+
+  el.className = "board";
+  let html = "";
+  DATA.teamOrder.forEach(team=>{
+    const riders = filtered.filter(r=>r.team===team);
+    if(riders.length === 0) return;
+    let extraClass = "", badge = "";
+    if(team === DATA.superTeam){ extraClass="st"; badge=`<span class="badge st">666 TEAM 👿</span>`; }
+    const tc = (DATA.teamColors && DATA.teamColors[team]) || {c1:"#3a414b", c2:"#5a626e", text:"#ffffff"};
+    const thStyle = `background:linear-gradient(100deg, ${tc.c1}, ${tc.c2}); color:${tc.text};`;
+    let rows = "";
+    riders.forEach(r=>{ rows += riderRowHTML(r, globalRemaining); });
+    html += `<div class="tc ${extraClass}"><div class="th" style="${thStyle}"><span class="tn">${team}</span>${badge}</div>${rows}</div>`;
+  });
+  el.innerHTML = html;
+}
+
+function renderScoringStrip(){
+  const el = document.getElementById("scoringStrip");
+  const medalClass = i => i===0 ? "gold" : (i===1 ? "silver" : (i===2 ? "bronze" : ""));
+  let chips = "";
+  for(let i=0;i<10;i++){
+    chips += `<div class="spos ${medalClass(i)}"><div class="sp-rank">${i+1}${i===0?'ᵉʳ':'ᵉ'}</div><div class="sp-pts">${BAREME[i]}</div></div>`;
+  }
+  el.innerHTML = `
+    <div class="tlabel">🏁 Comment on marque des points</div>
+    <div class="scoring-row">${chips}<div class="spos more">11 → 30<div class="sp-pts">${BAREME[10]} → ${BAREME[29]}</div></div></div>
+    <div class="mnote">Chaque coureur rapporte les points de sa position d'arrivée (top 30 seulement). Ton total d'équipe, ensuite modifié par tes bonus/malus ci-dessous, c'est ton score final.</div>
+  `;
+}
+
+function render(){
+  document.getElementById("playerNameInput").disabled = finalized;
+  renderDash();
+  renderCatCards();
+  renderScoringStrip();
+  renderLeaderPanel();
+  renderStatus();
+  renderModifiers();
+  renderFinalizedBanner();
+  renderValidateRow();
+  renderBoard();
+  updateStickyBarVisibility();
+}
+
+/* ---------------- sticky bar visibility ---------------- */
+function updateStickyBarVisibility(){
+  const bar = document.getElementById("stickyBar");
+  bar.classList.toggle("show", activeTab === "draft" && selected.length > 0);
+}
+window.addEventListener('scroll', updateStickyBarVisibility, {passive:true});
+
+/* ---------------- Tabs ---------------- */
+function switchTab(tab){
+  if(tab === "teams") renderTeamsTab();
+  if(tab === "result") renderResultTab();
+  activeTab = tab;
+  document.getElementById("panelDraft").classList.toggle("active", tab==="draft");
+  document.getElementById("panelTeams").classList.toggle("active", tab==="teams");
+  document.getElementById("panelResult").classList.toggle("active", tab==="result");
+  document.getElementById("tabBtnDraft").classList.toggle("active", tab==="draft");
+  document.getElementById("tabBtnTeams").classList.toggle("active", tab==="teams");
+  document.getElementById("tabBtnResult").classList.toggle("active", tab==="result");
+  if(tab !== "draft") document.getElementById("stickyBar").classList.remove("show");
+  else updateStickyBarVisibility();
+}
+
+let importedTeamsMemory = {};
+let publishedMemory = false;
+let resultsOrderMemory = null;
+
+async function fetchAllTeams(){
+  const teams = {};
+  try{
+    const listRes = await window.storage.list("route666-team:", true);
+    const keys = (listRes && listRes.keys) || [];
+    for(const k of keys){
+      try{
+        const r = await window.storage.get(k, true);
+        if(r && r.value){ const obj = JSON.parse(r.value); teams[slug(obj.player)] = obj; }
+      }catch(e){}
+    }
+  }catch(e){}
+  Object.assign(teams, importedTeamsMemory);
+  return Object.values(teams);
+}
+
+function buildTeamWhatsappText(t){
+  const sorted = [...t.riders].sort((a,b)=>b.cost-a.cost);
+  const m = t.modifiers || {};
+  const lines = [];
+  lines.push(`*${t.player}* — ${t.totalCost}/${BUDGET_MAX} pts`);
+  lines.push(`👑 Leader : ${t.leaderName || '—'}${m.coquinBonus ? ` (+${m.coquinBonus}% budget coquin)` : ''}`);
+  lines.push("");
+  sorted.forEach(r=>{
+    lines.push(`${CAT_EMOJI[r.cat]||''} ${r.name} — ${r.cost} pts${t.leaderBib===r.bib?' 👑':''}`);
+  });
+  lines.push("");
+  lines.push(`Bonus assuré : ${m.netEstimate>=0?'+':''}${m.netEstimate||0}% (hors bonus Angel supplémentaire éventuel, déterminé au classement)`);
+  return lines.join("\n");
+}
+
+async function copyTeamWhatsapp(slug_, btnEl){
+  const teams = await fetchAllTeams();
+  const t = teams.find(tt => slug(tt.player) === slug_);
+  if(!t) return;
+  const text = buildTeamWhatsappText(t);
+  try{
+    await navigator.clipboard.writeText(text);
+    if(btnEl){
+      const original = btnEl.textContent;
+      btnEl.textContent = "✅ Copié !";
+      setTimeout(()=>{ btnEl.textContent = original; }, 1800);
+    }
+  }catch(e){
+    if(btnEl) btnEl.textContent = "Échec de la copie";
+  }
+}
+
+function renderTeamCardHTML(t){
+  const sortedRiders = [...t.riders].sort((a,b)=>b.cost-a.cost);
+  const m = t.modifiers || {};
+  const tagsHTML = sortedRiders.map(r=>`
+    <span class="rider-tag ${t.leaderBib===r.bib?'is-leader':''}">${t.leaderBib===r.bib?'👑 ':''}${CAT_EMOJI[r.cat]||''} ${r.name} <b>${r.cost}</b></span>
+  `).join("");
+  return `
+    <div class="team-card">
+      <div class="tc-head">
+        <span class="tc-name">${t.player}${t.draft ? ' <span class="mono" style="font-size:0.65em;color:var(--dim-2);">(brouillon)</span>' : ''}</span>
+        <span class="tc-cost mono">${t.totalCost}/${BUDGET_MAX} pts</span>
+      </div>
+      <div class="tc-leader">👑 Leader — <b>${t.leaderName || '—'}</b></div>
+      <div class="tc-riderlist">${tagsHTML}</div>
+      <div class="tc-modifiers">
+        <div class="mod-line"><span>Résiste à la Tentation</span><b class="${m.zeroTentationBonus>0?'pos':''}">${m.zeroTentationBonus>0?'+':''}${m.zeroTentationBonus||0}%</b></div>
+        <div class="mod-line"><span>Picks Angel (${m.angelCount||0})</span><b style="color:var(--dim);">selon classement</b></div>
+        <div class="mod-line"><span>Malus 666 Team</span><b class="${m.superteamMalus<0?'neg':''}">${m.superteamMalus||0}%</b></div>
+        <div class="mod-total"><span>Bonus assuré (hors Angel)</span><b>${m.netEstimate>=0?'+':''}${m.netEstimate||0}%</b></div>
+        <div class="mod-line" style="margin-top:4px;"><span>🎁 Budget coquin (Leader)</span><b class="${m.coquinBonus>0?'pos':''}">${m.coquinBonus>0?'+':''}${m.coquinBonus||0}%</b></div>
+      </div>
+      <div style="margin-top:10px;">
+        <button class="btn" style="font-size:0.72em;padding:5px 10px;" onclick="copyTeamWhatsapp('${slug(t.player)}', this)">📋 Copier pour WhatsApp</button>
+      </div>
+    </div>
+  `;
+}
+
+function buildTeamsTextExport(teams){
+  const lines = [];
+  lines.push(`ROUTE 666 — ${DATA.raceName}`);
+  lines.push(`Équipes des enfers — export du ${new Date().toLocaleString('fr-FR')}`);
+  lines.push("=".repeat(50));
+  teams.forEach(t=>{
+    const m = t.modifiers || {};
+    lines.push("");
+    lines.push(`${t.player}${t.draft?' (brouillon)':''} — ${t.totalCost}/${BUDGET_MAX} pts`);
+    lines.push(`  Leader : ${t.leaderName || '—'}`);
+    [...t.riders].sort((a,b)=>b.cost-a.cost).forEach(r=>{
+      lines.push(`  ${CAT_EMOJI[r.cat]||''} ${r.name} — ${r.team} — ${r.cost} pts${t.leaderBib===r.bib?' [LEADER]':''}`);
+    });
+    lines.push(`  Modificateurs : Résiste à la Tentation ${m.zeroTentationBonus>0?'+':''}${m.zeroTentationBonus||0}% · Angel (${m.angelCount||0} choisi${(m.angelCount||0)>1?'s':''}, bonus selon classement) · Malus 666 Team ${m.superteamMalus||0}% --> Bonus assuré (hors Angel) ${m.netEstimate>=0?'+':''}${m.netEstimate||0}%`);
+    lines.push(`  Budget coquin (Leader) : +${m.coquinBonus||0}%`);
+  });
+  return lines.join("\n");
+}
+
+async function exportTeamsText(){
+  const teams = await fetchAllTeams();
+  if(teams.length === 0) return;
+  teams.sort((a,b)=>a.player.localeCompare(b.player));
+  const text = buildTeamsTextExport(teams);
+  const blob = new Blob([text], {type:"text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `route666-equipes-${slug(DATA.raceName)}.txt`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+
+async function exportTeamsImage(){
+  const statusEl = document.getElementById("teamsExportStatus");
+  if(statusEl) statusEl.textContent = "Génération de l'image…";
+  const teams = await fetchAllTeams();
+  if(teams.length === 0){ if(statusEl) statusEl.textContent = ""; return; }
+  teams.sort((a,b)=>a.player.localeCompare(b.player));
+  const container = document.getElementById("imageExportContainer");
+  container.innerHTML = `
+    <div class="ie-title">ROUTE 6<span style="color:var(--tentation);">6</span>6</div>
+    <div class="ie-sub">${DATA.raceName} — Équipes des enfers</div>
+    <div class="ie-grid">
+      ${teams.map(t=>{
+        const sorted = [...t.riders].sort((a,b)=>b.cost-a.cost);
+        return `<div class="ie-card">
+          <div class="ie-player">${t.player}</div>
+          <div class="ie-riders">${sorted.map(r=>`<div class="ie-rider">${t.leaderBib===r.bib?'👑 ':''}${CAT_EMOJI[r.cat]||''} ${r.name}</div>`).join("")}</div>
+        </div>`;
+      }).join("")}
+    </div>
+  `;
+  try{
+    const canvas = await html2canvas(container, {backgroundColor:"#170a0c", scale:2});
+    canvas.toBlob(blob=>{
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = `route666-equipes-${slug(DATA.raceName)}.png`;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(()=>URL.revokeObjectURL(url), 2000);
+      if(statusEl) statusEl.textContent = "";
+    });
+  }catch(e){
+    if(statusEl) statusEl.textContent = "Échec de la génération d'image.";
+  }
+}
+
+function computeTeamsStats(teams){
+  const pickCounts = {};
+  const catCounts = {tentation:0, diablo:0, malin:0, angel:0};
+  const realTeamCounts = {};
+  teams.forEach(t=>{
+    t.riders.forEach(r=>{
+      pickCounts[r.bib] = (pickCounts[r.bib]||0) + 1;
+      catCounts[r.cat] = (catCounts[r.cat]||0) + 1;
+      realTeamCounts[r.team] = (realTeamCounts[r.team]||0) + 1;
+    });
+  });
+  const totalPicks = teams.length * SLOTS_MAX;
+
+  const tentationRiders = RIDERS.filter(r=>r.cat==="tentation");
+  const tentationRanked = tentationRiders.map(r=>({...r, count: pickCounts[r.bib]||0})).sort((a,b)=>a.count-b.count);
+  const snubbedCount = tentationRanked.length ? tentationRanked[0].count : 0;
+  const mostSnubbed = tentationRanked.filter(r=>r.count===snubbedCount);
+
+  const angelRiders = RIDERS.filter(r=>r.cat==="angel");
+  const angelRanked = angelRiders.map(r=>({...r, count: pickCounts[r.bib]||0})).sort((a,b)=>b.count-a.count);
+  const topAngelCount = angelRanked.length ? angelRanked[0].count : 0;
+  const topAngels = angelRanked.filter(r=>r.count===topAngelCount && topAngelCount>0);
+
+  const teamRanked = Object.entries(realTeamCounts).sort((a,b)=>b[1]-a[1]);
+  const topRealTeam = teamRanked.length ? teamRanked[0] : null;
+
+  const pct = {};
+  ["tentation","diablo","malin","angel"].forEach(c=>{
+    pct[c] = totalPicks ? Math.round((catCounts[c]||0)/totalPicks*1000)/10 : 0;
+  });
+
+  return { mostSnubbed, topAngels, topRealTeam, pct, teamsCount: teams.length };
+}
+
+function buildTeamsStatsHTML(teams){
+  const s = computeTeamsStats(teams);
+  const snubbedNames = s.mostSnubbed.map(r=>r.name).join(", ") || "—";
+  const angelNames = s.topAngels.length ? s.topAngels.map(r=>r.name).join(", ") : "personne ne se dégage";
+  const realTeamLine = s.topRealTeam ? `${s.topRealTeam[0]} (${s.topRealTeam[1]} sélections cumulées)` : "—";
+  return `
+    <div class="team-card" style="background:var(--panel-2);">
+      <div class="tc-head"><span class="tc-name">📊 Un peu de statistiques, avant les compos</span></div>
+      <div class="tc-riders" style="line-height:1.9;">
+        🔥 <b>Tentation le(s) plus boudé(s)</b> : ${snubbedNames}<br>
+        😇 <b>Angel le(s) plus choisi(s)</b> : ${angelNames}<br>
+        🚴 <b>Équipe (réelle) la plus piochée</b> : ${realTeamLine}<br>
+        📈 <b>Répartition moyenne des ${s.teamsCount} équipe${s.teamsCount>1?'s':''}</b> :
+        🔥 ${s.pct.tentation}% · 😈 ${s.pct.diablo}% · 😏 ${s.pct.malin}% · 😇 ${s.pct.angel}%
+      </div>
+    </div>
+  `;
+}
+
+async function renderTeamsTab(){
+  const el = document.getElementById("teamsContent");
+  el.innerHTML = `<div class="empty-note">Chargement…</div>`;
+  const unlocked = isClosed() || adminUnlocked;
+  document.getElementById("tabBtnTeams").classList.toggle("locked", !unlocked);
+
+  if(!unlocked){
+    try{
+      const teams = await fetchAllTeams();
+      el.innerHTML = `<div class="empty-note">${teams.length} équipe${teams.length>1?'s':''} déjà enregistrée${teams.length>1?'s':''}. Les compositions restent secrètes jusqu'à la clôture des picks${CLOSE_AT ? ' (' + formatCloseDate(CLOSE_AT) + ')' : ''} — histoire que personne ne copie les pronos des autres avant.</div>`;
+    }catch(e){
+      el.innerHTML = `<div class="empty-note">Les compositions restent secrètes jusqu'à la clôture des picks.</div>`;
+    }
+    return;
+  }
+  try{
+    const teams = await fetchAllTeams();
+    if(teams.length === 0){
+      el.innerHTML = `<div class="empty-note">Aucune équipe importée pour l'instant.</div>`;
+      return;
+    }
+    teams.sort((a,b)=>a.player.localeCompare(b.player));
+    el.innerHTML = buildTeamsStatsHTML(teams) + `
+      <div class="teams-toolbar">
+        <button class="btn" onclick="exportTeamsImage()">📷 Exporter en image</button>
+        <button class="btn" onclick="exportTeamsText()">📄 Exporter en texte</button>
+        <span class="admin-status" id="teamsExportStatus"></span>
+      </div>
+    ` + teams.map(t=>renderTeamCardHTML(t)).join("");
+  }catch(e){
+    el.innerHTML = `<div class="empty-note">Impossible de charger les équipes pour le moment.</div>`;
+  }
+}
+
+function pointsForBib(bib, order){
+  const idx = order.indexOf(bib);
+  return idx === -1 ? 0 : (BAREME[idx] || 0);
+}
+
+const ANGEL_BONUS_PALIERS = {0:0, 1:50, 2:75, 3:100, 4:150, 5:200};
+function angelBonusPercent(top30Count, hasTop10){
+  const n = Math.min(top30Count, 5);
+  let bonus = ANGEL_BONUS_PALIERS[n] || 0;
+  if(n > 0 && hasTop10) bonus += 50;
+  return bonus;
+}
+
+function computeTeamScore(team, order, resultsComplete){
+  const details = [...team.riders].sort((a,b)=>b.cost-a.cost).map(r=>{
+    const idx = order.indexOf(r.bib);
+    return { ...r, pos: idx===-1?null:idx+1, pts: idx===-1?0:(BAREME[idx]||0), placed: idx!==-1 };
+  });
+  const rawTotal = details.reduce((s,d)=>s+d.pts, 0);
+  const angelDetails = details.filter(d=>d.cat==="angel");
+  const hasAngels = angelDetails.length > 0;
+  const angelsInTop30 = angelDetails.filter(d=>d.placed && d.pos <= 30);
+  const angelsInTop10 = angelsInTop30.filter(d=>d.pos <= 10);
+  const angelsStillPending = angelDetails.filter(d=>!d.placed);
+  const m = team.modifiers || {};
+  const bonusZeroTent = m.zeroTentationBonus || 0;
+  const bonusAngel = hasAngels ? angelBonusPercent(angelsInTop30.length, angelsInTop10.length > 0) : 0;
+  const bonusCoquin = m.coquinBonus || 0;
+  const malus = m.superteamMalus || 0;
+  const netPercent = bonusZeroTent + bonusAngel + malus;
+  const leaderDetail = details.find(d=>d.bib === team.leaderBib);
+  const leaderRaw = leaderDetail ? leaderDetail.pts : 0;
+  const coquinPoints = leaderRaw * (bonusCoquin/100);
+  const finalScore = rawTotal * (1 + netPercent/100) + coquinPoints;
+  return { details, rawTotal, hasAngels, angelsInTop30Count: angelsInTop30.length, angelsInTop10Count: angelsInTop10.length, angelsStillPending, bonusZeroTent, bonusAngel, bonusCoquin, malus, netPercent, leaderRaw, coquinPoints, finalScore: Math.round(finalScore*10)/10 };
+}
+
+function computeBestCase(team, order){
+  const totalPositions = 30;
+  const known = order.length;
+  const remainingBareme = BAREME.slice(known, totalPositions);
+  const details = team.riders.map(r=>{
+    const idx = order.indexOf(r.bib);
+    return { ...r, placed: idx !== -1, pos: idx !== -1 ? idx+1 : null, pts: idx !== -1 ? (BAREME[idx]||0) : null };
+  });
+  const unplaced = details.filter(d=>!d.placed);
+  const placedTotal = details.filter(d=>d.placed).reduce((s,d)=>s+d.pts, 0);
+
+  let pool = [...remainingBareme];
+  const leaderIsUnplaced = team.leaderBib && unplaced.some(d=>d.bib === team.leaderBib);
+  let leaderBestPts;
+  if(leaderIsUnplaced){
+    leaderBestPts = pool.length > 0 ? pool.shift() : 0;
+  } else {
+    leaderBestPts = (details.find(d=>d.bib === team.leaderBib) || {}).pts || 0;
+  }
+  const othersUnplacedCount = unplaced.filter(d=>d.bib !== team.leaderBib).length;
+  let othersBonus = 0;
+  for(let i=0;i<othersUnplacedCount && pool.length>0;i++){ othersBonus += pool.shift(); }
+  const upperRawTotal = placedTotal + (leaderIsUnplaced?leaderBestPts:0) + othersBonus;
+
+  const hasAngels = details.some(d=>d.cat==="angel");
+  const angelAlreadyIn30 = details.filter(d=>d.cat==="angel" && d.placed && d.pos<=30);
+  const angelUnplaced = details.filter(d=>d.cat==="angel" && !d.placed);
+  const remainingSlots = remainingBareme.length;
+  const bestAngelsIn30Count = angelAlreadyIn30.length + Math.min(angelUnplaced.length, remainingSlots);
+  const alreadyHasTop10 = angelAlreadyIn30.some(d=>d.pos<=10);
+  const remainingHasTop10Slot = known < 10;
+  const bestHasTop10 = alreadyHasTop10 || (remainingHasTop10Slot && angelUnplaced.length > 0);
+  const m = team.modifiers || {};
+  const bonusZeroTent = m.zeroTentationBonus || 0;
+  const bonusAngel = hasAngels ? angelBonusPercent(bestAngelsIn30Count, bestHasTop10) : 0;
+  const bonusCoquin = m.coquinBonus || 0;
+  const malus = m.superteamMalus || 0;
+  const netPercent = bonusZeroTent + bonusAngel + malus;
+  const coquinPoints = leaderBestPts * (bonusCoquin/100);
+  const bestFinal = upperRawTotal * (1 + netPercent/100) + coquinPoints;
+  return Math.round(bestFinal*10)/10;
+}
+
+function buildCalcHTML(t, s, resultsComplete){
+  const lines = s.details.map(d=>{
+    const posLabel = d.pos ? `${d.pos}<sup>e</sup>` : (resultsComplete ? "hors top 30" : "pas encore classé");
+    return `<div class="calc-line"><span>${CAT_EMOJI[d.cat]||''} ${d.name} — ${posLabel}</span><b>${d.pts} pts</b></div>`;
+  }).join("");
+  const factor = (1 + s.netPercent/100);
+  let infoLine = "";
+  if(s.hasAngels){
+    if(s.angelsInTop30Count > 0){
+      infoLine = `<div class="calc-line" style="color:var(--dim);font-style:italic;">${s.angelsInTop30Count} Angel${s.angelsInTop30Count>1?'s':''} dans le top 30${s.angelsInTop10Count>0?`, dont ${s.angelsInTop10Count} dans le top 10`:''} → bonus Angel +${s.bonusAngel}%.${!resultsComplete ? ' Ce chiffre peut encore augmenter tant que le classement n\'est pas complet.' : ''}</div>`;
+    } else {
+      const names = s.angelsStillPending.map(d=>d.name).join(", ");
+      infoLine = `<div class="calc-line" style="color:var(--dim);font-style:italic;">Aucun Angel dans le ${resultsComplete ? 'top 30' : 'classement connu pour l\'instant'} → bonus Angel +0%.${!resultsComplete && names ? ` Encore en course : ${names}.` : ''}</div>`;
+    }
+  }
+  return `
+    <details class="calc-block">
+      <summary>Voir le calcul</summary>
+      ${lines}
+      <div class="calc-line calc-sum"><span>Total brut</span><b>${s.rawTotal} pts</b></div>
+      <div class="calc-line"><span>Modificateur : Résiste Tentation (+${s.bonusZeroTent}%) + Angel (+${s.bonusAngel}%) + Malus 666 Team (${s.malus}%)</span><b>× ${factor.toFixed(2)}</b></div>
+      <div class="calc-line"><span>${t.leaderName || 'Leader'} (Leader) × budget coquin (+${s.bonusCoquin}%)</span><b>+ ${s.coquinPoints.toFixed(1)} pts</b></div>
+      <div class="calc-line calc-final"><span>Score final</span><b>${s.finalScore} pts</b></div>
+      ${infoLine}
+    </details>
+  `;
+}
+
+function buildRaceResultsHTML(order, resultsComplete){
+  const rows = order.map((bib,i)=>{
+    const r = bib ? BY_BIB[bib] : null;
+    if(!r) return `<div class="calc-line"><span>${i+1}. —</span><span></span></div>`;
+    return `<div class="calc-line"><span>${i+1}. ${r.name}</span><span>${CAT_EMOJI[r.cat]||''} ${r.cost} pts</span></div>`;
+  }).join("");
+  return `
+    <div class="team-card">
+      <div class="tc-head">
+        <span class="tc-name">🏁 Classement de la course</span>
+        ${resultsComplete ? '' : '<span style="color:var(--tentation);font-size:0.75em;font-weight:600;">provisoire — en attente du top 30 complet</span>'}
+      </div>
+      ${rows}
+    </div>
+  `;
+}
+
+let lastScoredResults = null;
+
+function buildResultWhatsappText(scored, resultsComplete){
+  const lines = [];
+  lines.push(`🏁 *Résultat — ${DATA.raceName}*${resultsComplete ? '' : ' (provisoire)'}`);
+  lines.push("");
+  scored.forEach((row, i)=>{
+    const {t, s} = row;
+    lines.push(`*${i+1}. ${t.player}* — ${s.finalScore} pts`);
+    lines.push(`👑 Leader : ${t.leaderName || '—'}`);
+    s.details.forEach(d=>{
+      const posLabel = d.pos ? `${d.pos}e` : (resultsComplete ? "hors top 30" : "pas classé");
+      lines.push(`${CAT_EMOJI[d.cat]||''} ${d.name} — ${posLabel} — ${d.pts} pts`);
+    });
+    const factor = (1 + s.netPercent/100).toFixed(2);
+    lines.push(`Brut ${s.rawTotal} pts × ${factor} (modif ${s.netPercent>=0?'+':''}${s.netPercent}%) + coquin ${s.coquinPoints.toFixed(1)} pts = ${s.finalScore} pts`);
+    lines.push("");
+  });
+  if(!resultsComplete) lines.push("⚠ Classement provisoire, top 30 pas encore complet.");
+  return lines.join("\n");
+}
+
+async function copyResultWhatsapp(btnEl){
+  if(!lastScoredResults) return;
+  const text = buildResultWhatsappText(lastScoredResults.scored, lastScoredResults.resultsComplete);
+  try{
+    await navigator.clipboard.writeText(text);
+    if(btnEl){
+      const original = btnEl.textContent;
+      btnEl.textContent = "✅ Copié !";
+      setTimeout(()=>{ btnEl.textContent = original; }, 1800);
+    }
+  }catch(e){
+    if(btnEl) btnEl.textContent = "Échec de la copie";
+  }
+}
+
+async function renderResultTab(){
+  const el = document.getElementById("resultContent");
+  el.innerHTML = `<div class="empty-note">Chargement…</div>`;
+  let order = resultsOrderMemory;
+  if(!order){
+    try{
+      const r = await window.storage.get("route666-results", true);
+      if(r && r.value) order = JSON.parse(r.value).order;
+    }catch(e){}
+  }
+  document.getElementById("tabBtnResult").classList.toggle("locked", !order);
+  if(!order){
+    el.innerHTML = `<div class="empty-note">Résultat pas encore rentré par l'organisateur.</div>`;
+    return;
+  }
+  const teams = await fetchAllTeams();
+  if(teams.length === 0){
+    el.innerHTML = `<div class="empty-note">Aucune équipe à classer.</div>`;
+    return;
+  }
+  const resultsComplete = order.length >= 30;
+  const scored = teams.map(t => ({t, s: computeTeamScore(t, order, resultsComplete)}));
+  scored.sort((a,b)=> b.s.finalScore - a.s.finalScore);
+  const leaderScore = scored[0].s.finalScore;
+  lastScoredResults = { scored, resultsComplete };
+
+  const raceResultsHTML = buildRaceResultsHTML(order, resultsComplete);
+
+  el.innerHTML = raceResultsHTML + `
+    <div class="teams-toolbar">
+      <button class="btn" onclick="copyResultWhatsapp(this)">📋 Copier le classement pour WhatsApp</button>
+    </div>
+  ` + scored.map((row,i)=>{
+    const {t,s} = row;
+    let angelNote = "";
+    if(s.hasAngels){
+      angelNote = s.bonusAngel > 0
+        ? `· Angel +${s.bonusAngel}% (${s.angelsInTop30Count} dans le top 30${s.angelsInTop10Count>0?', dont 1+ top 10':''})`
+        : `· <span class="warn" style="color:var(--dim);">Angel +0% (aucun dans le top 30${resultsComplete?'':' pour l\'instant'})</span>`;
+    }
+    let bestCaseHTML = "";
+    if(!resultsComplete && i !== 0){
+      const best = computeBestCase(t, order);
+      const canWin = best > leaderScore;
+      bestCaseHTML = `<div class="mnote" style="margin-top:6px;font-style:italic;">🔮 Meilleur scénario possible (approximatif) : jusqu'à <b>${best}</b> pts. ${canWin ? "Cela suffirait à dépasser le leader actuel — la partie n'est pas jouée !" : `Même dans ce cas, ne dépasse pas le leader actuel (${scored[0].t.player}, ${leaderScore} pts).`}</div>`;
+    }
+    return `<div class="team-card">
+      <div class="tc-head">
+        <span class="tc-name"><span class="rank-badge ${i===0?'gold':''}">${i+1}</span>${t.player}</span>
+        <span class="tc-score">${s.finalScore}${resultsComplete ? '' : ' *'}</span>
+      </div>
+      <div class="tc-riders">👑 ${t.leaderName || '—'} · brut ${s.rawTotal} pts · modif. ${s.netPercent>=0?'+':''}${s.netPercent}% · coquin +${s.coquinPoints.toFixed(1)} pts ${angelNote}</div>
+      ${buildCalcHTML(t, s, resultsComplete)}
+      ${bestCaseHTML}
+    </div>`;
+  }).join("") + `<div class="mnote" style="margin-top:10px;">${resultsComplete ? '' : '* Classement provisoire tant que le top 30 n\'est pas complet. '}Formule : total brut (barème par position) × (1 + bonus/malus%) + points du Leader × bonus budget coquin.</div>`;
+}
+
+/* ---------------- Admin ---------------- */
+function openAdmin(){
+  document.getElementById("adminOverlay").classList.add("show");
+  document.getElementById("adminLockedForm").style.display = adminUnlocked ? "none" : "block";
+  document.getElementById("adminUnlockedArea").style.display = adminUnlocked ? "block" : "none";
+}
+function closeAdmin(){ document.getElementById("adminOverlay").classList.remove("show"); }
+function tryAdminUnlock(){
+  const pwd = document.getElementById("adminPwd").value;
+  if(pwd === "styx666"){
+    adminUnlocked = true;
+    document.getElementById("adminLockedForm").style.display = "none";
+    document.getElementById("adminUnlockedArea").style.display = "block";
+    if(activeTab === "teams") renderTeamsTab();
+  } else {
+    alert("Mot de passe incorrect.");
+  }
+}
+
+function normNameTokens(s){
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()
+    .replace(/[^a-z0-9\s]/g," ").split(/\s+/).filter(Boolean).sort().join(" ");
+}
+
+function findRiderByPastedRow(namePart, teamPart){
+  const wantTokens = normNameTokens(namePart);
+  let candidates = teamPart ? RIDERS.filter(r => r.team.trim().toLowerCase() === teamPart.trim().toLowerCase()) : [];
+  if(candidates.length === 0) candidates = RIDERS;
+  let match = candidates.find(r => normNameTokens(r.name) === wantTokens);
+  if(!match){
+    const wantSet = wantTokens.split(" ");
+    match = candidates.find(r => {
+      const rTokens = normNameTokens(r.name).split(" ");
+      return wantSet.every(t => rTokens.includes(t));
+    });
+  }
+  return match ? match.bib : null;
+}
+
+function parseResultsPaste(text){
+  const lines = text.split("\n").map(l=>l.replace(/\r$/,"")).filter(l=>l.trim().length>0).slice(0,30);
+  const order = [];
+  const unmatched = [];
+  lines.forEach((line, i)=>{
+    const stripped = line.replace(/^\s*\d+\.?\s*/, "");
+    const parts = stripped.split(/\t+|\s{2,}/).map(p=>p.trim()).filter(Boolean);
+    if(parts.length < 1){ order.push(null); unmatched.push(i+1); return; }
+    const namePart = parts[0];
+    const teamPart = parts[1] || "";
+    const bib = findRiderByPastedRow(namePart, teamPart);
+    order.push(bib);
+    if(!bib) unmatched.push(`${i+1} (${namePart})`);
+  });
+  while(order.length && order[order.length-1] === null) order.pop();
+  return { order, unmatched };
+}
+
+async function handleAdminImport(files){
+  const statusEl = document.getElementById("adminImportStatus");
+  let ok = 0, fail = 0;
+  for(const file of files){
+    try{
+      const text = await file.text();
+      const obj = JSON.parse(text);
+      if(obj.game !== "route666" || !obj.player){ fail++; continue; }
+      importedTeamsMemory[slug(obj.player)] = obj;
+      try{ await window.storage.set(`route666-team:${slug(obj.player)}`, JSON.stringify(obj), true); }catch(e){}
+      ok++;
+    }catch(e){ fail++; }
+  }
+  publishedMemory = true;
+  try{ await window.storage.set("route666-published", "true", true); }catch(e){}
+  statusEl.textContent = `${ok} équipe(s) importée(s)${fail?', '+fail+' fichier(s) ignoré(s)':''}. Onglet Teams actualisé.`;
+  if(activeTab === "teams") renderTeamsTab();
+}
+
+async function saveResults(){
+  const statusEl = document.getElementById("adminResultsStatus");
+  const raw = document.getElementById("resultsPaste").value;
+  const { order, unmatched } = parseResultsPaste(raw);
+  const recognized = order.filter(x=>x!==null).length;
+  if(recognized === 0){ statusEl.textContent = "Aucune ligne reconnue — vérifie le format collé."; return; }
+  resultsOrderMemory = order;
+  try{ await window.storage.set("route666-results", JSON.stringify({order, enteredAt: new Date().toISOString()}), true); }catch(e){}
+  statusEl.textContent = `Résultat enregistré (${recognized}/${order.length} lignes reconnues). Onglet Résultat actualisé.`
+    + (unmatched.length ? ` Non reconnu(e)s : ${unmatched.join(", ")}.` : "");
+  if(activeTab === "result") renderResultTab();
+}
+
+async function releasePseudo(){
+  const statusEl = document.getElementById("adminReleaseStatus");
+  const input = document.getElementById("releasePseudoInput");
+  const name = input.value.trim();
+  if(name === ""){ statusEl.textContent = "Indique un pseudo à libérer."; return; }
+  const key = slug(name);
+  try{
+    const existing = await window.storageGlobal.get(key);
+    if(!existing || !existing.value){
+      statusEl.textContent = `Aucun compte trouvé pour "${name}".`;
+      return;
+    }
+    const ok = await window.storageGlobal.delete(key);
+    statusEl.textContent = ok
+      ? `Pseudo "${name}" libéré — il pourra recréer un mot de passe au prochain essai, sur n'importe quelle course.`
+      : `Échec de la libération (connexion ?). Réessaie dans un instant.`;
+    if(ok) input.value = "";
+  }catch(e){
+    statusEl.textContent = "Échec de la libération (connexion ?). Réessaie dans un instant.";
+  }
+}
+
+/* ---------------- init ---------------- */
+(async ()=>{
+  try{
+    const r = await window.storage.get("route666-playername", false);
+    if(r && r.value){ playerName = r.value; document.getElementById("playerNameInput").value = r.value; }
+  }catch(e){}
+  try{
+    const sk = await window.storage.get("route666-skip-tutorials", false);
+    if(sk && sk.value === "true"){ skipTutorials = true; document.getElementById("skipTutoCheckbox").checked = true; }
+  }catch(e){}
+  try{
+    const st = await window.storage.get("route666-seen-tutorials", false);
+    if(st && st.value){ seenTutorials = JSON.parse(st.value); }
+  }catch(e){}
+  render();
+  if(!skipTutorials){
+    document.getElementById("welcomeText").textContent = WELCOME_VARIANTS[Math.floor(Math.random()*WELCOME_VARIANTS.length)];
+    document.getElementById("welcomeOverlay").classList.add("show");
+  }
+  resetIdleTimer();
+  updateCloseBanner();
+  setInterval(updateCloseBanner, 1000);
+  document.getElementById("tabBtnTeams").classList.toggle("locked", !isClosed());
+  try{
+    const res = await window.storage.get("route666-results", true);
+    document.getElementById("tabBtnResult").classList.toggle("locked", !(res && res.value));
+  }catch(e){}
+
+  // Permet à la landing page (ou un lien direct) d'ouvrir une page course
+  // directement sur un onglet précis, via #teams ou #result dans l'URL.
+  const hashTab = (window.location.hash || "").replace("#", "");
+  if(hashTab === "teams" || hashTab === "result"){
+    switchTab(hashTab);
+  }
+})();
+</script>
+
+</body>
+</html>
