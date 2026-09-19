@@ -98,7 +98,9 @@ function parseFirstCyclingHTML(text){
   let rm;
   while((rm = rowRe.exec(tbody)) !== null){
     const row = rm[1];
-    const bibM = row.match(/<td>(\d+)\s*<\/td>/);
+    // Dossard parfois vide (épreuves individuelles type CLM/championnats) -> on
+    // attribue un numéro auto-incrémenté plutôt que de rejeter la ligne.
+    const bibM = row.match(/<td>\s*(\d*)\s*<\/td>/);
     const natM = row.match(/flag flag-([a-z]+)/);
     const nameM = row.match(/title="([^"]+)">\s*<span[^>]*>([^<]+)<\/span>\s*([^<]*)<\/a>/);
     let teamName = null;
@@ -111,7 +113,8 @@ function parseFirstCyclingHTML(text){
     // pcm sans chiffre (coureur sans note PCM) -> valeur par défaut 20 au lieu d'ignorer la ligne
     const statMatches = [...row.matchAll(/pcmBox pcm(\d*)"/g)].map(x=>x[1] === "" ? 20 : parseInt(x[1]));
     if(!(bibM && natM && nameM && teamName && statMatches.length === 14)) continue;
-    riders.push({ bib: parseInt(bibM[1]), name: nameM[1], nat: natM[1], team: teamName, stats: statMatches });
+    const bib = (bibM[1] === "") ? (1000 + riders.length) : parseInt(bibM[1]);
+    riders.push({ bib, name: nameM[1], nat: natM[1], team: teamName, stats: statMatches });
   }
   return riders;
 }
