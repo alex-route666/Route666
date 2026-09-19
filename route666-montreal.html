@@ -2280,6 +2280,43 @@ function buildRaceResultsHTML(order, resultsComplete){
   `;
 }
 
+let lastScoredResults = null;
+
+function buildResultWhatsappText(scored, resultsComplete){
+  const lines = [];
+  lines.push(`🏁 *Résultat — ${DATA.raceName}*${resultsComplete ? '' : ' (provisoire)'}`);
+  lines.push("");
+  scored.forEach((row, i)=>{
+    const {t, s} = row;
+    lines.push(`*${i+1}. ${t.player}* — ${s.finalScore} pts`);
+    lines.push(`👑 Leader : ${t.leaderName || '—'}`);
+    s.details.forEach(d=>{
+      const posLabel = d.pos ? `${d.pos}e` : (resultsComplete ? "hors top 30" : "pas classé");
+      lines.push(`${CAT_EMOJI[d.cat]||''} ${d.name} — ${posLabel} — ${d.pts} pts`);
+    });
+    const factor = (1 + s.netPercent/100).toFixed(2);
+    lines.push(`Brut ${s.rawTotal} pts × ${factor} (modif ${s.netPercent>=0?'+':''}${s.netPercent}%) + coquin ${s.coquinPoints.toFixed(1)} pts = ${s.finalScore} pts`);
+    lines.push("");
+  });
+  if(!resultsComplete) lines.push("⚠ Classement provisoire, top 30 pas encore complet.");
+  return lines.join("\n");
+}
+
+async function copyResultWhatsapp(btnEl){
+  if(!lastScoredResults) return;
+  const text = buildResultWhatsappText(lastScoredResults.scored, lastScoredResults.resultsComplete);
+  try{
+    await navigator.clipboard.writeText(text);
+    if(btnEl){
+      const original = btnEl.textContent;
+      btnEl.textContent = "✅ Copié !";
+      setTimeout(()=>{ btnEl.textContent = original; }, 1800);
+    }
+  }catch(e){
+    if(btnEl) btnEl.textContent = "Échec de la copie";
+  }
+}
+
 async function renderResultTab(){
   const el = document.getElementById("resultContent");
   el.innerHTML = `<div class="empty-note">Chargement…</div>`;
@@ -2304,10 +2341,15 @@ async function renderResultTab(){
   const scored = teams.map(t => ({t, s: computeTeamScore(t, order, resultsComplete)}));
   scored.sort((a,b)=> b.s.finalScore - a.s.finalScore);
   const leaderScore = scored[0].s.finalScore;
+  lastScoredResults = { scored, resultsComplete };
 
   const raceResultsHTML = buildRaceResultsHTML(order, resultsComplete);
 
-  el.innerHTML = raceResultsHTML + scored.map((row,i)=>{
+  el.innerHTML = raceResultsHTML + `
+    <div class="teams-toolbar">
+      <button class="btn" onclick="copyResultWhatsapp(this)">📋 Copier le classement pour WhatsApp</button>
+    </div>
+  ` + scored.map((row,i)=>{
     const {t,s} = row;
     let angelNote = "";
     if(s.hasAngels){
