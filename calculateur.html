@@ -108,7 +108,8 @@ function parseFirstCyclingHTML(text){
       const teamM2 = row.match(/<\/td>\s*<td>([^<]+)<\/td>/);
       if(teamM2) teamName = teamM2[1].trim();
     }
-    const statMatches = [...row.matchAll(/pcmBox pcm(\d+)"/g)].map(x=>parseInt(x[1]));
+    // pcm sans chiffre (coureur sans note PCM) -> valeur par défaut 20 au lieu d'ignorer la ligne
+    const statMatches = [...row.matchAll(/pcmBox pcm(\d*)"/g)].map(x=>x[1] === "" ? 20 : parseInt(x[1]));
     if(!(bibM && natM && nameM && teamName && statMatches.length === 14)) continue;
     riders.push({ bib: parseInt(bibM[1]), name: nameM[1], nat: natM[1], team: teamName, stats: statMatches });
   }
