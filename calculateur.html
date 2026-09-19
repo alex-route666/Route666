@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Route 666 — Calculateur de coûts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f8f1ea; --bg-2:#f0e2d8; --panel:#fffbf7; --panel-2:#f8ece3;
+    --line:#e4cdbe; --paper:#2a1417; --dim:#8c6d6a;
+    --tentation:#d81633; --diablo:#9c2d6b; --malin:#e0703f; --angel:#8c9a93;
+    --superteam:#e8bf5a; --header-bg1:#e0102c; --header-bg2:#8f0d21; --header-text:#fff5ee; --header-accent:#f2c14e;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(180deg, var(--bg), var(--bg-2) 45%);color:var(--paper);font-family:'IBM Plex Sans',sans-serif;}
+  header{padding:20px 22px;background:linear-gradient(120deg, var(--header-bg1), var(--header-bg2) 75%);color:var(--header-text);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.6em;margin:0 0 2px;}
+  h1 .six{color:var(--header-accent);text-shadow:0 0 16px rgba(242,193,78,0.5);}
+  .subtitle{font-family:'Space Grotesk',sans-serif;font-size:0.85em;color:rgba(255,245,238,0.8);}
+  main{max-width:820px;margin:0 auto;padding:20px 16px 60px;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:16px;}
+  .panel h2{font-family:'Space Grotesk',sans-serif;font-size:1em;margin:0 0 10px;}
+  textarea{width:100%;height:160px;background:var(--bg);border:1px solid var(--line);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:0.7em;border-radius:4px;padding:10px;}
+  .coeff-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(100px,1fr));gap:8px;margin-top:10px;}
+  .coeff-field{display:flex;flex-direction:column;gap:3px;}
+  .coeff-field label{font-family:'IBM Plex Mono',monospace;font-size:0.7em;color:var(--dim);}
+  .coeff-field input{background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;text-align:center;}
+  .calc-btn{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.95em;
+    background:var(--tentation);color:#fff;border:none;padding:10px 20px;border-radius:6px;
+    cursor:pointer;margin-top:14px;
+  }
+  .calc-btn:hover{background:#b81229;}
+  .summary{font-family:'IBM Plex Mono',monospace;font-size:0.82em;margin-bottom:12px;padding:10px;background:var(--panel-2);border-radius:6px;}
+  table{width:100%;border-collapse:collapse;font-size:0.85em;}
+  th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:0.72em;color:var(--dim);padding:4px 8px;border-bottom:1px solid var(--line);}
+  td{padding:4px 8px;border-bottom:1px solid rgba(0,0,0,0.05);}
+  tr.tentation td:first-child{color:var(--tentation);font-weight:700;}
+  tr.diablo td:first-child{color:var(--diablo);font-weight:700;}
+  tr.malin td:first-child{color:var(--malin);font-weight:700;}
+  tr.angel td:first-child{color:var(--angel);}
+  .cost-cell{font-family:'IBM Plex Mono',monospace;font-weight:700;text-align:right;}
+  .error{color:var(--tentation);font-weight:600;}
+  .empty-note{color:var(--dim);font-style:italic;}
+  .copy-btn{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.8em;
+    background:var(--panel-2);border:1px solid var(--line);color:var(--paper);
+    padding:6px 12px;border-radius:5px;cursor:pointer;margin-bottom:10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ROUTE 6<span class="six">6</span>6</h1>
+  <div class="subtitle">Calculateur de coûts — 100% local, aucun appel externe</div>
+</header>
+
+<main>
+  <div class="panel">
+    <h2>1. Colle le code source FirstCycling (onglet Pro Cycling Manager)</h2>
+    <textarea id="sourceInput" placeholder="Colle ici le contenu du fichier .txt / .mht exporté depuis FirstCycling..."></textarea>
+  </div>
+
+  <div class="panel">
+    <h2>2. Coefficients (0 à ~20 chacun)</h2>
+    <div class="coeff-grid" id="coeffGrid"></div>
+  </div>
+
+  <button class="calc-btn" onclick="runCalculation()">⚙️ Calculer les coûts</button>
+
+  <div id="resultArea" style="margin-top:20px;"></div>
+</main>
+
+<script>
+const STAT_KEYS = ["FLA","MTN","MM","HIL","TTR","PRL","COB","SPR","ACC","DHI","ATT","STA","RES","REC"];
+const CAT_EMOJI = {tentation:"🔥", diablo:"😈", malin:"😏", angel:"😇"};
+
+const grid = document.getElementById("coeffGrid");
+grid.innerHTML = STAT_KEYS.map(k=>`
+  <div class="coeff-field">
+    <label>${k}</label>
+    <input type="number" id="coeff_${k}" value="0" min="0" max="30">
+  </div>
+`).join("");
+
+function parseFirstCyclingHTML(text){
+  const tbodyRe = /<tbody[^>]*>([\s\S]*?)<\/tbody>/g;
+  let m, tbody = null;
+  while((m = tbodyRe.exec(text)) !== null){
+    if(m[1].includes("pcmBox")){ tbody = m[1]; break; }
+  }
+  if(!tbody) return [];
+  const rowRe = /<tr[^>]*>([\s\S]*?)<\/tr>/g;
+  const riders = [];
+  let rm;
+  while((rm = rowRe.exec(tbody)) !== null){
+    const row = rm[1];
+    const bibM = row.match(/<td>(\d+)\s*<\/td>/);
+    const natM = row.match(/flag flag-([a-z]+)/);
+    const nameM = row.match(/title="([^"]+)">\s*<span[^>]*>([^<]+)<\/span>\s*([^<]*)<\/a>/);
+    let teamName = null;
+    const teamM = row.match(/team\.php\?l=\d+">([^<]+)<\/a>/);
+    if(teamM) teamName = teamM[1].trim();
+    else {
+      const teamM2 = row.match(/<\/td>\s*<td>([^<]+)<\/td>/);
+      if(teamM2) teamName = teamM2[1].trim();
+    }
+    const statMatches = [...row.matchAll(/pcmBox pcm(\d+)"/g)].map(x=>parseInt(x[1]));
+    if(!(bibM && natM && nameM && teamName && statMatches.length === 14)) continue;
+    riders.push({ bib: parseInt(bibM[1]), name: nameM[1], nat: natM[1], team: teamName, stats: statMatches });
+  }
+  return riders;
+}
+
+function computeCosts(riders, weights){
+  const W = weights.reduce((a,b)=>a+b,0);
+  if(W === 0) return null;
+  const all = riders.map(r=>{
+    const wavg = r.stats.reduce((s,v,i)=>s+v*weights[i],0)/W;
+    return {...r, wavg};
+  });
+  const N = all.length;
+  const sorted = [...all].sort((a,b)=>b.wavg-a.wavg);
+  const tentationN = Math.max(4, Math.round(0.03*N));
+  const diabloN = Math.round(0.17*N);
+  const malinN = Math.round(0.30*N);
+
+  const tentationTier = sorted.slice(0, tentationN);
+  const diabloTier = sorted.slice(tentationN, tentationN+diabloN);
+  const malinTier = sorted.slice(tentationN+diabloN, tentationN+diabloN+malinN);
+  const angelTier = sorted.slice(tentationN+diabloN+malinN);
+
+  const tmin = tentationTier[tentationTier.length-1].wavg;
+  const vmax = tentationTier[0].wavg;
+  const avgGap = (tentationN > 1) ? (vmax - tmin) / (tentationN - 1) : 1;
+  tentationTier.forEach(r=>{
+    r.cost = Math.round(90 + (avgGap !== 0 ? 10*(r.wavg-tmin)/avgGap : 0));
+    r.cat = "tentation";
+  });
+
+  function scaleTier(tier, lo, hi){
+    if(tier.length === 0) return;
+    const vals = tier.map(r=>r.wavg);
+    const vmn = Math.min(...vals), vmx = Math.max(...vals);
+    const denom = (vmx !== vmn) ? (vmx-vmn) : 1;
+    tier.forEach(r=>{ r.cost = Math.round(lo + (hi-lo)*(r.wavg-vmn)/denom); });
+  }
+  scaleTier(diabloTier, 80, 89); diabloTier.forEach(r=>r.cat="diablo");
+  scaleTier(malinTier, 70, 79); malinTier.forEach(r=>r.cat="malin");
+  scaleTier(angelTier, 20, 69); angelTier.forEach(r=>r.cat="angel");
+
+  // Superteam : équipe réelle au coût moyen le plus élevé
+  const teamCosts = {};
+  all.forEach(r=>{ (teamCosts[r.team] = teamCosts[r.team]||[]).push(r.cost); });
+  let superTeam = null, bestAvg = -1;
+  Object.entries(teamCosts).forEach(([team, costs])=>{
+    const avg = costs.reduce((a,b)=>a+b,0)/costs.length;
+    if(avg > bestAvg){ bestAvg = avg; superTeam = team; }
+  });
+
+  return { riders: all.sort((a,b)=>b.cost-a.cost), superTeam, tentationN, diabloN, malinN, angelN: N-tentationN-diabloN-malinN, W };
+}
+
+let lastResultText = "";
+
+function runCalculation(){
+  const el = document.getElementById("resultArea");
+  const source = document.getElementById("sourceInput").value;
+  if(!source.trim()){
+    el.innerHTML = `<div class="error">Colle d'abord le code source FirstCycling.</div>`;
+    return;
+  }
+  const weights = STAT_KEYS.map(k => parseFloat(document.getElementById("coeff_"+k).value) || 0);
+  const riders = parseFirstCyclingHTML(source);
+  if(riders.length === 0){
+    el.innerHTML = `<div class="error">Aucun coureur détecté — vérifie que c'est bien l'onglet "Pro Cycling Manager" (avec les statistiques), pas la liste des partants classique.</div>`;
+    return;
+  }
+  const result = computeCosts(riders, weights);
+  if(!result){
+    el.innerHTML = `<div class="error">Tous les coefficients sont à 0 — indique au moins un poids.</div>`;
+    return;
+  }
+
+  lastResultText = result.riders.map(r=>`${CAT_EMOJI[r.cat]} ${r.name} — ${r.team} — ${r.cost} pts`).join("\n");
+
+  el.innerHTML = `
+    <button class="copy-btn" onclick="copyResultList()">📋 Copier la liste</button>
+    <div class="summary">
+      ${riders.length} coureurs · W=${result.W} · Répartition : 🔥${result.tentationN} 😈${result.diabloN} 😏${result.malinN} 😇${result.angelN}<br>
+      👿 Superteam : <b>${result.superTeam}</b>
+    </div>
+    <table>
+      <tr><th></th><th>Coureur</th><th>Équipe</th><th style="text-align:right;">Coût</th></tr>
+      ${result.riders.map(r=>`<tr class="${r.cat}"><td>${CAT_EMOJI[r.cat]}</td><td>${r.name}</td><td>${r.team}</td><td class="cost-cell">${r.cost}</td></tr>`).join("")}
+    </table>
+  `;
+}
+
+async function copyResultList(){
+  try{ await navigator.clipboard.writeText(lastResultText); }catch(e){}
+}
+</script>
+
+</body>
+</html>
