@@ -161,10 +161,15 @@ function computeCosts(riders, weights){
     if(avg > bestAvg){ bestAvg = avg; superTeam = team; }
   });
 
-  return { riders: all.sort((a,b)=>b.cost-a.cost), superTeam, tentationN, diabloN, malinN, angelN: N-tentationN-diabloN-malinN, W };
+  const teamOrder = [];
+  riders.forEach(r=>{ if(!teamOrder.includes(r.team)) teamOrder.push(r.team); });
+  all.forEach(r=>{ r.special = (r.team === superTeam) ? "st" : null; });
+
+  return { riders: all.sort((a,b)=>b.cost-a.cost), superTeam, teamOrder, tentationN, diabloN, malinN, angelN: N-tentationN-diabloN-malinN, W };
 }
 
 let lastResultText = "";
+let lastExportPayload = null;
 
 function runCalculation(){
   const el = document.getElementById("resultArea");
@@ -186,9 +191,15 @@ function runCalculation(){
   }
 
   lastResultText = result.riders.map(r=>`${CAT_EMOJI[r.cat]} ${r.name} — ${r.team} — ${r.cost} pts`).join("\n");
+  lastExportPayload = {
+    riders: result.riders.map(r=>({bib:r.bib, name:r.name, nat:r.nat, team:r.team, cost:r.cost, cat:r.cat, special:r.special})),
+    teamOrder: result.teamOrder,
+    superTeam: result.superTeam,
+  };
 
   el.innerHTML = `
     <button class="copy-btn" onclick="copyResultList()">📋 Copier la liste</button>
+    <button class="copy-btn" onclick="copyExportForClaude(this)">📤 Exporter pour Claude</button>
     <div class="summary">
       ${riders.length} coureurs · W=${result.W} · Répartition : 🔥${result.tentationN} 😈${result.diabloN} 😏${result.malinN} 😇${result.angelN}<br>
       👿 Superteam : <b>${result.superTeam}</b>
@@ -202,6 +213,22 @@ function runCalculation(){
 
 async function copyResultList(){
   try{ await navigator.clipboard.writeText(lastResultText); }catch(e){}
+}
+
+async function copyExportForClaude(btnEl){
+  if(!lastExportPayload) return;
+  const text = `Voici les coûts déjà calculés (via le calculateur autonome) — reprends-les tels quels, sans refaire le calcul, et génère la page de course :\n\n` +
+    "```json\n" + JSON.stringify(lastExportPayload) + "\n```";
+  try{
+    await navigator.clipboard.writeText(text);
+    if(btnEl){
+      const original = btnEl.textContent;
+      btnEl.textContent = "✅ Copié, colle-le dans le chat";
+      setTimeout(()=>{ btnEl.textContent = original; }, 2200);
+    }
+  }catch(e){
+    if(btnEl) btnEl.textContent = "Échec de la copie";
+  }
 }
 </script>
 
