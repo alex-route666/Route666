@@ -82,6 +82,15 @@
     padding:6px 12px;border-radius:5px;cursor:pointer;
   }
   .refresh-btn:hover{background:var(--panel);}
+  .strategy-bubble{
+    display:inline-block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.85em;
+    background:rgba(232,191,90,0.1);border:1px solid var(--superteam);color:var(--superteam);
+    padding:8px 14px;border-radius:20px;cursor:pointer;margin-bottom:14px;
+  }
+  .strategy-bubble:hover{background:rgba(232,191,90,0.2);}
+  .strategy-panel{display:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:0.85em;line-height:1.8;}
+  .strategy-panel.show{display:block;}
+  .strategy-panel .sp-title{font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:8px;}
   .ranking-row{
     display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);
     border-radius:6px;padding:10px 14px;margin-bottom:6px;
@@ -112,6 +121,10 @@
 
 <main>
   <div class="panel active" id="panelCal">
+    <div class="strategy-bubble" id="strategyBubble" onclick="toggleStrategyPanel()">
+      💡 Quelles stratégies marchent le plus souvent ?
+    </div>
+    <div class="strategy-panel" id="strategyPanel"></div>
     <div id="calContent" class="loading">Chargement du calendrier…</div>
   </div>
   <div class="panel" id="panelRank">
@@ -207,11 +220,18 @@ async function fetchRaceTeamsAndResults(raceNameForSlug){
 }
 
 let MANIFEST = null;
+let PSEUDO_ALIASES = {};
 async function loadManifest(){
   if(MANIFEST) return MANIFEST;
   const res = await fetch("manifest.json", {cache:"no-store"});
-  MANIFEST = (await res.json()).races;
+  const full = await res.json();
+  MANIFEST = full.races;
+  PSEUDO_ALIASES = full.pseudoAliases || {};
   return MANIFEST;
+}
+function canonicalPseudoKey(player){
+  const k = slug(player);
+  return PSEUDO_ALIASES[k] || k;
 }
 
 function formatDate(iso){
@@ -271,17 +291,17 @@ function buildCalendarHTML(data){
   let html = "";
   html += `<div class="section-title">✅ Terminées</div>`;
   html += data.finished.length
-    ? data.finished.map(r=>`<div class="race-card finished"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><a class="rc-link" href="${r.file}#result">Voir le résultat</a></div>`).join("")
+    ? data.finished.map(r=>`<div class="race-card finished"><div class="rc-left"><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><a class="rc-link" href="${r.file}#result">Voir le résultat</a></div>`).join("")
     : `<div class="empty-note">Aucune course terminée pour l'instant.</div>`;
 
   html += `<div class="section-title">🕒 En cours</div>`;
   const enCoursHTML = [];
   data.open.forEach(r=>{
     const closeAtDate = new Date(r.closeAtISO);
-    enCoursHTML.push(`<div class="race-card open"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">Clôture ${formatDateTime(r.closeAtISO)}</span></div><div style="display:flex;align-items:center;gap:8px;"><span class="rc-status">ouvre encore ${countdownStr(closeAtDate-now)}</span><a class="rc-link" href="${r.file}">Pronostiquer</a></div></div>`);
+    enCoursHTML.push(`<div class="race-card open"><div class="rc-left"><span class="rc-name">${r.name}</span><span class="rc-date">Clôture ${formatDateTime(r.closeAtISO)}</span></div><div style="display:flex;align-items:center;gap:8px;"><span class="rc-status">ouvre encore ${countdownStr(closeAtDate-now)}</span><a class="rc-link" href="${r.file}">Pronostiquer</a></div></div>`);
   });
   data.pending.forEach(r=>{
-    enCoursHTML.push(`<div class="race-card pending"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><div style="display:flex;align-items:center;gap:8px;"><span class="rc-status">clôturée, résultat en attente</span><a class="rc-link" href="${r.file}">Ouvrir</a></div></div>`);
+    enCoursHTML.push(`<div class="race-card pending"><div class="rc-left"><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><div style="display:flex;align-items:center;gap:8px;"><span class="rc-status">clôturée, résultat en attente</span><a class="rc-link" href="${r.file}">Ouvrir</a></div></div>`);
   });
   html += enCoursHTML.length ? enCoursHTML.join("") : `<div class="empty-note">Aucune course en cours actuellement.</div>`;
 
@@ -293,7 +313,7 @@ function buildCalendarHTML(data){
         openDay.setHours(17,0,0,0);
         const untilOpen = openDay - now;
         const openLabel = untilOpen > 0 ? `ouverture prévue dans ${countdownStr(untilOpen)} (veille, 17h)` : "ouverture imminente";
-        return `<div class="race-card planned"><div class="rc-left"><span class="rc-index">#${r.index}</span><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><span class="rc-status">${openLabel}</span></div>`;
+        return `<div class="race-card planned"><div class="rc-left"><span class="rc-name">${r.name}</span><span class="rc-date">${formatDate(r.date)}</span></div><span class="rc-status">${openLabel}</span></div>`;
       }).join("")
     : `<div class="empty-note">Rien de plus au calendrier pour l'instant.</div>`;
 
@@ -332,10 +352,13 @@ async function renderRanking(){
     if(!rr || !rr.finished) continue;
     racesCounted++;
     rr.teams.forEach(t=>{
-      const key = slug(t.player);
+      const rawKey = slug(t.player);
+      const key = PSEUDO_ALIASES[rawKey] || rawKey;
       const score = computeTeamScore(t, rr.order);
       totals[key] = (totals[key]||0) + score;
-      namesByKey[key] = t.player;
+      // Préfère comme libellé affiché le pseudo dont le slug EST la clé canonique
+      // (ex. "Alexandre Mignot") plutôt qu'un alias fusionné (ex. "Alex Mignot").
+      if(!namesByKey[key] || rawKey === key) namesByKey[key] = t.player;
     });
   }
 
@@ -354,6 +377,80 @@ async function renderRanking(){
       <span class="rank-score">${r.score} pts</span>
     </div>
   `).join("") + `<div class="caveat">Classement basé sur ${racesCounted} course${racesCounted>1?'s':''} terminée${racesCounted>1?'s':''}, cumul par pseudo. ⚠️ Le système de connexion (pseudo + mot de passe) n'est pas encore actif — deux personnes différentes utilisant le même pseudo sur deux courses seraient ici comptées comme une seule. À prendre avec cette réserve tant que le login n'est pas en place.</div>`;
+}
+
+// Récupère le fichier HTML réel d'une course pour en extraire les données complètes
+// (coût de chaque coureur, Superteam) — nécessaire pour les stats de stratégie, que
+// les documents d'équipe seuls ne contiennent pas (ils ne listent que les coureurs pris).
+async function fetchRaceFullData(file){
+  try{
+    const res = await fetch(file, {cache:"no-store"});
+    const html = await res.text();
+    const m = html.match(/const DATA = ([\s\S]*?);\n<\/script>/);
+    if(!m) return null;
+    return JSON.parse(m[1]);
+  }catch(e){ return null; }
+}
+
+let strategyStatsCache = null;
+async function computeStrategyStats(){
+  if(strategyStatsCache) return strategyStatsCache;
+  const races = await loadManifest();
+  const now = new Date();
+  let total = 0, withMostExpensive = 0, withZeroTentation = 0, with2PlusSuperteam = 0;
+  const angelCounts = {0:0,1:0,2:0,3:0,4:0,5:0};
+
+  for(const r of races){
+    if(r.status !== "live" || !r.file || !r.closeAt) continue;
+    if(now < new Date(r.closeAt)) continue;
+    const rr = await fetchRaceTeamsAndResults(r.raceName || r.name);
+    if(!rr || !rr.finished || rr.teams.length === 0) continue;
+    const full = await fetchRaceFullData(r.file);
+    if(!full || !full.riders || !full.riders.length) continue;
+
+    const scored = rr.teams.map(t=>({t, score: computeTeamScore(t, rr.order)}));
+    scored.sort((a,b)=>b.score-a.score);
+    const winner = scored[0].t;
+
+    total++;
+    const maxCost = Math.max(...full.riders.map(x=>x.cost));
+    if(winner.riders.some(x=>x.cost === maxCost)) withMostExpensive++;
+    if(!winner.riders.some(x=>x.cat === "tentation")) withZeroTentation++;
+    const numAngels = winner.riders.filter(x=>x.cat === "angel").length;
+    angelCounts[numAngels] = (angelCounts[numAngels]||0) + 1;
+    const superteamCount = winner.riders.filter(x=>x.team === full.superTeam).length;
+    if(superteamCount >= 2) with2PlusSuperteam++;
+  }
+
+  strategyStatsCache = { total, withMostExpensive, withZeroTentation, with2PlusSuperteam, angelCounts };
+  return strategyStatsCache;
+}
+
+function pct(n, total){ return total ? Math.round(n/total*100) : 0; }
+
+async function toggleStrategyPanel(){
+  const panel = document.getElementById("strategyPanel");
+  const showing = panel.classList.contains("show");
+  if(showing){ panel.classList.remove("show"); return; }
+  panel.classList.add("show");
+  panel.innerHTML = `<div class="loading">Calcul en cours…</div>`;
+  const s = await computeStrategyStats();
+  if(s.total === 0){
+    panel.innerHTML = `<div class="empty-note">Pas encore assez de courses terminées pour en tirer des statistiques fiables.</div>`;
+    return;
+  }
+  const angelLines = Object.entries(s.angelCounts)
+    .filter(([,c])=>c>0)
+    .map(([n,c])=>`${n} Angel${n>1?'s':''} : ${pct(c, s.total)}%`)
+    .join(" · ");
+  panel.innerHTML = `
+    <div class="sp-title">📊 Sur ${s.total} course${s.total>1?'s':''} terminée${s.total>1?'s':''}, l'équipe gagnante avait...</div>
+    <div>🔥 Le coureur le plus cher de la course : <b>${pct(s.withMostExpensive, s.total)}%</b> du temps</div>
+    <div>🚫 Aucun Pick Tentation : <b>${pct(s.withZeroTentation, s.total)}%</b> du temps</div>
+    <div>👿 2 coureurs ou plus de la 666 Team : <b>${pct(s.with2PlusSuperteam, s.total)}%</b> du temps</div>
+    <div>😇 Nombre d'Angels dans l'équipe gagnante : ${angelLines || "—"}</div>
+    <div class="caveat" style="margin-top:10px;">Échantillon encore restreint — à prendre avec précaution tant que peu de courses sont jouées.</div>
+  `;
 }
 
 // Une seule vraie vérification Firebase au chargement. Ensuite, le compte à rebours
