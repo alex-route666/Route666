@@ -1858,7 +1858,7 @@ function renderBoard(){
   el.className = "board";
   let html = "";
   DATA.teamOrder.forEach(team=>{
-    const riders = filtered.filter(r=>r.team===team);
+    const riders = filtered.filter(r=>r.team===team).sort((a,b)=>b.cost-a.cost);
     if(riders.length === 0) return;
     let extraClass = "", badge = "";
     if(team === DATA.superTeam){ extraClass="st"; badge=`<span class="badge st">666 TEAM 👿</span>`; }
