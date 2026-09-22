@@ -55,7 +55,10 @@
       "index": 12,
       "name": "Championnat du Monde U23",
       "date": "2026-09-25",
-      "status": "planned"
+      "status": "live",
+      "file": "route666-monde-u23.html",
+      "raceName": "Championnat du Monde U23 2026",
+      "closeAt": "2026-09-25T15:00:00+02:00"
     },
     {
       "index": 13,
