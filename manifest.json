@@ -70,7 +70,10 @@
       "index": 14,
       "name": "Championnat du Monde",
       "date": "2026-09-27",
-      "status": "planned"
+      "status": "live",
+      "file": "route666-monde.html",
+      "raceName": "Championnat du Monde 2026",
+      "closeAt": "2026-09-27T15:00:00+02:00"
     },
     {
       "index": 15,
