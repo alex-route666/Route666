@@ -91,7 +91,10 @@
       "index": 17,
       "name": "Championnat d'Europe",
       "date": "2026-10-04",
-      "status": "planned"
+      "status": "live",
+      "file": "route666-europe.html",
+      "raceName": "Championnat d'Europe 2026",
+      "closeAt": "2026-10-04T12:30:00+02:00"
     },
     {
       "index": 18,
