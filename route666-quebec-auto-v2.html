@@ -510,6 +510,7 @@
       <input type="text" id="playerNameInput" placeholder="ex: Alexandre" oninput="onNameInput(this.value)">
       <div class="iolinks">
         <label style="display:flex;align-items:center;gap:4px;font-size:0.75em;color:var(--dim);cursor:pointer;"><input type="checkbox" id="skipTutoCheckbox" onchange="onSkipTutoToggle(this.checked)">Mode sans tuto</label>
+        <span class="iolink" onclick="loadMyTeam()">🔑 Récupérer mon équipe validée</span>
         <span class="iolink" onclick="exportDraft()">💾 Exporter ma sélection</span>
         <span class="iolink" onclick="document.getElementById('importDraftInput').click()">📂 Importer ma sélection</span>
         <input type="file" id="importDraftInput" accept="application/json" style="display:none" onchange="handleImportDraft(this.files)">
@@ -1677,6 +1678,69 @@ function handleImportDraft(files){
       render();
     }
   });
+}
+
+async function loadMyTeam(){
+  const name = playerName.trim();
+  if(name === ""){
+    statusMsg = "Indique d'abord ton pseudo en haut de page.";
+    render();
+    return;
+  }
+  const teamSlug = slug(name);
+
+  let account;
+  try{
+    account = await window.storageGlobal.get(teamSlug);
+  }catch(e){
+    statusMsg = "Impossible de vérifier ton pseudo pour l'instant (connexion ?). Réessaie dans un instant.";
+    render();
+    return;
+  }
+  if(!account || !account.value){
+    statusMsg = `Aucun compte trouvé pour "${name}" — tu n'as jamais validé d'équipe sous ce pseudo.`;
+    render();
+    return;
+  }
+
+  const pwd = await askPassword(`Récupérer l'équipe de ${name}`, `Entre ton mot de passe pour récupérer et modifier l'équipe enregistrée sous "${name}" sur cette course.`);
+  if(pwd === null){
+    statusMsg = "Récupération annulée.";
+    render();
+    return;
+  }
+  const enteredHash = await sha256Hex(pwd);
+  if(enteredHash !== account.value){
+    statusMsg = `Mot de passe incorrect pour "${name}" — récupération refusée.`;
+    render();
+    return;
+  }
+
+  let team;
+  try{
+    team = await window.storage.get(`route666-team:${teamSlug}`, true);
+  }catch(e){
+    statusMsg = "Impossible de récupérer ton équipe pour l'instant (connexion ?). Réessaie dans un instant.";
+    render();
+    return;
+  }
+  if(!team || !team.value){
+    statusMsg = `Mot de passe correct, mais aucune équipe enregistrée pour "${name}" sur cette course.`;
+    render();
+    return;
+  }
+
+  try{
+    const obj = JSON.parse(team.value);
+    selected = (obj.riders||[]).map(r=>r.bib).filter(b => BY_BIB[b]);
+    leader = (obj.leaderBib && selected.includes(obj.leaderBib)) ? obj.leaderBib : null;
+    finalized = false;
+    statusMsg = "Équipe récupérée — modifie-la si besoin, puis valide à nouveau pour enregistrer les changements.";
+    render();
+  }catch(e){
+    statusMsg = "Impossible de lire l'équipe enregistrée (donnée corrompue).";
+    render();
+  }
 }
 
 async function sha256Hex(text){
