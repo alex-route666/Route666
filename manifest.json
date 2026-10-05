@@ -124,7 +124,10 @@
       "index": 22,
       "name": "Binche-Chimay-Binche",
       "date": "2026-10-06",
-      "status": "planned"
+      "status": "live",
+      "file": "route666-bcb.html",
+      "raceName": "Binche-Chimay-Binche 2026",
+      "closeAt": "2026-10-06T12:40:00+02:00"
     },
     {
       "index": 23,
