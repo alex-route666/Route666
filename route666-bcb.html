@@ -2479,19 +2479,26 @@ function findRiderByPastedRow(namePart, teamPart){
 }
 
 function parseResultsPaste(text){
-  const lines = text.split("\n").map(l=>l.replace(/\r$/,"")).filter(l=>l.trim().length>0).slice(0,30);
+  const lines = text.split("\n").map(l=>l.replace(/\r$/,"")).filter(l=>l.trim().length>0);
   const order = [];
   const unmatched = [];
-  lines.forEach((line, i)=>{
+  let seq = 0;
+  lines.forEach(line=>{
+    // Le rang collé en début de ligne est respecté (les rangs absents du collage restent vides)
+    const m = line.match(/^\s*(\d+)\.?(?=\s|$)/);
+    seq = m ? parseInt(m[1],10) : seq + 1;
+    if(seq < 1 || seq > 30) return;
     const stripped = line.replace(/^\s*\d+\.?\s*/, "");
     const parts = stripped.split(/\t+|\s{2,}/).map(p=>p.trim()).filter(Boolean);
-    if(parts.length < 1){ order.push(null); unmatched.push(i+1); return; }
+    while(order.length < seq-1) order.push(null);
+    if(parts.length < 1){ order[seq-1] = null; unmatched.push(seq); return; }
     const namePart = parts[0];
     const teamPart = parts[1] || "";
     const bib = findRiderByPastedRow(namePart, teamPart);
-    order.push(bib);
-    if(!bib) unmatched.push(`${i+1} (${namePart})`);
+    order[seq-1] = bib;
+    if(!bib) unmatched.push(`${seq} (${namePart})`);
   });
+  for(let i=0;i<order.length;i++) if(order[i]===undefined) order[i]=null;
   while(order.length && order[order.length-1] === null) order.pop();
   return { order, unmatched };
 }
