@@ -136,7 +136,10 @@
       "index": 23,
       "name": "Gran Piemonte",
       "date": "2026-10-08",
-      "status": "planned"
+      "status": "live",
+      "file": "route666-gp.html",
+      "raceName": "Gran Piemonte 2026",
+      "closeAt": "2026-10-08T12:00:00+02:00"
     },
     {
       "index": 24,
