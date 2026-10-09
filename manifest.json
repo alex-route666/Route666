@@ -145,7 +145,10 @@
       "index": 24,
       "name": "Il Lombardia",
       "date": "2026-10-10",
-      "status": "planned"
+      "status": "live",
+      "file": "route666-lombardia2.html",
+      "raceName": "Il Lombardia 2026",
+      "closeAt": "2026-10-10T10:45:00+02:00"
     },
     {
       "index": 25,
