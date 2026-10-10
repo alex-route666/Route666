@@ -154,7 +154,10 @@
       "index": 25,
       "name": "Paris-Tours",
       "date": "2026-10-11",
-      "status": "planned"
+      "status": "live",
+      "file": "route666-paristours.html",
+      "raceName": "Paris-Tours 2026",
+      "closeAt": "2026-10-11T11:55:00+02:00"
     },
     {
       "index": 26,
